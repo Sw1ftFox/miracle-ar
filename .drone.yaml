@@ -1,0 +1,41 @@
+kind: pipeline
+type: docker
+name: direct-deploy
+
+trigger:
+  branch:
+    - main
+    - master
+
+steps:
+  - name: build-jar
+    image: maven:3.9.8-eclipse-temurin-21
+    commands:
+      - mvn clean package -DskipTests
+
+  - name: copy-files
+    image: appleboy/drone-scp
+    settings:
+      host: {from_secret: ssh_host}
+      username: {from_secret: ssh_user}
+      password: {from_secret: ssh_password}
+      source:
+        - target/*.jar
+        - Dockerfile
+      target: /opt/app/
+
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host: {from_secret: ssh_host}
+      username: {from_secret: ssh_user}
+      password: {from_secret: ssh_password}
+      script:
+        - |
+          cd /opt/app
+          docker build -t ar-webapp:1.1.0 .
+          docker stop ar-webapp:1.1.0 || true
+          sleep 5
+          docker rm ar-webapp:1.1.0 || true
+          sleep 5
+          docker run -d --name app -p 3062:3062 ar-webapp:1.1.0
