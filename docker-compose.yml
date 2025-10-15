@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    image: my-app:latest
+    build: .
+    container_name: my-app
+    restart: unless-stopped
+    ports:
+      - "2062:2062"
+    volumes:
+      - ./models:/app/models
+    environment:
+      - storage.location=/app/models
+      - admin.password=ADMINPOLITEX01
