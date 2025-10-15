@@ -1,5 +1,8 @@
 HELP.md
 target/
+apps/backend/target/
+apps/frontend/node_modules/
+apps/frontend/dist/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -14,7 +17,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr

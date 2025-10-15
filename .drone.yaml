@@ -11,6 +11,7 @@ steps:
   - name: build-jar
     image: maven:3.9.8-eclipse-temurin-21
     commands:
+      - cd apps/backend
       - mvn clean package -DskipTests
 
   - name: copy-files
@@ -20,8 +21,9 @@ steps:
       username: {from_secret: ssh_user}
       password: {from_secret: ssh_password}
       source:
-        - target/*.jar
-        - Dockerfile
+        - apps/backend/target/*.jar
+        - apps/backend/Dockerfile
+        - storage/                
       target: /opt/app/
 
   - name: deploy
