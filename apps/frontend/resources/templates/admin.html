@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Панель администратора</h1>
+    <a href="/menu" class="btn">← Вернуться в меню</a>
+
+    <div th:if="${authenticated}">
+
+        <div class="section">
+            <div class="tabs">
+                <button id="models-tab" class="tab-btn active">Модели</button>
+                <button id="sounds-tab" class="tab-btn">Звук</button>
+                <button id="images-tab" class="tab-btn">Картинки</button>
+                <button id="descriptions-tab" class="tab-btn">Описания</button>
+                <button id="patterns-tab" class="tab-btn">Паттерны</button>
+            </div>
+
+            <div id="models-section">
+                <h2>3D Модели</h2>
+                <div id="model-list" class="file-list"></div>
+            </div>
+
+            <div id="sounds-section" style="display:none;">
+                <h2>Звуковые файлы</h2>
+                <div id="sound-list" class="file-list"></div>
+            </div>
+
+            <div id="images-section" style="display:none;">
+                <h2>Графические файлы</h2>
+                <div id="image-list" class="file-list"></div>
+            </div>
+
+            <div id="descriptions-section" style="display:none;">
+                <h2>Описания</h2>
+                <div id="description-list" class="file-list"></div>
+            </div>
+
+            <div id="patterns-section" style="display:none;">
+                <h2>Паттерны AR</h2>
+                <div id="pattern-list" class="file-list"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Загрузить новую модель</h2>
+            <form id="upload-model-form">
+                <input type="file" id="model-file" class="upload-btn" accept=".glb" required>
+                <button type="submit" class="btn">Загрузить модель</button>
+            </form>
+            <div id="model-upload-status"></div>
+        </div>
+
+        <div class="section">
+            <h2>Загрузить звук для модели</h2>
+            <form id="upload-sound-form">
+                <input type="file" id="sound-file" class="upload-btn" accept=".mp3,.wav" required>
+                <button type="submit" class="btn">Загрузить звук</button>
+            </form>
+            <div id="sound-upload-status"></div>
+        </div>
+
+        <div class="section">
+            <h2>Загрузить картинку для модели</h2>
+            <form id="upload-image-form">
+                <input type="file" id="image-file" class="upload-btn" accept=".png,.jpg,.jpeg" required>
+                <button type="submit" class="btn">Загрузить картинку</button>
+            </form>
+            <div id="image-upload-status"></div>
+        </div>
+
+        <div class="section">
+            <h2>Загрузить описание для модели</h2>
+            <form id="upload-description-form">
+                <input type="file" id="description-file" class="upload-btn" accept=".txt" required>
+                <button type="submit" class="btn">Загрузить описание</button>
+            </form>
+            <div id="description-upload-status"></div>
+        </div>
+
+        <div class="section">
+            <h2>Загрузить паттерн для модели</h2>
+            <form id="upload-pattern-form">
+                <input type="file" id="pattern-file" class="upload-btn" accept=".patt" required>
+                <button type="submit" class="btn">Загрузить паттерн</button>
+            </form>
+            <div id="pattern-upload-status"></div>
+        </div>
+    </div>
+
+    <div th:unless="${authenticated}">
+        <div class="error-message">
+            <h2>Доступ запрещен</h2>
+            <p>Неверный пароль администратора. Пожалуйста, вернитесь в меню и повторите попытку.</p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>
