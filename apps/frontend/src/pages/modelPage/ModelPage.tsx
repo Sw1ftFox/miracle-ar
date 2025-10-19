@@ -1,6 +1,6 @@
 const ModelPage = () => {
   return (
-    <div>ModelPage</div>
+    <div>AR просмотр будет здесь</div>
   )
 }
 
