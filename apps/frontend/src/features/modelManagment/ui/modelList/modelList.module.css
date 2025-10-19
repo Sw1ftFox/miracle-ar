@@ -1,0 +1,6 @@
+.models__gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  margin: 25px 0;
+}
