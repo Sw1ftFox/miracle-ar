@@ -9,13 +9,16 @@ const initialState: authType = {
   errorMessage: "",
 }
 
-export const loginAdmin = createAsyncThunk<any, string, { rejectValue: string }>(
+export const loginAdmin = createAsyncThunk<void, string, { rejectValue: string }>(
   'auth/login',
   async (password: string, { rejectWithValue }) => {
     try {
       const response = await fetch("/api/admin/authenticate", {
         method: "POST",
-        body: password
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
       })
 
       if (!response.ok) {
@@ -24,9 +27,7 @@ export const loginAdmin = createAsyncThunk<any, string, { rejectValue: string }>
 
       const data = await response.json();
 
-      if (data) {
-        return data;
-      } else {
+      if (!data.authenticated) {
         throw new Error("Password incorrect!");
       }
     } catch (err: unknown) {
