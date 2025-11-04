@@ -1,22 +1,25 @@
+import { useDispatch, useSelector } from "react-redux";
 import ModelItem from "../modelItem/ModelItem";
-import type { ModelType } from "../../types";
 import styles from "./modelList.module.css";
-
-const mockModels: ModelType[] = [
-  {
-    id: "polonsky",
-    name: "Полонский",
-    previewUrl: "/mock-images/polonsky.jpg",
-    description: "3D модель персонажа",
-    isCurrent: true,
-  },
-];
+import { type AppDispatch, type RootState } from "@app/store";
+import type { ModelType } from "../../types";
+import { useEffect } from "react";
+import { fetchModels } from "../../modelsSlice";
 
 const ModelList = () => {
+  const models = useSelector<RootState, ModelType[]>(
+    (state) => state.modelsReducer.models
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchModels());
+  }, []);
+
   return (
     <div className={styles.models__gallery}>
-      {mockModels.map((model) => (
-        <ModelItem model={model} />
+      {models.map((model) => (
+        <ModelItem key={model.id} model={model} />
       ))}
     </div>
   );
