@@ -3,7 +3,7 @@ import authReducer from "@features/auth/authSlice";
 import modelsReducer from "@features/modelManagment/modelsSlice"
 
 
-const store = configureStore({
+export const store = configureStore({
   reducer: { authReducer, modelsReducer }
 })
 

@@ -9,7 +9,7 @@ const initialState: AppState = {
   errorMessage: ""
 }
 
-const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: string }>(
+export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: string }>(
   "models/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
