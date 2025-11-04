@@ -9,7 +9,7 @@ const initialState: authType = {
   errorMessage: "",
 }
 
-export const loginAdmin = createAsyncThunk<void, string, { rejectValue: string }>(
+export const loginAdmin = createAsyncThunk<boolean, string, { rejectValue: string }>(
   'auth/login',
   async (password: string, { rejectWithValue }) => {
     try {
@@ -22,19 +22,21 @@ export const loginAdmin = createAsyncThunk<void, string, { rejectValue: string }
       })
 
       if (!response.ok) {
-        throw new Error("HTTP error!");
+        throw new Error("Ошибка сервера!");
       }
 
       const data = await response.json();
 
-      if (!data.authenticated) {
-        throw new Error("Password incorrect!");
+      if (data.authenticated) {
+        return true;
+      } else {
+        return rejectWithValue("Неверный пароль!");
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
-        rejectWithValue(err.message);
+        return rejectWithValue(err.message);
       } else {
-        rejectWithValue("Unknown error!");
+        return rejectWithValue("Неизвестная ошибка!");
       }
     }
   }
