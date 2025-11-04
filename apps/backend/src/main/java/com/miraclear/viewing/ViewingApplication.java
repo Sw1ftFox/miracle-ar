@@ -1,11 +1,11 @@
-package com.example.viewing;
+package com.miraclear.viewing;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.viewing.service.StorageService;
+import com.miraclear.viewing.service.StorageService;
 import java.io.IOException;
 import java.nio.file.*;
 
