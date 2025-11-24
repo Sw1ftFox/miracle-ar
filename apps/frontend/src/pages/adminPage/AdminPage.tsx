@@ -52,9 +52,10 @@ const AdminPage = () => {
             return (
               <Section
                 styles={styles}
+                type={section.type}
                 title={section.title}
                 id={section.id}
-                type={section.type}
+                inputType={section.inputType}
                 accept={section.accept}
                 required={section.required}
                 submitText={section.submitText}

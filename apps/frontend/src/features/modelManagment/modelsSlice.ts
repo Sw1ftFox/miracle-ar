@@ -6,6 +6,7 @@ const initialState: AppState = {
   models: [],
   isLoading: false,
   isError: false,
+  isSuccess: false,
   errorMessage: ""
 }
 
@@ -16,7 +17,8 @@ export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: st
       const response = await fetch("/api/models/full");
 
       if (!response.ok) {
-        throw new Error("HTTP error!");
+        const errorText = await response.text();
+        return rejectWithValue(`HTTP ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
@@ -42,7 +44,8 @@ const fetchModel = createAsyncThunk<ModelType, string, { rejectValue: string }>(
       const response = await fetch(`/api/models/${modelName}/info`);
 
       if (!response.ok) {
-        throw new Error("HTTP error!");
+        const errorText = await response.text();
+        return rejectWithValue(`HTTP ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
@@ -70,7 +73,8 @@ const deleteModel = createAsyncThunk<string | undefined, string, { rejectValue: 
       });
 
       if (!response.ok) {
-        throw new Error("HTTP error!");
+        const errorText = await response.text();
+        return rejectWithValue(`HTTP ${response.status}: ${errorText}`);
       }
 
       return modelName;
@@ -83,24 +87,21 @@ const deleteModel = createAsyncThunk<string | undefined, string, { rejectValue: 
     }
   }
 )
-const uploadFiles = createAsyncThunk<void, HTMLFormElement, { rejectValue: string }>(
+export const uploadFiles = createAsyncThunk<void, FormData, { rejectValue: string }>(
   "models/uploadFiles",
-  async (formFields: HTMLFormElement, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-      formData.append("file", formFields.fileObject);
-      formData.append("type", "model");
-      formData.append("modelName", formFields.modelName);
-
       const response = await fetch("/api/files/upload", {
         method: "POST",
         body: formData
       })
 
       if (!response.ok) {
-        throw new Error("HTTP error!");
+        const errorText = await response.text();
+        return rejectWithValue(`HTTP ${response.status}: ${errorText}`);
       }
 
+      return response.json();
     } catch (err: unknown) {
       if (err instanceof Error) {
         rejectWithValue(err.message);
@@ -114,7 +115,14 @@ const uploadFiles = createAsyncThunk<void, HTMLFormElement, { rejectValue: strin
 const modelsSlice = createSlice({
   name: "models",
   initialState,
-  reducers: {},
+  reducers: {
+    resetUploadState: (state) => {
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.isError = false;
+      state.errorMessage = '';
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchModels.pending, (state) => {
@@ -154,9 +162,11 @@ const modelsSlice = createSlice({
       })
       .addCase(uploadFiles.pending, (state) => {
         state.isLoading = true;
+        state.isSuccess = false;
       })
-      .addCase(uploadFiles.fulfilled, (state) => {
+      .addCase(uploadFiles.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.isSuccess = true;
       })
       .addCase(uploadFiles.rejected, (state, action) => {
         state.isLoading = false;
@@ -166,7 +176,11 @@ const modelsSlice = createSlice({
   }
 })
 
+const { actions, reducer } = modelsSlice;
+
+export const { resetUploadState } = actions;
+
 export const selectModels = (state: RootState) => state.modelsReducer.models;
 export const selectModel = (state: RootState, name: string) => state.modelsReducer.models.find(model => model.name === name);
 
-export default modelsSlice.reducer;
+export default reducer;
