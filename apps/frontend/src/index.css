@@ -60,7 +60,6 @@ button {
   font-weight: 600;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(92, 107, 192, 0.3);
-  font-size: 16px;
 }
 button:hover {
   transform: translateY(-2px);
