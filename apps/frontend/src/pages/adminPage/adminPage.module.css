@@ -1,10 +1,12 @@
 h2 {
   color: black;
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
 }
 
 .tabs {
   display: flex;
-  margin-bottom: 25px;
+  margin-bottom: 0.8rem;
   border-bottom: 3px solid #ede7f6;
   gap: 5px;
 }
@@ -20,13 +22,20 @@ h2 {
   transition: all 0.3s ease;
   color: #666;
 }
-
+.tab__btn:hover {
+  color: #5e35b1;
+  background: white;
+}
 .tab__btn.active {
   background: #5e35b1;
   color: white;
   box-shadow: 0 -4px 10px rgba(92, 107, 192, 0.2);
 }
-
+.upload__form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .upload__btn {
   padding: 8px 16px;
   border: none;
@@ -43,14 +52,14 @@ h2 {
   box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
 }
 
-.btn {
+.btn,
+.return__btn {
   display: inline-block;
   padding: 12px 25px;
   background: linear-gradient(45deg, #5e35b1, #3949ab);
   color: white;
   text-decoration: none;
   border-radius: 25px;
-  margin-bottom: 20px;
   cursor: pointer;
   border: none;
   font-weight: 600;
@@ -62,4 +71,15 @@ h2 {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(92, 107, 192, 0.4);
   background: linear-gradient(45deg, #3949ab, #5e35b1);
+}
+
+.return__btn {
+  border-radius: 18px;
+  margin-bottom: 20px;
+  background: transparent;
+  color: #5e35b1;
+}
+
+.return__btn:hover {
+  transform: translateY(-2px);
 }
