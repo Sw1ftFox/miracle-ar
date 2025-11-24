@@ -18,7 +18,7 @@ const ModelItem = ({ model }: Props) => {
         <div className={styles.image__container}>
           <img
             src={model.previewUrl}
-            alt={model.name}
+            alt={displayName}
             className={styles.model__image}
           />
         </div>

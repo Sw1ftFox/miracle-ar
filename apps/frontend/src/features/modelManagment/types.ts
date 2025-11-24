@@ -11,6 +11,7 @@ export type ModelType = {
 
 export type AppState = {
   models: ModelType[];
+  isSuccess: boolean;
   isLoading: boolean;
   isError: boolean;
   errorMessage: string | undefined;
