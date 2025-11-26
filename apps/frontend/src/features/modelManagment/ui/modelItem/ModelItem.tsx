@@ -1,6 +1,10 @@
 import Button from "@shared/ui/button/Button";
 import type { ModelType } from "../../types";
 import styles from "./modelItem.module.css";
+import { useDispatch } from "react-redux";
+import { type AppDispatch } from "@/app/store";
+import { setCurrentModel } from "../../modelsSlice";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   model: ModelType;
@@ -11,6 +15,15 @@ const removeFileExtension = (filename: string): string => {
 };
 
 const ModelItem = ({ model }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const handleNavigate = (displayName: string) => {
+    dispatch(setCurrentModel(model));
+
+    navigate(`/models/${displayName}`);
+  };
+
   if (model) {
     const displayName = removeFileExtension(model.name);
     return (
@@ -27,6 +40,7 @@ const ModelItem = ({ model }: Props) => {
           <p className={styles.model__description}>{model.description}</p>
           <p className={styles.pattern__info}></p>
           <Button
+            onClick={() => handleNavigate(displayName)}
             className={styles.view__btn}
             dataAttribute={model}
             content="Просмотр в AR"
