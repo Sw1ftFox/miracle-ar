@@ -19,7 +19,7 @@ const ModelList = () => {
   return (
     <div className={styles.models__gallery}>
       {isLoading ? (
-        <div style={{ color: "red", textAlign: "center" }}>Загрузка...</div>
+        <div style={{ color: "black", textAlign: "center" }}>Загрузка...</div>
       ) : (
         models.map((model) => <ModelItem key={model.id} model={model} />)
       )}

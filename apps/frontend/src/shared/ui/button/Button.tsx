@@ -1,6 +1,7 @@
 import type { ModelType } from "@features/modelManagment/types";
 
 type PropsType = {
+  onClick?: () => void;
   className?: string;
   dataAttribute?: ModelType;
   content?: string;
@@ -8,13 +9,14 @@ type PropsType = {
 };
 
 const Button = ({
+  onClick,
   className = "",
   dataAttribute,
   content = "",
   type = "button",
 }: PropsType) => {
   return (
-    <button type={type} className={className} data-model={dataAttribute}>
+    <button onClick={onClick} type={type} className={className} data-model={dataAttribute}>
       {content}
     </button>
   );

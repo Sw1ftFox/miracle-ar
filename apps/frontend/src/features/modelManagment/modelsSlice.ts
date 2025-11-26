@@ -4,6 +4,7 @@ import type { RootState } from "@/app/store";
 
 const initialState: AppState = {
   models: [],
+  currentModel: null,
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -37,7 +38,7 @@ export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: st
     }
   }
 )
-const fetchModel = createAsyncThunk<ModelType, string, { rejectValue: string }>(
+export const fetchModel = createAsyncThunk<ModelType, string, { rejectValue: string }>(
   "models/fetchOne",
   async (modelName: string, { rejectWithValue }) => {
     try {
@@ -121,6 +122,9 @@ const modelsSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
       state.errorMessage = '';
+    },
+    setCurrentModel: (state, action) => {
+      state.currentModel = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -178,7 +182,7 @@ const modelsSlice = createSlice({
 
 const { actions, reducer } = modelsSlice;
 
-export const { resetUploadState } = actions;
+export const { resetUploadState, setCurrentModel } = actions;
 
 export const selectModels = (state: RootState) => state.modelsReducer.models;
 export const selectModel = (state: RootState, name: string) => state.modelsReducer.models.find(model => model.name === name);
