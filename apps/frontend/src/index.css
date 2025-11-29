@@ -1,3 +1,7 @@
+.ar-mode {
+  overflow: hidden;
+}
+
 * {
   box-sizing: border-box;
 }
