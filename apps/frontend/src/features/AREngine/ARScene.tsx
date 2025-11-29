@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface ARSceneProps {
   modelUrl: string | undefined;
@@ -6,141 +6,164 @@ interface ARSceneProps {
 }
 
 const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
-  const [debugInfo, setDebugInfo] = useState({
-    markerFound: false,
-    modelLoaded: false,
-    patternLoaded: false,
-  });
+  const [modelScale, setModelScale] = useState(1);
 
-  useEffect(() => {
-    console.log("🔧 Debug - Model URL:", modelUrl);
-    console.log("🔧 Debug - Marker Pattern URL:", markerPatternUrl);
+  const increaseScale = () => {
+    const newScale = Math.min(modelScale + 0.1, 6);
+    setModelScale(newScale);
+  };
 
-    // Проверяем загрузку паттерна
-    if (markerPatternUrl) {
-      fetch(markerPatternUrl)
-        .then((response) => {
-          console.log("🔧 Pattern fetch status:", response.status);
-          return response.text();
-        })
-        .then((data) => {
-          console.log(
-            "🔧 Pattern content (first 100 chars):",
-            data.substring(0, 100)
-          );
-          setDebugInfo((prev) => ({ ...prev, patternLoaded: true }));
-        })
-        .catch((error) => {
-          console.error("🔧 Pattern load error:", error);
-        });
-    }
+  const decreaseScale = () => {
+    const newScale = Math.max(modelScale - 0.1, 0.1);
+    setModelScale(newScale);
+  };
 
-    const scene = document.querySelector("a-scene");
-    if (scene) {
-      scene.addEventListener("loaded", () => {
-        console.log("✅ A-Frame scene loaded");
-      });
-
-      // Слушаем события маркера
-      scene.addEventListener("markerFound", (event) => {
-        console.log("🎯 Marker found!", event.target);
-        setDebugInfo((prev) => ({ ...prev, markerFound: true }));
-      });
-
-      scene.addEventListener("markerLost", (event) => {
-        console.log("❌ Marker lost", event.target);
-        setDebugInfo((prev) => ({ ...prev, markerFound: false }));
-      });
-
-      // Слушаем события загрузки модели
-      scene.addEventListener("model-loaded", () => {
-        console.log("✅ Model loaded successfully!");
-        setDebugInfo((prev) => ({ ...prev, modelLoaded: true }));
-      });
-    }
-  }, [modelUrl, markerPatternUrl]);
+  const resetScale = () => {
+    setModelScale(1);
+  };
 
   return (
-    <div style={{ width: "100%", height: "100vh", position: "relative" }}>
-      <a-scene
-        embedded
-        arjs="patternRatio: 0.75; sourceType: webcam; debugUIEnabled: true;"
-        vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true;"
-        sound
-      >
-        {markerPatternUrl ? (
-          <a-marker type="pattern" url={markerPatternUrl}>
-            <a-entity
-              gltf-model={`url(${modelUrl})`}
-              position="0 0 0"
-              scale="0.5 0.5 0.5"
-              rotation="0 0 0"
-              animation-mixer="clip: *"
-            />
-          </a-marker>
-        ) : (
-          <a-marker preset="hiro">
-            <a-entity
-              gltf-model={`url(${modelUrl})`}
-              position="0 0 0"
-              scale="0.5 0.5 0.5"
-              rotation="0 0 0"
-            />
-          </a-marker>
-        )}
-
-        <a-entity camera></a-entity>
-      </a-scene>
-
-      {/* Отладочная информация */}
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       <div
         style={{
           position: "absolute",
-          bottom: "20px",
-          left: "20px",
-          background: "rgba(0, 0, 0, 0.8)",
-          color: "white",
-          padding: "15px",
-          borderRadius: "10px",
-          fontSize: "14px",
+          top: "10px",
+          right: "10px",
           zIndex: 1000,
-          minWidth: "250px",
+          background: "rgba(255,255,255,0.9)",
+          padding: "15px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          minWidth: "200px",
         }}
       >
-        <h4 style={{ margin: "0 0 10px 0", color: "#4dabf7" }}>
-          🔧 Отладка AR
-        </h4>
-        <div style={{ marginBottom: "5px" }}>
-          📍 Маркер:{" "}
-          <span
-            style={{ color: debugInfo.markerFound ? "#4CAF50" : "#ff6b6b" }}
-          >
-            {debugInfo.markerFound ? "Найден" : "Не найден"}
-          </span>
+        <h4 style={{ margin: "0 0 10px 0", color: "#333" }}>Масштаб модели</h4>
+
+        <div style={{ marginBottom: "10px", color: "#333" }}>
+          <strong>Текущий: {modelScale.toFixed(1)}x</strong>
         </div>
-        <div style={{ marginBottom: "5px" }}>
-          🎯 Паттерн:{" "}
-          <span
-            style={{ color: debugInfo.patternLoaded ? "#4CAF50" : "#ff6b6b" }}
+
+        <div style={{ display: "flex", gap: "5px", marginBottom: "10px" }}>
+          <button
+            onClick={decreaseScale}
+            style={{
+              flex: 1,
+              padding: "8px",
+              background: "#ff4757",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
           >
-            {debugInfo.patternLoaded ? "Загружен" : "Загрузка..."}
-          </span>
-        </div>
-        <div style={{ marginBottom: "5px" }}>
-          🎨 Модель:{" "}
-          <span
-            style={{ color: debugInfo.modelLoaded ? "#4CAF50" : "#ff6b6b" }}
+            -
+          </button>
+          <button
+            onClick={increaseScale}
+            style={{
+              flex: 1,
+              padding: "8px",
+              background: "#2ed573",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
           >
-            {debugInfo.modelLoaded ? "Загружена" : "Загрузка..."}
-          </span>
+            +
+          </button>
+          <button
+            onClick={resetScale}
+            style={{
+              flex: 1,
+              padding: "8px",
+              background: "#3742fa",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Сброс
+          </button>
         </div>
-        {debugInfo.markerFound && !debugInfo.modelLoaded && (
-          <div style={{ color: "#ff9800", fontSize: "12px", marginTop: "8px" }}>
-            ⚠️ Маркер найден, но модель не загружается
-          </div>
-        )}
+
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ fontSize: "12px", color: "#666" }}>
+            Точная настройка:
+            <input
+              type="range"
+              min="0.1"
+              max="6"
+              step="0.1"
+              value={modelScale}
+              onChange={(e) => setModelScale(parseFloat(e.target.value))}
+              style={{ width: "100%", marginTop: "5px" }}
+            />
+          </label>
+        </div>
       </div>
+      <a-scene
+        embedded
+        arjs="sourceType: webcam; patternRatio: 0.75; debugUIEnabled: false; trackingMethod: best;"
+        sound
+        vr-mode-ui="enabled: false"
+        renderer="logarithmicDepthBuffer: true;"
+        cursor="rayOrigin: mouse"
+        raycaster="objects: .clickable"
+      >
+        {markerPatternUrl ? (
+          <a-marker
+            type="pattern"
+            url={markerPatternUrl}
+            smooth
+            smoothCount="10"
+            smoothTolerance="0.01"
+          >
+            <a-entity
+              gltf-model={modelUrl}
+              animation-mixer="clip: *"
+              sound-handler
+              gltf-model-loaded="events: model-loaded;"
+              scale={`${modelScale} ${modelScale} ${modelScale}`}
+              //           events="model-loaded: function(e) {
+              //   const box = new THREE.Box3().setFromObject(this.object3D);
+              //   const height = box.max.y - box.min.y;
+              //   this.setAttribute('position', {y: height/2, x: 0, z: 0});
+              // }"
+              // rotation="-90 0 0"
+              // scale="0.5 0.5 0.5"
+              // position="0 0 -1.7"
+              // scale="0.8 0.8 0.8"
+              // rotation="0 0 0"
+              // arjs-rotation-control="enabled: true; minY: -5; maxY: 5;"
+            />
+          </a-marker>
+        ) : (
+          ""
+          // <a-marker preset="hiro">
+          //   <a-entity
+          //     gltf-model={modelUrl}
+          //     position="0 1 -1.7"
+          //     scale="0.8 0.8 0.8"
+          //     rotation="0 0 0"
+          //     arjs-rotation-control="enabled: true; minY: -5; maxY: 5;"
+          //   />
+          // </a-marker>
+        )}
+        <a-camera
+          position="0 0 0"
+          look-controls="enabled: false"
+          wasd-controls="enabled: false"
+        ></a-camera>
+      </a-scene>
     </div>
   );
 };

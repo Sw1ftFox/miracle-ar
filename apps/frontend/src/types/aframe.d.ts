@@ -9,6 +9,8 @@ declare namespace JSX {
       'device-orientation-permission-ui'?: string;
       renderer?: string;
       sound?: boolean;
+      cursor?: string;
+      raycaster?: string;
     };
     'a-marker': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
       preset?: string;
@@ -17,6 +19,10 @@ declare namespace JSX {
       emitevents?: boolean;
       cursor?: string;
       raycaster?: string;
+      smooth?: boolean;
+      smoothCount?: string;
+      smoothTolerance?: string;
+      smoothThreshold?: string;
     };
     'a-entity': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
       position?: string;
@@ -29,6 +35,7 @@ declare namespace JSX {
       geometry?: string;
       material?: string;
       camera?: boolean | string;
+      events?: string;
     };
     'a-camera': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
       position?: string;
