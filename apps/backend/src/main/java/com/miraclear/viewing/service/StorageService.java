@@ -67,7 +67,6 @@ public class StorageService {
         System.out.println("=== DEBUG getModelDetailInfo ===");
         System.out.println("Input modelName: " + modelName);
 
-        // Если передано имя без расширения, добавляем .glb
         if (!modelName.toLowerCase().endsWith(".glb")) {
             modelName += ".glb";
             System.out.println("After adding .glb: " + modelName);
@@ -92,7 +91,6 @@ public class StorageService {
         info.setPatternUrl("/api/files/patterns/" + baseName + ".patt");
         info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
 
-        // Получаем размер файла и дату создания
         try {
             info.setFileSize(Files.size(modelPath));
             info.setCreatedAt(LocalDateTime.ofInstant(
@@ -106,23 +104,63 @@ public class StorageService {
         return info;
     }
 
-    // Новые методы для работы с подпапками
-
     private List<String> listModelFiles() throws IOException {
         Path modelsPath = Paths.get(storageLocation, MODELS_DIR);
         if (!Files.exists(modelsPath)) {
             return Collections.emptyList();
         }
 
-        return Files.walk(modelsPath)
+        return Files.walk(modelsPath, 1)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.toString().toLowerCase().endsWith(".glb"))
                 .map(path -> path.getFileName().toString())
                 .collect(Collectors.toList());
     }
 
+    public List<String> getModelFiles() throws IOException {
+        return listModelFiles();
+    }
+
+    public List<String> getSoundFiles() throws IOException {
+        return listFilesByType(SOUNDS_DIR, ".mp3");
+    }
+
+    public List<String> getPatternFiles() throws IOException {
+        return listFilesByType(MARKERS_DIR, ".patt");
+    }
+
+    public List<String> getImageFiles() throws IOException {
+        Path imagesPath = Paths.get(storageLocation, PREVIEWS_DIR);
+        if (!Files.exists(imagesPath)) {
+            return Collections.emptyList();
+        }
+        return Files.walk(imagesPath, 1)
+                .filter(Files::isRegularFile)
+                .filter(path -> {
+                    String fileName = path.getFileName().toString().toLowerCase();
+                    return fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png");
+                })
+                .map(path -> path.getFileName().toString())
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getDescriptionFiles() throws IOException {
+        return listFilesByType(DESCRIPTIONS_DIR, ".txt");
+    }
+
+    private List<String> listFilesByType(String subDirectory, String extension) throws IOException {
+        Path dirPath = Paths.get(storageLocation, subDirectory);
+        if (!Files.exists(dirPath)) {
+            return Collections.emptyList();
+        }
+        return Files.walk(dirPath, 1)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.toString().toLowerCase().endsWith(extension))
+                .map(path -> path.getFileName().toString())
+                .collect(Collectors.toList());
+    }
+
     private String getDescriptionContent(String baseName) throws IOException {
-        // Пробуем разные расширения для описания
         String[] possibleExtensions = { ".txt", ".md" };
         for (String ext : possibleExtensions) {
             Path descPath = Paths.get(storageLocation, DESCRIPTIONS_DIR, baseName + ext);
@@ -144,10 +182,8 @@ public class StorageService {
         return "";
     }
 
-    // Обновляем методы для serving файлов с учетом подпапок
     public ResponseEntity<Resource> serveFile(String fileName, String fileType, String contentType) {
         try {
-            // Определяем подпапку в зависимости от типа файла
             String subDir = getSubDirectory(fileType);
             Path filePath = Paths.get(storageLocation, subDir).resolve(fileName).normalize();
 
@@ -208,13 +244,11 @@ public class StorageService {
         return serveFile(fileName, "images", contentType);
     }
 
-    // Вспомогательные методы
     private String getBaseName(String filename) {
         int dotIndex = filename.lastIndexOf('.');
         return (dotIndex == -1) ? filename : filename.substring(0, dotIndex);
     }
 
-    // Остальные методы остаются без изменений
     public boolean deleteModelAndRelatedFiles(String modelName) throws IOException {
         if (!modelName.toLowerCase().endsWith(".glb")) {
             modelName += ".glb";
@@ -223,7 +257,6 @@ public class StorageService {
         String baseName = getBaseName(modelName);
         boolean deletedAny = false;
 
-        // Удаляем из всех подпапок
         String[] fileTypes = { ".glb", ".patt", ".mp3", ".txt", ".jpg", ".jpeg", ".png" };
         Map<String, String> dirMapping = Map.of(
                 ".glb", MODELS_DIR,
@@ -282,10 +315,8 @@ public class StorageService {
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
 
-        // Валидация расширений
         validateFileExtension(type, extension);
 
-        // Определяем папку для сохранения
         String targetDir = getTargetDirectory(type);
         String finalFilename = modelName + extension;
 
@@ -354,7 +385,6 @@ public class StorageService {
         }
     }
 
-    // Старые методы для совместимости
     public boolean validatePassword(String password) {
         return adminPassword.equals(password);
     }
