@@ -34,7 +34,6 @@ public class StorageService {
     @Value("${app.version:1.0.0}")
     private String appVersion;
 
-    // Пути к подпапкам
     private final String MODELS_DIR = "models";
     private final String MARKERS_DIR = "markers";
     private final String PREVIEWS_DIR = "previews";
@@ -403,5 +402,35 @@ public class StorageService {
 
     public void setCurrentModel(String model) {
         this.currentModel = model;
+    }
+
+    public boolean deleteFile(String fileName, String fileType) throws IOException {
+        String subDir = getSubDirectory(fileType);
+
+        if (subDir.isEmpty()) {
+            throw new IllegalArgumentException("Неизвестный тип файла: " + fileType);
+        }
+
+        Path filePath = Paths.get(storageLocation, subDir).resolve(fileName).normalize();
+
+        System.out.println("Attempting to delete file: " + filePath.toAbsolutePath());
+
+        if (!Files.exists(filePath)) {
+            System.out.println("File not found: " + filePath);
+            return false;
+        }
+
+        if (fileType.equals("models") && fileName.equals(currentModel)) {
+            System.out.println("Deleting current model, resetting currentModel field");
+            currentModel = "";
+        }
+
+        boolean deleted = Files.deleteIfExists(filePath);
+
+        if (deleted) {
+            System.out.println("Successfully deleted: " + filePath);
+        }
+
+        return deleted;
     }
 }
