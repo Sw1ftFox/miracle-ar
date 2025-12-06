@@ -55,4 +55,55 @@ public class ModelController {
                     .body("Ошибка при удалении модели: " + e.getMessage());
         }
     }
+
+    @GetMapping("")
+    public ResponseEntity<List<String>> getAllModelFiles() {
+        try {
+            List<String> models = storageService.getModelFiles();
+
+            return ResponseEntity.ok(models);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/sounds")
+    public ResponseEntity<List<String>> getAllSoundFiles() {
+        try {
+            List<String> sounds = storageService.getSoundFiles();
+            return ResponseEntity.ok(sounds);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/patterns")
+    public ResponseEntity<List<String>> getAllPatternFiles() {
+        try {
+            List<String> patterns = storageService.getPatternFiles();
+            return ResponseEntity.ok(patterns);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/images")
+    public ResponseEntity<List<String>> getAllImageFiles() {
+        try {
+            List<String> images = storageService.getImageFiles();
+            return ResponseEntity.ok(images);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/descriptions")
+    public ResponseEntity<List<String>> getAllDescriptionFiles() {
+        try {
+            List<String> descriptions = storageService.getDescriptionFiles();
+            return ResponseEntity.ok(descriptions);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
