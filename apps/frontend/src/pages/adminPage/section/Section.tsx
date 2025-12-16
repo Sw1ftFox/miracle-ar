@@ -1,4 +1,6 @@
 import {
+  deleteFile,
+  fetchFiles,
   resetUploadState,
   uploadFiles,
 } from "@features/modelManagment/modelsSlice";
@@ -31,7 +33,7 @@ const Section = ({
 }: PropsType) => {
   const [selectedFile, setSelectedFile] = useState<File | null>();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isLoading, isSuccess, isError, errorMessage } = useSelector<
+  const { files, isLoading, isSuccess, isError, errorMessage } = useSelector<
     RootState,
     AppState
   >((state) => state.modelsReducer);
@@ -61,6 +63,14 @@ const Section = ({
       });
   };
 
+  const handleDelete = (type: string, fileName: string) => {
+    dispatch(deleteFile({ type, fileName }));
+  };
+
+  useEffect(() => {
+    dispatch(fetchFiles(type + "s"));
+  }, []);
+
   useEffect(() => {
     if (isSuccess || isError) {
       const timer = setTimeout(() => {
@@ -73,7 +83,18 @@ const Section = ({
   return (
     <div id={id}>
       <h2>{title}</h2>
-      <div id="model-list" className={styles.file__list}></div>
+      <div id="items__list" className={styles.files}>
+        {files?.map((fileName) => {
+          return (
+            <div className={styles.files__item}>
+              <div className={styles.files__fileName}>{fileName}</div>
+              <button onClick={() => handleDelete(type + "s", fileName)}>
+                Удалить
+              </button>
+            </div>
+          );
+        })}
+      </div>
 
       <form className={styles.upload__form} onSubmit={handleSubmit}>
         <input
