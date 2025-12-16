@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AppState, ModelType } from "./types";
+import type { AppState, FileDelete, FileResponse, ModelType } from "./types";
 import type { RootState } from "@/app/store";
 
 const initialState: AppState = {
   models: [],
+  files: [],
   currentModel: null,
   isLoading: false,
   isError: false,
@@ -31,9 +32,9 @@ export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: st
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
-        rejectWithValue(err.message);
+        return rejectWithValue(err.message);
       } else {
-        rejectWithValue("Unknown error!");
+        return rejectWithValue("Unknown error!");
       }
     }
   }
@@ -58,18 +59,41 @@ export const fetchModel = createAsyncThunk<ModelType, string, { rejectValue: str
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
-        rejectWithValue(err.message);
+        return rejectWithValue(err.message);
       } else {
-        rejectWithValue("Unknown error!");
+        return rejectWithValue("Unknown error!");
       }
     }
   }
 )
-const deleteModel = createAsyncThunk<string | undefined, string, { rejectValue: string }>(
-  "models/delete",
-  async (modelName: string, { rejectWithValue }) => {
+export const fetchFiles = createAsyncThunk<FileResponse, string, { rejectValue: string }>(
+  "models/fetchFiles",
+  async (type, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/models/${modelName}`, {
+      const response = await fetch(type !== "models" ? `/api/models/${type}` : `/api/models`);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return rejectWithValue(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      return { type, data };
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      } else {
+        return rejectWithValue("Unknown error!");
+      }
+    }
+  }
+)
+export const deleteFile = createAsyncThunk<string | undefined, FileDelete, { rejectValue: string }>(
+  "models/delete",
+  async (obj, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/files/${obj.type}/${obj.fileName}`, {
         method: "DELETE"
       });
 
@@ -78,12 +102,12 @@ const deleteModel = createAsyncThunk<string | undefined, string, { rejectValue: 
         return rejectWithValue(`HTTP ${response.status}: ${errorText}`);
       }
 
-      return modelName;
+      return obj.fileName;
     } catch (err: unknown) {
       if (err instanceof Error) {
-        rejectWithValue(err.message);
+        return rejectWithValue(err.message);
       } else {
-        rejectWithValue("Unknown error!");
+        return rejectWithValue("Unknown error!");
       }
     }
   }
@@ -105,9 +129,9 @@ export const uploadFiles = createAsyncThunk<void, FormData, { rejectValue: strin
       return response.json();
     } catch (err: unknown) {
       if (err instanceof Error) {
-        rejectWithValue(err.message);
+        return rejectWithValue(err.message);
       } else {
-        rejectWithValue("Unknown error!");
+        return rejectWithValue("Unknown error!");
       }
     }
   }
@@ -152,14 +176,26 @@ const modelsSlice = createSlice({
         state.isError = true;
         state.errorMessage = action.payload;
       })
-      .addCase(deleteModel.pending, (state) => {
+      .addCase(fetchFiles.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteModel.fulfilled, (state, action) => {
+      .addCase(fetchFiles.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.models = state.models.filter(model => model.name !== action.payload)
+        state.files = action.payload.data;
       })
-      .addCase(deleteModel.rejected, (state, action) => {
+      .addCase(fetchFiles.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload;
+      })
+      .addCase(deleteFile.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteFile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.files = state.files.filter(file => file !== action.payload)
+      })
+      .addCase(deleteFile.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.errorMessage = action.payload;
