@@ -11,9 +11,20 @@ export type ModelType = {
 
 export type AppState = {
   models: ModelType[];
+  files: string[];
   currentModel: null | ModelType;
   isSuccess: boolean;
   isLoading: boolean;
   isError: boolean;
   errorMessage: string | undefined;
+}
+
+export type FileResponse = {
+  type: string;
+  data: string[];
+}
+
+export type FileDelete = {
+  type: string;
+  fileName: string; 
 }
