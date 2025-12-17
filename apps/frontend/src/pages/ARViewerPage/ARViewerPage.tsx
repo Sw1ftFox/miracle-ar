@@ -1,5 +1,5 @@
-import { type RootState } from "@/app/store";
-import type { ModelType } from "@/features/modelManagment/types";
+import { type RootState } from "@app/store";
+import type { ModelType } from "@features/modelManagment/types";
 import ARScene from "@features/AREngine/ARScene";
 import { useSelector } from "react-redux";
 import Link from "@shared/ui/link/Link";

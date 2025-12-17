@@ -8,7 +8,7 @@ import { type AppDispatch, type RootState } from "@app/store";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppState } from "@features/modelManagment/types";
-import UploadStatus from "@/shared/ui/uploadStatus/UploadStatus";
+import UploadStatus from "@shared/ui/uploadStatus/UploadStatus";
 
 type PropsType = {
   styles: CSSModuleClasses;
