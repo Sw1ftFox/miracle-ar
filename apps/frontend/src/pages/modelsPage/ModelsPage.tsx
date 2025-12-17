@@ -1,4 +1,4 @@
-import { ModelList } from "@/features/modelManagment/ui";
+import { ModelList } from "@features/modelManagment/ui";
 import Link from "@shared/ui/link/Link";
 
 const ModelsPage = () => {
