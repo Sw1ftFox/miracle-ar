@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ARSceneProps {
   modelUrl: string | undefined;
@@ -21,6 +21,39 @@ const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
   const resetScale = () => {
     setModelScale(1);
   };
+
+  useEffect(() => {
+    const preventAFrameMargin = () => {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "style"
+          ) {
+            if (
+              document.body.style.marginTop &&
+              document.body.style.marginTop !== "0px"
+            ) {
+              console.log(
+                "Prevented A-Frame margin:",
+                document.body.style.marginTop
+              );
+              document.body.style.marginTop = "";
+            }
+          }
+        });
+      });
+
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+
+      return () => observer.disconnect();
+    };
+
+    preventAFrameMargin();
+  }, []);
 
   return (
     <div
