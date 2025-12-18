@@ -7,10 +7,10 @@
   border: 2px solid #e8eaf6;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 80px;
+  /* grid-template-rows: auto 80px; */
   grid-template-areas:
     "content image"
-    "button button";
+    "button image";
 }
 .model__card:hover {
   transform: translateY(-5px);
@@ -36,17 +36,15 @@
 .image__container {
   grid-area: image;
   width: 100%;
-  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: linear-gradient(135deg, #ede7f6, #d1c4e9);
-  padding: 15px;
 }
 .model__image {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 350px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
