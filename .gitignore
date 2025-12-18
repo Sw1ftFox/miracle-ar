@@ -1,5 +1,6 @@
 HELP.md
 target/
+node_modules/
 apps/backend/target/
 apps/frontend/node_modules/
 apps/frontend/dist/
