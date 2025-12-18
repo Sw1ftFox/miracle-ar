@@ -12,6 +12,7 @@ const ARViewerPage = () => {
 
   const modelUrl = currentModel?.modelUrl;
   const markerPatternUrl = currentModel?.patternUrl;
+  const soundUrl = currentModel?.soundUrl;
 
   useEffect(() => {
     const forceHideScroll = () => {
@@ -62,7 +63,7 @@ const ARViewerPage = () => {
         overflow: "hidden",
       }}
     >
-      <ARScene modelUrl={modelUrl} markerPatternUrl={markerPatternUrl} />
+      <ARScene modelUrl={modelUrl} markerPatternUrl={markerPatternUrl} soundUrl={soundUrl}/>
       <div
         style={{
           position: "absolute",
@@ -74,8 +75,7 @@ const ARViewerPage = () => {
       >
         <Link content="Вернуться в меню" link="/models" />
       </div>
-
-      {/* Инструкция для тестирования
+      Инструкция для тестирования
       <div
         style={{
           position: "absolute",
@@ -93,11 +93,7 @@ const ARViewerPage = () => {
       >
         <p>1. Разрешите доступ к камере</p>
         <p>2. Наведите камеру на маркер</p>
-        <div style={{ marginTop: "10px", fontSize: "14px", opacity: 0.8 }}>
-          <p>Модель: {modelUrl}</p>
-          <p>Маркер: {markerPatternUrl}</p>
-        </div>
-      </div> */}
+      </div>
     </div>
   );
 };

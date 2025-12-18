@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ARSceneProps {
   modelUrl: string | undefined;
   markerPatternUrl?: string;
+  soundUrl?: string;
 }
 
-const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
+const ARScene: React.FC<ARSceneProps> = ({
+  modelUrl,
+  markerPatternUrl,
+  soundUrl,
+}) => {
   const [modelScale, setModelScale] = useState(1);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const increaseScale = () => {
     const newScale = Math.min(modelScale + 0.1, 6);
@@ -23,37 +29,48 @@ const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
   };
 
   useEffect(() => {
-    const preventAFrameMargin = () => {
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (
-            mutation.type === "attributes" &&
-            mutation.attributeName === "style"
-          ) {
-            if (
-              document.body.style.marginTop &&
-              document.body.style.marginTop !== "0px"
-            ) {
-              console.log(
-                "Prevented A-Frame margin:",
-                document.body.style.marginTop
-              );
-              document.body.style.marginTop = "";
-            }
-          }
-        });
-      });
+    if (!soundUrl) return;
 
-      observer.observe(document.body, {
-        attributes: true,
-        attributeFilter: ["style"],
-      });
+    audioRef.current = new Audio(soundUrl);
+    audioRef.current.loop = true;
+    audioRef.current.preload = "auto";
 
-      return () => observer.disconnect();
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
+  }, [soundUrl]);
 
-    preventAFrameMargin();
-  }, []);
+  // useEffect(() => {
+  //   const preventAFrameMargin = () => {
+  //     const observer = new MutationObserver((mutations) => {
+  //       mutations.forEach((mutation) => {
+  //         if (
+  //           mutation.type === "attributes" &&
+  //           mutation.attributeName === "style"
+  //         ) {
+  //           if (
+  //             document.body.style.marginTop &&
+  //             document.body.style.marginTop !== "0px"
+  //           ) {
+  //             document.body.style.marginTop = "";
+  //           }
+  //         }
+  //       });
+  //     });
+
+  //     observer.observe(document.body, {
+  //       attributes: true,
+  //       attributeFilter: ["style"],
+  //     });
+
+  //     return () => observer.disconnect();
+  //   };
+
+  //   preventAFrameMargin();
+  // }, []);
 
   return (
     <div
@@ -143,6 +160,43 @@ const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
           </label>
         </div>
       </div>
+
+      {soundUrl && (
+        <div style={{ marginBottom: "10px" }}>
+          <button
+            onClick={() => audioRef.current?.play()}
+            style={{
+              width: "20%",
+              padding: "6px",
+              background: "#8e44ad",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "14px",
+              marginBottom: "5px",
+            }}
+          >
+            ▶ Включить звук
+          </button>
+          <button
+            onClick={() => audioRef.current?.pause()}
+            style={{
+              width: "20%",
+              padding: "6px",
+              background: "#7f8c8d",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+          >
+            ⏸ Выключить звук
+          </button>
+        </div>
+      )}
+
       <a-scene
         embedded
         arjs="sourceType: webcam; patternRatio: 0.75; debugUIEnabled: false; trackingMethod: best;"
@@ -152,6 +206,11 @@ const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
         cursor="rayOrigin: mouse"
         raycaster="objects: .clickable"
       >
+        {soundUrl && (
+          <a-assets>
+            <audio id="model-sound" src={soundUrl} preload="auto"></audio>
+          </a-assets>
+        )}
         {markerPatternUrl ? (
           <a-marker
             type="pattern"
@@ -190,6 +249,9 @@ const ARScene: React.FC<ARSceneProps> = ({ modelUrl, markerPatternUrl }) => {
           //     arjs-rotation-control="enabled: true; minY: -5; maxY: 5;"
           //   />
           // </a-marker>
+        )}
+        {soundUrl && (
+          <a-entity sound="src: #model-sound; autoplay: false; loop: true; volume: 0.5;" />
         )}
         <a-camera
           position="0 0 0"
