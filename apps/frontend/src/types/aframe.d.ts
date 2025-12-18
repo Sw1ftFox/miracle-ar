@@ -36,6 +36,7 @@ declare namespace JSX {
       material?: string;
       camera?: boolean | string;
       events?: string;
+      sound?:string;
     };
     'a-camera': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
       position?: string;
