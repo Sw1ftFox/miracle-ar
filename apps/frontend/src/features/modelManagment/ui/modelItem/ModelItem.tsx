@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { type AppDispatch } from "@/app/store";
 import { setCurrentModel } from "../../modelsSlice";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type Props = {
   model: ModelType;
@@ -15,8 +16,16 @@ const removeFileExtension = (filename: string): string => {
 };
 
 const ModelItem = ({ model }: Props) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const shouldTruncate = model.description
+    ? model.description?.length > 150
+    : false;
+  const displayText = isExpanded
+    ? model.description
+    : `${model.description?.substring(0, 150)}${shouldTruncate ? "..." : ""}`;
 
   const handleNavigate = (displayName: string) => {
     dispatch(setCurrentModel(model));
@@ -37,7 +46,19 @@ const ModelItem = ({ model }: Props) => {
         </div>
         <div className={styles.model__content}>
           <h3 className={styles.model__title}>{displayName}</h3>
-          <p className={styles.model__description}>{model.description}</p>
+          <p className={styles.model__description}>{displayText}</p>
+          {shouldTruncate && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{
+                color: "#673ab7",
+                background: "none",
+                padding: "4px 8px",
+              }}
+            >
+              {isExpanded ? "Скрыть подробности" : "Показать полностью"}
+            </button>
+          )}
           <p className={styles.pattern__info}></p>
           <Button
             onClick={() => handleNavigate(displayName)}
