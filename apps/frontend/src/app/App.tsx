@@ -25,6 +25,7 @@ function App() {
         <Route path="/models" element={<ModelsPage />} />
         <Route path="*" element={<Error404Page />} />
         <Route path="/models/:modelId" element={<ARViewerPage />} />
+        <Route path="/models/preview/:modelId" element={<ARViewerPagePC />} />
       </Routes>
     </Layout>
   );

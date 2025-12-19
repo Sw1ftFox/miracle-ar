@@ -4,10 +4,8 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
-  border: 2px solid #e8eaf6;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* grid-template-rows: auto 80px; */
   grid-template-areas:
     "content image"
     "button image";
@@ -19,6 +17,18 @@
 }
 .model__card:hover .model__image {
   transform: scale(1.05);
+}
+.btns {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.preview__btn {
+  background: transparent;
+  color: #5e35b1;
+}
+.preview__btn:hover {
+  background: transparent;
 }
 @keyframes fadeIn {
   from {
