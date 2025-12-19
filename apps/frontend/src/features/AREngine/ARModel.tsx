@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { Group } from "three";
 
 interface ARModelProps {
-  modelUrl: string;
+  modelUrl: string | undefined;
   position?: [number, number, number];
   scale?: number;
   rotation?: [number, number, number];
@@ -20,7 +20,7 @@ const ARModel = ({
 }: ARModelProps) => {
   const modelRef = useRef<Group>(null);
 
-  const { scene } = useGLTF(modelUrl);
+  const { scene } = useGLTF(modelUrl || "");
 
   useFrame((_, delta) => {
     if (modelRef.current && autoRotate) {
@@ -35,7 +35,7 @@ const ARModel = ({
       scale={[scale, scale, scale]}
       rotation={rotation}
     >
-      <primitive object={scene} />
+      {scene ? <primitive object={scene} /> : null}
     </group>
   );
 };
