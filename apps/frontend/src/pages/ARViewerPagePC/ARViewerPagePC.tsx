@@ -1,8 +1,31 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import ARModel from "@features/AREngine/ARModel";
+import { useSelector } from "react-redux";
+import type { RootState } from "@app/store";
+import type { ModelType } from "@features/modelManagment/types";
 
 const ARViewerPagePC = () => {
+  const currentModel = useSelector<RootState, ModelType | null>((state) => {
+    return state.modelsReducer.currentModel;
+  });
+  const modelUrl = currentModel?.modelUrl;
+  const [modelScale, setModelScale] = useState(1);
+
+  const increaseScale = () => {
+    const newScale = Math.min(modelScale + 0.1, 6);
+    setModelScale(newScale);
+  };
+
+  const decreaseScale = () => {
+    const newScale = Math.max(modelScale - 0.1, 0.1);
+    setModelScale(newScale);
+  };
+
+  const resetScale = () => {
+    setModelScale(1);
+  };
+
   return (
     <div
       style={{
@@ -11,6 +34,86 @@ const ARViewerPagePC = () => {
         background: "#1a1a1a",
       }}
     >
+      <div
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          zIndex: 1000,
+          background: "rgba(255,255,255,0.9)",
+          padding: "15px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          minWidth: "200px",
+        }}
+      >
+        <h4 style={{ margin: "0 0 10px 0", color: "#333" }}>Масштаб модели</h4>
+
+        <div style={{ marginBottom: "10px", color: "#333" }}>
+          <strong>Текущий: {modelScale.toFixed(1)}x</strong>
+        </div>
+
+        <div style={{ display: "flex", gap: "5px", marginBottom: "10px" }}>
+          <button
+            onClick={decreaseScale}
+            style={{
+              flex: 1,
+              padding: "8px",
+              background: "#ff4757",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            -
+          </button>
+          <button
+            onClick={increaseScale}
+            style={{
+              flex: 1,
+              padding: "8px",
+              background: "#2ed573",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            +
+          </button>
+          <button
+            onClick={resetScale}
+            style={{
+              flex: 1,
+              padding: "8px",
+              background: "#3742fa",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Сброс
+          </button>
+        </div>
+
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ fontSize: "12px", color: "#666" }}>
+            Точная настройка:
+            <input
+              type="range"
+              min="0.1"
+              max="6"
+              step="0.1"
+              value={modelScale}
+              onChange={(e) => setModelScale(parseFloat(e.target.value))}
+              style={{ width: "100%", marginTop: "5px" }}
+            />
+          </label>
+        </div>
+      </div>
+
       <Canvas
         camera={{
           position: [0, 0, 5],
@@ -33,30 +136,13 @@ const ARViewerPagePC = () => {
         */}
         <Suspense fallback={null}>
           <ARModel
-            modelUrl="/api/files/models/Полонский.glb"
-            position={[0, -1, 0]}
-            scale={1}
+            modelUrl={modelUrl}
+            position={[0, -1.3, 0]}
+            scale={modelScale}
             autoRotate={true}
           />
         </Suspense>
       </Canvas>
-
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          color: "white",
-          background: "rgba(0,0,0,0.7)",
-          padding: "10px 20px",
-          borderRadius: "10px",
-          textAlign: "center",
-        }}
-      >
-        <h3>Тест компонента ARModel</h3>
-        <p>Если видите вращающуюся 3D модель - компонент работает!</p>
-      </div>
     </div>
   );
 };

@@ -27,10 +27,14 @@ const ModelItem = ({ model }: Props) => {
     ? model.description
     : `${model.description?.substring(0, 150)}${shouldTruncate ? "..." : ""}`;
 
-  const handleNavigate = (displayName: string) => {
+  const handleNavigate = (displayName: string, preview?: boolean) => {
     dispatch(setCurrentModel(model));
 
-    navigate(`/models/${displayName}`);
+    if (!preview) {
+      navigate(`/models/${displayName}`);
+    } else {
+      navigate(`/models/preview/${displayName}`);
+    }
   };
 
   if (model) {
@@ -60,12 +64,20 @@ const ModelItem = ({ model }: Props) => {
             </button>
           )}
           <p className={styles.pattern__info}></p>
-          <Button
+          <div className={styles.btns}>
+            <Button
             onClick={() => handleNavigate(displayName)}
             className={styles.view__btn}
             dataAttribute={model}
             content="Просмотр в AR"
           />
+          <Button
+            onClick={() => handleNavigate(displayName, true)}
+            className={styles.preview__btn}
+            dataAttribute={model}
+            content="Предпросмотр"
+          />
+          </div>
         </div>
       </div>
     );
