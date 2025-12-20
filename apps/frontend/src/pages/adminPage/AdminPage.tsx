@@ -2,26 +2,21 @@ import { useState } from "react";
 import styles from "./adminPage.module.css";
 import Section from "./section/Section";
 import { sectionData } from "./section/sectionData";
-
-type SectionType = "models" | "sounds" | "images" | "descriptions" | "patterns";
-
-function isValidSection(
-  value: string
-): value is "models" | "sounds" | "images" | "descriptions" | "patterns" {
-  return ["models", "sounds", "images", "descriptions", "patterns"].includes(
-    value
-  );
-}
+import {
+  FileTypes,
+  isSectionType,
+  type SectionType,
+} from "@features/modelManagment/types";
 
 const AdminPage = () => {
-  const [selectedSection, setSelectedSection] = useState<SectionType>("models");
+  const [selectedSection, setSelectedSection] = useState<SectionType>(
+    FileTypes.MODELS
+  );
 
   const changeSelectedSection = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     const id = target.id;
-    if (isValidSection(id)) {
-      setSelectedSection(id);
-    }
+    isSectionType(id) && setSelectedSection(id);
   };
 
   return (
