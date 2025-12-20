@@ -57,7 +57,7 @@ public class FileController {
         return storageService.serveFile(fileName, "patterns", "application/octet-stream");
     }
 
-    @GetMapping("/images/{fileName:.+}")
+    @GetMapping("/previews/{fileName:.+}")
     public ResponseEntity<Resource> serveImageFile(@PathVariable String fileName) {
         return storageService.serveImageFile(fileName);
     }
@@ -77,9 +77,9 @@ public class FileController {
         return deleteFile(fileName, "patterns");
     }
 
-    @DeleteMapping("/images/{fileName:.+}")
+    @DeleteMapping("/previews/{fileName:.+}")
     public ResponseEntity<?> deleteImageFile(@PathVariable String fileName) {
-        return deleteFile(fileName, "images");
+        return deleteFile(fileName, "previews");
     }
 
     @DeleteMapping("/descriptions/{fileName:.+}")

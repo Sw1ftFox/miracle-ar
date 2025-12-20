@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AppState, FileDelete, FileResponse, ModelType } from "./types";
+import { FileTypes, type AppState, type FileDelete, type FileResponse, type ModelType, type SectionType } from "./types";
 import type { RootState } from "@/app/store";
 
 const initialState: AppState = {
@@ -66,11 +66,11 @@ export const fetchModel = createAsyncThunk<ModelType, string, { rejectValue: str
     }
   }
 )
-export const fetchFiles = createAsyncThunk<FileResponse, string, { rejectValue: string }>(
+export const fetchFiles = createAsyncThunk<FileResponse, SectionType, { rejectValue: string }>(
   "models/fetchFiles",
   async (type, { rejectWithValue }) => {
     try {
-      const response = await fetch(type !== "models" ? `/api/models/${type}` : `/api/models`);
+      const response = await fetch(type !== FileTypes.MODELS ? `/api/models/${type}` : `/api/models`);
 
       if (!response.ok) {
         const errorText = await response.text();
