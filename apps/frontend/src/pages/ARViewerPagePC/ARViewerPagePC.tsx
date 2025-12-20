@@ -4,6 +4,7 @@ import ARModel from "@features/AREngine/ARModel";
 import { useSelector } from "react-redux";
 import type { RootState } from "@app/store";
 import type { ModelType } from "@features/modelManagment/types";
+import Link from "@shared/ui/link/Link";
 
 const ARViewerPagePC = () => {
   const currentModel = useSelector<RootState, ModelType | null>((state) => {
@@ -13,7 +14,7 @@ const ARViewerPagePC = () => {
   const [modelScale, setModelScale] = useState(1);
 
   const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.1, 6);
+    const newScale = Math.min(modelScale + 0.1, 10);
     setModelScale(newScale);
   };
 
@@ -104,7 +105,7 @@ const ARViewerPagePC = () => {
             <input
               type="range"
               min="0.1"
-              max="6"
+              max="10"
               step="0.1"
               value={modelScale}
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
@@ -112,6 +113,18 @@ const ARViewerPagePC = () => {
             />
           </label>
         </div>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: "30px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1000,
+        }}
+      >
+        <Link content="Вернуться в меню" link="/models" />
       </div>
 
       <Canvas

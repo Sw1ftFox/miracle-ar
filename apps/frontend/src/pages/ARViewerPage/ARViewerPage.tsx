@@ -63,7 +63,11 @@ const ARViewerPage = () => {
         overflow: "hidden",
       }}
     >
-      <ARScene modelUrl={modelUrl} markerPatternUrl={markerPatternUrl} soundUrl={soundUrl}/>
+      <ARScene
+        modelUrl={modelUrl}
+        markerPatternUrl={markerPatternUrl}
+        soundUrl={soundUrl}
+      />
       <div
         style={{
           position: "absolute",
@@ -75,7 +79,6 @@ const ARViewerPage = () => {
       >
         <Link content="Вернуться в меню" link="/models" />
       </div>
-      Инструкция для тестирования
       <div
         style={{
           position: "absolute",
