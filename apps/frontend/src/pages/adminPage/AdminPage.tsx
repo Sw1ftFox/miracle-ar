@@ -7,11 +7,15 @@ import {
   isSectionType,
   type SectionType,
 } from "@features/modelManagment/types";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@app/store";
+import { downloadDefaultMarker } from "@features/modelManagment/modelsSlice";
 
 const AdminPage = () => {
   const [selectedSection, setSelectedSection] = useState<SectionType>(
     FileTypes.MODELS
   );
+  const dispatch = useDispatch<AppDispatch>();
 
   const changeSelectedSection = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
@@ -19,12 +23,31 @@ const AdminPage = () => {
     isSectionType(id) && setSelectedSection(id);
   };
 
+  const handleDownloadDefaultMarker = () => {
+    dispatch(downloadDefaultMarker());
+  };
+
   return (
     <div>
       <h1>Панель администратора</h1>
-      <a href="/models" className={styles.return__btn}>
-        ← Вернуться в меню
-      </a>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "20px",
+        }}
+      >
+        <a href="/models" className={styles.return__btn}>
+          ← Вернуться в меню
+        </a>
+        <button
+          className={styles.download__btn}
+          onClick={handleDownloadDefaultMarker}
+        >
+          Скачать маркер по умолчанию
+        </button>
+      </div>
 
       <div className={styles.section}>
         <div className={styles.tabs} onClick={changeSelectedSection}>
