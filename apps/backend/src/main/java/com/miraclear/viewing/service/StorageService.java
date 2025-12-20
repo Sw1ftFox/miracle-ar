@@ -290,8 +290,6 @@ public class StorageService {
                 currentModel != null && !currentModel.isEmpty() ? currentModel.replace(".glb", ".patt") : "");
         config.setAppVersion(appVersion);
 
-        config.setDefaultMarkerAvailable(Files.exists(Paths.get(storageLocation, MARKERS_DIR, "default.patt")));
-
         AppConfigDto.SupportedFormats formats = new AppConfigDto.SupportedFormats();
         formats.setModels(List.of(".glb"));
         formats.setImages(List.of(".jpg", ".png", ".jpeg"));
