@@ -10,7 +10,7 @@ public class AppConfigDto {
 
   public static class SupportedFormats {
     private List<String> models;
-    private List<String> images;
+    private List<String> previews;
     private List<String> sounds;
     private List<String> patterns;
 
@@ -26,11 +26,11 @@ public class AppConfigDto {
     }
 
     public List<String> getImages() {
-      return images;
+      return previews;
     }
 
-    public void setImages(List<String> images) {
-      this.images = images;
+    public void setImages(List<String> previews) {
+      this.previews = previews;
     }
 
     public List<String> getSounds() {
