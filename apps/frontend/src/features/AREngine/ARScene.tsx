@@ -15,7 +15,7 @@ const ARScene: React.FC<ARSceneProps> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.1, 6);
+    const newScale = Math.min(modelScale + 0.1, 10);
     setModelScale(newScale);
   };
 
@@ -151,7 +151,7 @@ const ARScene: React.FC<ARSceneProps> = ({
             <input
               type="range"
               min="0.1"
-              max="6"
+              max="10"
               step="0.1"
               value={modelScale}
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
@@ -167,14 +167,7 @@ const ARScene: React.FC<ARSceneProps> = ({
             onClick={() => audioRef.current?.play()}
             style={{
               width: "20%",
-              padding: "6px",
-              background: "#8e44ad",
               color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "14px",
-              marginBottom: "5px",
             }}
           >
             ▶ Включить звук
@@ -183,13 +176,8 @@ const ARScene: React.FC<ARSceneProps> = ({
             onClick={() => audioRef.current?.pause()}
             style={{
               width: "20%",
-              padding: "6px",
-              background: "#7f8c8d",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "14px",
+              background: "white",
+              color: "#5e35b1",
             }}
           >
             ⏸ Выключить звук
