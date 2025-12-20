@@ -87,11 +87,11 @@ public class ModelController {
         }
     }
 
-    @GetMapping("/images")
+    @GetMapping("/previews")
     public ResponseEntity<List<String>> getAllImageFiles() {
         try {
-            List<String> images = storageService.getImageFiles();
-            return ResponseEntity.ok(images);
+            List<String> previews = storageService.getImageFiles();
+            return ResponseEntity.ok(previews);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

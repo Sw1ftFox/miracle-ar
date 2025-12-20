@@ -19,12 +19,29 @@ export type AppState = {
   errorMessage: string | undefined;
 }
 
+export const FileTypes = {
+  DEFAULT: "default",
+  MODELS: "models",
+  SOUNDS: "sounds",
+  PREVIEWS: "previews",
+  DESCRIPTIONS: "descriptions",
+  PATTERNS: "patterns",
+} as const;
+
+export type SectionType = typeof FileTypes[keyof typeof FileTypes];
+
+const SECTION_SET = new Set(Object.values(FileTypes));
+
+export function isSectionType(value: string): value is SectionType {
+  return SECTION_SET.has(value as SectionType);
+}
+
 export type FileResponse = {
-  type: string;
+  type: SectionType;
   data: string[];
 }
 
 export type FileDelete = {
-  type: string;
-  fileName: string; 
+  type: SectionType;
+  fileName: string;
 }

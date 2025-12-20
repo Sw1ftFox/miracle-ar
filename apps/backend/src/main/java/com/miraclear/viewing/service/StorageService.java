@@ -175,7 +175,7 @@ public class StorageService {
         for (String ext : imageExtensions) {
             Path imagePath = Paths.get(storageLocation, PREVIEWS_DIR, baseName + ext);
             if (Files.exists(imagePath)) {
-                return "/api/files/images/" + baseName + ext;
+                return "/api/files/previews/" + baseName + ext;
             }
         }
         return "";
@@ -211,8 +211,8 @@ public class StorageService {
                 return MODELS_DIR;
             case "patterns":
                 return MARKERS_DIR; // markers -> patterns в URL
-            case "images":
-                return PREVIEWS_DIR; // previews -> images в URL
+            case "previews":
+                return PREVIEWS_DIR; 
             case "sounds":
                 return SOUNDS_DIR;
             case "descriptions":
@@ -224,7 +224,7 @@ public class StorageService {
 
     public ResponseEntity<Resource> serveImageFile(String fileName) {
         String extension = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-        String contentType = "image/";
+        String contentType = "preview/";
 
         switch (extension) {
             case ".png":
@@ -240,7 +240,7 @@ public class StorageService {
                 contentType = "application/octet-stream";
         }
 
-        return serveFile(fileName, "images", contentType);
+        return serveFile(fileName, "previews", contentType);
     }
 
     private String getBaseName(String filename) {
@@ -343,7 +343,7 @@ public class StorageService {
                 return MODELS_DIR;
             case "pattern":
                 return MARKERS_DIR;
-            case "image":
+            case "preview":
                 return PREVIEWS_DIR;
             case "sound":
                 return SOUNDS_DIR;
@@ -361,7 +361,7 @@ public class StorageService {
                     throw new IllegalArgumentException("Для моделей разрешены только файлы GLB");
                 }
                 break;
-            case "image":
+            case "preview":
                 if (!Arrays.asList(".png", ".jpg", ".jpeg").contains(extension)) {
                     throw new IllegalArgumentException("Для изображений разрешены только файлы PNG/JPG/JPEG");
                 }

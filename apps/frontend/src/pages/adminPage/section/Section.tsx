@@ -8,6 +8,7 @@ import { type AppDispatch, type RootState } from "@app/store";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppState } from "@features/modelManagment/types";
+import { isSectionType } from "@features/modelManagment/types";
 import UploadStatus from "@shared/ui/uploadStatus/UploadStatus";
 
 type PropsType = {
@@ -39,6 +40,22 @@ const Section = ({
   >((state) => state.modelsReducer);
   const dispatch = useDispatch<AppDispatch>();
 
+  const fileType = type + "s";
+  useEffect(() => {
+    if (isSectionType(fileType)) {
+      dispatch(fetchFiles(fileType));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isSuccess || isError) {
+      const timer = setTimeout(() => {
+        dispatch(resetUploadState());
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [dispatch, isSuccess, isError]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -64,21 +81,10 @@ const Section = ({
   };
 
   const handleDelete = (type: string, fileName: string) => {
-    dispatch(deleteFile({ type, fileName }));
-  };
-
-  useEffect(() => {
-    dispatch(fetchFiles(type + "s"));
-  }, []);
-
-  useEffect(() => {
-    if (isSuccess || isError) {
-      const timer = setTimeout(() => {
-        dispatch(resetUploadState());
-      }, 3000);
-      return () => clearTimeout(timer);
+    if (isSectionType(type)) {
+      dispatch(deleteFile({ type, fileName }));
     }
-  }, [dispatch, isSuccess, isError]);
+  };
 
   return (
     <div id={id}>
