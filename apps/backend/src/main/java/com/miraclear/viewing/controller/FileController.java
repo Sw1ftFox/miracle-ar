@@ -37,6 +37,11 @@ public class FileController {
         }
     }
 
+    @GetMapping("/patterns/default")
+    public ResponseEntity<Resource> serveDefaultPattern() {
+        return storageService.serveFile("default.patt", "patterns", "application/octet-stream");
+    }
+
     @GetMapping("/models/{fileName:.+}")
     public ResponseEntity<Resource> serveModelFile(@PathVariable String fileName) {
         return storageService.serveFile(fileName, "models", "model/gltf-binary");
