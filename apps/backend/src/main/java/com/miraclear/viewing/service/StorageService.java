@@ -224,7 +224,7 @@ public class StorageService {
 
     public ResponseEntity<Resource> serveImageFile(String fileName) {
         String extension = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-        String contentType = "image/";
+        String contentType = "preview/";
 
         switch (extension) {
             case ".png":
@@ -341,7 +341,7 @@ public class StorageService {
                 return MODELS_DIR;
             case "pattern":
                 return MARKERS_DIR;
-            case "image":
+            case "preview":
                 return PREVIEWS_DIR;
             case "sound":
                 return SOUNDS_DIR;
@@ -359,7 +359,7 @@ public class StorageService {
                     throw new IllegalArgumentException("Для моделей разрешены только файлы GLB");
                 }
                 break;
-            case "image":
+            case "preview":
                 if (!Arrays.asList(".png", ".jpg", ".jpeg").contains(extension)) {
                     throw new IllegalArgumentException("Для изображений разрешены только файлы PNG/JPG/JPEG");
                 }
