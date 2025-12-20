@@ -63,9 +63,9 @@ const ModelItem = ({ model }: Props) => {
               {isExpanded ? "Скрыть подробности" : "Показать полностью"}
             </button>
           )}
-          <p className={styles.pattern__info}></p>
-          <div className={styles.btns}>
-            <Button
+        </div>
+        <div className={styles.btns}>
+          <Button
             onClick={() => handleNavigate(displayName)}
             className={styles.view__btn}
             dataAttribute={model}
@@ -77,7 +77,6 @@ const ModelItem = ({ model }: Props) => {
             dataAttribute={model}
             content="Предпросмотр"
           />
-          </div>
         </div>
       </div>
     );
