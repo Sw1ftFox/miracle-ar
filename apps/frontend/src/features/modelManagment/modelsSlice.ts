@@ -112,6 +112,31 @@ export const deleteFile = createAsyncThunk<string | undefined, FileDelete, { rej
     }
   }
 )
+export const downloadDefaultMarker = createAsyncThunk<void, void, { rejectValue: string }>(
+  "models/defaultMarker",
+  async (_, { rejectWithValue }) => {
+    fetch("/api/files/patterns/default").then(response => {
+      if (!response.ok) throw new Error('Failed to download');
+      return response.blob();
+    })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'default-marker.patt';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }).catch(err => {
+        if (err instanceof Error) {
+          return rejectWithValue(err.message);
+        } else {
+          return rejectWithValue("Unknown error!");
+        }
+      })
+  }
+)
 export const uploadFiles = createAsyncThunk<void, FormData, { rejectValue: string }>(
   "models/uploadFiles",
   async (formData, { rejectWithValue }) => {

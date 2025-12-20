@@ -91,14 +91,15 @@ const Section = ({
       <h2>{title}</h2>
       <div id="items__list" className={styles.files}>
         {files?.map((fileName) => {
-          return (
-            <div className={styles.files__item}>
-              <div className={styles.files__fileName}>{fileName}</div>
-              <button onClick={() => handleDelete(type + "s", fileName)}>
-                Удалить
-              </button>
-            </div>
-          );
+          if (fileName !== "default.patt")
+            return (
+              <div className={styles.files__item}>
+                <div className={styles.files__fileName}>{fileName}</div>
+                <button onClick={() => handleDelete(type + "s", fileName)}>
+                  Удалить
+                </button>
+              </div>
+            );
         })}
       </div>
 
