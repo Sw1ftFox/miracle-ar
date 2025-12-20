@@ -22,6 +22,8 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
+  padding-bottom: 25px;
+  grid-area: button;
 }
 .preview__btn {
   background: transparent;
@@ -69,8 +71,8 @@
   font-weight: 600;
 }
 .model__content {
-  grid-area: content;
   padding: 25px;
+  grid-area: content;
   display: flex;
   flex-direction: column;
   justify-content: center;
