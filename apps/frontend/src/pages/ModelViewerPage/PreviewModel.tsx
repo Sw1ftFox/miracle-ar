@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { Group } from "three";
 
-interface ARModelProps {
+interface PreviewModelProps {
   modelUrl: string | undefined;
   position?: [number, number, number];
   scale?: number;
@@ -11,13 +11,13 @@ interface ARModelProps {
   autoRotate?: boolean;
 }
 
-const ARModel = ({
+const PreviewModel = ({
   modelUrl,
   position = [0, 0, 0],
   scale = 1,
   rotation = [0, 0, 0],
   autoRotate = true,
-}: ARModelProps) => {
+}: PreviewModelProps) => {
   const modelRef = useRef<Group>(null);
 
   const { scene } = useGLTF(modelUrl || "");
@@ -40,4 +40,4 @@ const ARModel = ({
   );
 };
 
-export default ARModel;
+export default PreviewModel;
