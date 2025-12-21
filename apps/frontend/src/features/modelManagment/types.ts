@@ -4,6 +4,7 @@ export type ModelType = {
   previewUrl?: string; 
   description?: string; 
   modelUrl: string; 
+  patternUrl: string; 
   soundUrl?: string; 
 }
 

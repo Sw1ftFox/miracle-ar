@@ -4,11 +4,12 @@ import styles from "./link.module.css";
 type PropsType = {
   content: string;
   link: string;
+  style?: React.CSSProperties;
 };
 
-const Link = ({ content = "", link = "/" }: PropsType) => {
+const Link = ({ content = "", link = "/", style }: PropsType) => {
   return (
-    <NavLink className={styles.link} end to={link}>
+    <NavLink style={style} className={styles.link} end to={link}>
       {content}
     </NavLink>
   );

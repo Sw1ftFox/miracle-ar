@@ -225,7 +225,7 @@ const modelsSlice = createSlice({
         state.isLoading = true;
         state.isSuccess = false;
       })
-      .addCase(uploadFiles.fulfilled, (state, action) => {
+      .addCase(uploadFiles.fulfilled, (state) => {
         state.isLoading = false;
         state.isSuccess = true;
       })

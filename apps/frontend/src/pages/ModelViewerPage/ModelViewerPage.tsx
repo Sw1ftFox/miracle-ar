@@ -4,6 +4,7 @@ import PreviewModel from "@pages/ModelViewerPage/PreviewModel";
 import type { ModelType } from "@features/modelManagment/types";
 import Link from "@shared/ui/link/Link";
 import { useParams } from "react-router-dom";
+import ErrorBoundary from "@shared/ui/errorBoundary/ErrorBoundary";
 
 const ModelViewerPage = () => {
   const { modelName } = useParams();
@@ -135,35 +136,37 @@ const ModelViewerPage = () => {
         <Link content="Вернуться в меню" link="/models" />
       </div>
 
-      <Canvas
-        camera={{
-          position: [0, 0, 5],
-          fov: 50, // Угол обзора камеры
-          near: 0.1, // Ближняя плоскость отсечения
-          far: 1000, // Дальняя плоскость отсечения
-        }}
-      >
-        {/* 
+      <ErrorBoundary>
+        <Canvas
+          camera={{
+            position: [0, 0, 5],
+            fov: 50, // Угол обзора камеры
+            near: 0.1, // Ближняя плоскость отсечения
+            far: 1000, // Дальняя плоскость отсечения
+          }}
+        >
+          {/* 
           Освещение сцены - обязательно для видимости моделей 
           AmbientLight - рассеянный свет со всех сторон
           DirectionalLight - направленный свет (как солнце)
         */}
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[10, 10, 5]} intensity={1} />
 
-        {/*
+          {/*
           Suspense для асинхронной загрузки модели
           fallback={null} значит ничего не показываем во время загрузки
         */}
-        <Suspense fallback={null}>
-          <PreviewModel
-            modelUrl={modelUrl}
-            position={[0, -1.3, 0]}
-            scale={modelScale}
-            autoRotate={true}
-          />
-        </Suspense>
-      </Canvas>
+          <Suspense fallback={null}>
+            <PreviewModel
+              modelUrl={modelUrl}
+              position={[0, -1.3, 0]}
+              scale={modelScale}
+              autoRotate={true}
+            />
+          </Suspense>
+        </Canvas>
+      </ErrorBoundary>
     </div>
   );
 };
