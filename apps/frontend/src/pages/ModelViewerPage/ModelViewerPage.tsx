@@ -1,17 +1,25 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useState } from "react";
-import ARModel from "@features/AREngine/ARModel";
-import { useSelector } from "react-redux";
-import type { RootState } from "@app/store";
+import { Suspense, useEffect, useState } from "react";
+import PreviewModel from "@pages/ModelViewerPage/PreviewModel";
 import type { ModelType } from "@features/modelManagment/types";
 import Link from "@shared/ui/link/Link";
+import { useParams } from "react-router-dom";
 
-const ARViewerPagePC = () => {
-  const currentModel = useSelector<RootState, ModelType | null>((state) => {
-    return state.modelsReducer.currentModel;
-  });
-  const modelUrl = currentModel?.modelUrl;
+const ModelViewerPage = () => {
+  const { modelName } = useParams();
+  const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
   const [modelScale, setModelScale] = useState(1);
+
+  useEffect(() => {
+    if (modelName) {
+      fetch(`/api/models/${modelName}/info`)
+        .then((res) => res.json())
+        .then(setCurrentModel)
+        .catch((err) => console.error(err));
+    }
+  }, [modelName]);
+
+  const modelUrl = currentModel?.modelUrl;
 
   const increaseScale = () => {
     const newScale = Math.min(modelScale + 0.1, 10);
@@ -148,7 +156,7 @@ const ARViewerPagePC = () => {
           fallback={null} значит ничего не показываем во время загрузки
         */}
         <Suspense fallback={null}>
-          <ARModel
+          <PreviewModel
             modelUrl={modelUrl}
             position={[0, -1.3, 0]}
             scale={modelScale}
@@ -160,4 +168,4 @@ const ARViewerPagePC = () => {
   );
 };
 
-export default ARViewerPagePC;
+export default ModelViewerPage;

@@ -1,14 +1,21 @@
-import { type RootState } from "@app/store";
 import type { ModelType } from "@features/modelManagment/types";
-import ARScene from "@features/AREngine/ARScene";
-import { useSelector } from "react-redux";
+import ARScene from "@pages/ARViewerPage/ARScene";
 import Link from "@shared/ui/link/Link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const ARViewerPage = () => {
-  const currentModel = useSelector<RootState, ModelType | null>((state) => {
-    return state.modelsReducer.currentModel;
-  });
+  const { modelName } = useParams();
+  const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
+
+  useEffect(() => {
+    if (modelName) {
+      fetch(`/api/models/${modelName}/info`)
+        .then((res) => res.json())
+        .then(setCurrentModel)
+        .catch((err) => console.error(err));
+    }
+  }, [modelName]);
 
   const modelUrl = currentModel?.modelUrl;
   const markerPatternUrl = currentModel?.patternUrl;
