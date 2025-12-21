@@ -1,9 +1,6 @@
 import Button from "@shared/ui/button/Button";
 import type { ModelType } from "../../types";
 import styles from "./modelItem.module.css";
-import { useDispatch } from "react-redux";
-import { type AppDispatch } from "@/app/store";
-import { setCurrentModel } from "../../modelsSlice";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -17,8 +14,6 @@ const removeFileExtension = (filename: string): string => {
 
 const ModelItem = ({ model }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   const shouldTruncate = model.description
     ? model.description?.length > 150
@@ -27,9 +22,8 @@ const ModelItem = ({ model }: Props) => {
     ? model.description
     : `${model.description?.substring(0, 150)}${shouldTruncate ? "..." : ""}`;
 
+  const navigate = useNavigate();
   const handleNavigate = (displayName: string, preview?: boolean) => {
-    dispatch(setCurrentModel(model));
-
     if (!preview) {
       navigate(`/models/${displayName}`);
     } else {

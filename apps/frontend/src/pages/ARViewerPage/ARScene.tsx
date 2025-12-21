@@ -12,6 +12,7 @@ const ARScene: React.FC<ARSceneProps> = ({
   soundUrl,
 }) => {
   const [modelScale, setModelScale] = useState(1);
+  const [soundData, setSoundData] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const increaseScale = () => {
@@ -30,10 +31,20 @@ const ARScene: React.FC<ARSceneProps> = ({
 
   useEffect(() => {
     if (!soundUrl) return;
-
-    audioRef.current = new Audio(soundUrl);
-    audioRef.current.loop = true;
-    audioRef.current.preload = "auto";
+    fetch(soundUrl)
+      .then((res) => res.ok)
+      .then((status) => {
+        if (status) {
+          audioRef.current = new Audio(soundUrl);
+          audioRef.current.loop = true;
+          audioRef.current.preload = "auto";
+        }
+        setSoundData(status);
+      })
+      .catch((err) => {
+        setSoundData(false);
+        console.error(err);
+      });
 
     return () => {
       if (audioRef.current) {
@@ -42,35 +53,6 @@ const ARScene: React.FC<ARSceneProps> = ({
       }
     };
   }, [soundUrl]);
-
-  // useEffect(() => {
-  //   const preventAFrameMargin = () => {
-  //     const observer = new MutationObserver((mutations) => {
-  //       mutations.forEach((mutation) => {
-  //         if (
-  //           mutation.type === "attributes" &&
-  //           mutation.attributeName === "style"
-  //         ) {
-  //           if (
-  //             document.body.style.marginTop &&
-  //             document.body.style.marginTop !== "0px"
-  //           ) {
-  //             document.body.style.marginTop = "";
-  //           }
-  //         }
-  //       });
-  //     });
-
-  //     observer.observe(document.body, {
-  //       attributes: true,
-  //       attributeFilter: ["style"],
-  //     });
-
-  //     return () => observer.disconnect();
-  //   };
-
-  //   preventAFrameMargin();
-  // }, []);
 
   return (
     <div
@@ -161,7 +143,7 @@ const ARScene: React.FC<ARSceneProps> = ({
         </div>
       </div>
 
-      {soundUrl && (
+      {soundData && (
         <div style={{ marginBottom: "10px" }}>
           <button
             onClick={() => audioRef.current?.play()}
@@ -194,11 +176,11 @@ const ARScene: React.FC<ARSceneProps> = ({
         cursor="rayOrigin: mouse"
         raycaster="objects: .clickable"
       >
-        {soundUrl && (
+        {/* {soundData && (
           <a-assets>
             <audio id="model-sound" src={soundUrl} preload="auto"></audio>
           </a-assets>
-        )}
+        )} */}
         {markerPatternUrl ? (
           <a-marker
             type="pattern"
@@ -213,34 +195,14 @@ const ARScene: React.FC<ARSceneProps> = ({
               sound-handler
               gltf-model-loaded="events: model-loaded;"
               scale={`${modelScale} ${modelScale} ${modelScale}`}
-              //           events="model-loaded: function(e) {
-              //   const box = new THREE.Box3().setFromObject(this.object3D);
-              //   const height = box.max.y - box.min.y;
-              //   this.setAttribute('position', {y: height/2, x: 0, z: 0});
-              // }"
-              // rotation="-90 0 0"
-              // scale="0.5 0.5 0.5"
-              // position="0 0 -1.7"
-              // scale="0.8 0.8 0.8"
-              // rotation="0 0 0"
-              // arjs-rotation-control="enabled: true; minY: -5; maxY: 5;"
             />
           </a-marker>
         ) : (
           ""
-          // <a-marker preset="hiro">
-          //   <a-entity
-          //     gltf-model={modelUrl}
-          //     position="0 1 -1.7"
-          //     scale="0.8 0.8 0.8"
-          //     rotation="0 0 0"
-          //     arjs-rotation-control="enabled: true; minY: -5; maxY: 5;"
-          //   />
-          // </a-marker>
         )}
-        {soundUrl && (
+        {/* {soundData && (
           <a-entity sound="src: #model-sound; autoplay: false; loop: true; volume: 0.5;" />
-        )}
+        )} */}
         <a-camera
           position="0 0 0"
           look-controls="enabled: false"

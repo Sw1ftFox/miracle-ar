@@ -5,7 +5,6 @@ import type { RootState } from "@/app/store";
 const initialState: AppState = {
   models: [],
   files: [],
-  currentModel: null,
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -172,9 +171,6 @@ const modelsSlice = createSlice({
       state.isError = false;
       state.errorMessage = '';
     },
-    setCurrentModel: (state, action) => {
-      state.currentModel = action.payload;
-    }
   },
   extraReducers: (builder) => {
     builder
@@ -243,7 +239,7 @@ const modelsSlice = createSlice({
 
 const { actions, reducer } = modelsSlice;
 
-export const { resetUploadState, setCurrentModel } = actions;
+export const { resetUploadState } = actions;
 
 export const selectModels = (state: RootState) => state.modelsReducer.models;
 export const selectModel = (state: RootState, name: string) => state.modelsReducer.models.find(model => model.name === name);
