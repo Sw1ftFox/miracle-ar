@@ -19,7 +19,9 @@ const PreviewModel = ({
   autoRotate = true,
 }: PreviewModelProps) => {
   const modelRef = useRef<Group>(null);
-  const { scene } = useGLTF(modelUrl || "");
+
+  const { scene } = useGLTF(modelUrl || "", true);
+
   useFrame((_, delta) => {
     if (modelRef.current && autoRotate) {
       modelRef.current.rotation.y += delta * 0.5;

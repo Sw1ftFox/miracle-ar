@@ -15,6 +15,7 @@ export type AppState = {
   isLoading: boolean;
   isError: boolean;
   errorMessage: string | undefined;
+  currentModel: ModelType | null;
 }
 
 export const FileTypes = {
