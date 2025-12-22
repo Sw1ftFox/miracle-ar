@@ -8,7 +8,8 @@ const initialState: AppState = {
   isLoading: false,
   isError: false,
   isSuccess: false,
-  errorMessage: ""
+  errorMessage: "",
+  currentModel: null
 }
 
 export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: string }>(
@@ -38,9 +39,9 @@ export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: st
     }
   }
 )
-export const fetchModel = createAsyncThunk<ModelType, string, { rejectValue: string }>(
+export const fetchCurrentModel = createAsyncThunk<ModelType, string, { rejectValue: string }>(
   "models/fetchOne",
-  async (modelName: string, { rejectWithValue }) => {
+  async (modelName: string | undefined, { rejectWithValue }) => {
     try {
       const response = await fetch(`/api/models/${modelName}/info`);
 
@@ -186,13 +187,14 @@ const modelsSlice = createSlice({
         state.isError = true;
         state.errorMessage = action.payload;
       })
-      .addCase(fetchModel.pending, (state) => {
+      .addCase(fetchCurrentModel.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(fetchModel.fulfilled, (state) => {
+      .addCase(fetchCurrentModel.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.currentModel = action.payload;
       })
-      .addCase(fetchModel.rejected, (state, action) => {
+      .addCase(fetchCurrentModel.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.errorMessage = action.payload;
