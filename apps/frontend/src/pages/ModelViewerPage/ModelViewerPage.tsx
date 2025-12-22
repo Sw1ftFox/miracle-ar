@@ -1,26 +1,27 @@
-import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
-import PreviewModel from "@pages/ModelViewerPage/PreviewModel";
-import type { ModelType } from "@features/modelManagment/types";
+import { useEffect, useState } from "react";
+import type { AppState } from "@features/modelManagment/types";
 import Link from "@shared/ui/link/Link";
 import { useParams } from "react-router-dom";
 import ErrorBoundary from "@shared/ui/errorBoundary/ErrorBoundary";
+import ModelCanvas from "./ModelCanvas";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/app/store";
+import { fetchCurrentModel } from "@features/modelManagment/modelsSlice";
 
 const ModelViewerPage = () => {
   const { modelName } = useParams();
-  const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
   const [modelScale, setModelScale] = useState(1);
+  const [canvasKey, setCanvasKey] = useState(0);
+
+  const { currentModel, isLoading, isError } = useSelector<RootState, AppState>(
+    (state) => state.modelsReducer
+  );
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (modelName) {
-      fetch(`/api/models/${modelName}/info`)
-        .then((res) => res.json())
-        .then(setCurrentModel)
-        .catch((err) => console.error(err));
-    }
+    dispatch(fetchCurrentModel(modelName || ""));
+    setCanvasKey((prev) => prev + 1);
   }, [modelName]);
-
-  const modelUrl = currentModel?.modelUrl;
 
   const increaseScale = () => {
     const newScale = Math.min(modelScale + 0.1, 10);
@@ -35,6 +36,55 @@ const ModelViewerPage = () => {
   const resetScale = () => {
     setModelScale(1);
   };
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          background: "#1a1a1a",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+        }}
+      >
+        <div>Загрузка модели...</div>
+      </div>
+    );
+  }
+
+  if (isError || !currentModel) {
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          background: "#1a1a1a",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          padding: "20px",
+        }}
+      >
+        <h2>Ошибка загрузки модели</h2>
+        <Link
+          content="Вернуться в меню"
+          link="/models"
+          style={{
+            marginTop: "20px",
+            padding: "10px 20px",
+            background: "white",
+            color: "#1a1a1a",
+            borderRadius: "4px",
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -137,35 +187,10 @@ const ModelViewerPage = () => {
       </div>
 
       <ErrorBoundary>
-        <Canvas
-          camera={{
-            position: [0, 0, 5],
-            fov: 50, // Угол обзора камеры
-            near: 0.1, // Ближняя плоскость отсечения
-            far: 1000, // Дальняя плоскость отсечения
-          }}
-        >
-          {/* 
-          Освещение сцены - обязательно для видимости моделей 
-          AmbientLight - рассеянный свет со всех сторон
-          DirectionalLight - направленный свет (как солнце)
-        */}
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
-
-          {/*
-          Suspense для асинхронной загрузки модели
-          fallback={null} значит ничего не показываем во время загрузки
-        */}
-          <Suspense fallback={null}>
-            <PreviewModel
-              modelUrl={modelUrl}
-              position={[0, -1.3, 0]}
-              scale={modelScale}
-              autoRotate={true}
-            />
-          </Suspense>
-        </Canvas>
+        <ModelCanvas
+          modelUrl={currentModel?.modelUrl}
+          modelScale={modelScale}
+        ></ModelCanvas>
       </ErrorBoundary>
     </div>
   );
