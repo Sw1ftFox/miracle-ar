@@ -33,7 +33,7 @@ const ARViewerPageHTML = () => {
   // Загрузка звука
   useEffect(() => {
     if (!currentModel?.soundUrl) return;
-    fetch(currentModel.soundUrl)
+    fetch(`${API_BASE}${currentModel.soundUrl}`)
       .then((res) => res.ok)
       .then((status) => {
         if (status) {
