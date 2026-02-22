@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { FileTypes, type AppState, type FileDelete, type FileResponse, type ModelType, type SectionType } from "./types";
 import type { RootState } from "@/app/store";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const initialState: AppState = {
   models: [],
   files: [],
@@ -16,7 +18,7 @@ export const fetchModels = createAsyncThunk<ModelType[], void, { rejectValue: st
   "models/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/models/full");
+      const response = await fetch(`${API_BASE}/api/models/full`);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -43,7 +45,7 @@ export const fetchCurrentModel = createAsyncThunk<ModelType, string, { rejectVal
   "models/fetchOne",
   async (modelName: string | undefined, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/models/${modelName}/info`);
+      const response = await fetch(`${API_BASE}/api/models/${modelName}/info`);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -70,7 +72,7 @@ export const fetchFiles = createAsyncThunk<FileResponse, SectionType, { rejectVa
   "models/fetchFiles",
   async (type, { rejectWithValue }) => {
     try {
-      const response = await fetch(type !== FileTypes.MODELS ? `/api/models/${type}` : `/api/models`);
+      const response = await fetch(type !== FileTypes.MODELS ? `${API_BASE}/api/models/${type}` : `${API_BASE}/api/models`);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -93,7 +95,7 @@ export const deleteFile = createAsyncThunk<string | undefined, FileDelete, { rej
   "models/delete",
   async (obj, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/files/${obj.type}/${obj.fileName}`, {
+      const response = await fetch(`${API_BASE}/api/files/${obj.type}/${obj.fileName}`, {
         method: "DELETE"
       });
 
@@ -115,7 +117,7 @@ export const deleteFile = createAsyncThunk<string | undefined, FileDelete, { rej
 export const downloadDefaultMarker = createAsyncThunk<void, void, { rejectValue: string }>(
   "models/defaultMarker",
   async (_, { rejectWithValue }) => {
-    fetch("/api/files/patterns/default").then(response => {
+    fetch(`${API_BASE}/api/files/patterns/default`).then(response => {
       if (!response.ok) throw new Error('Failed to download');
       return response.blob();
     })
@@ -141,7 +143,7 @@ export const uploadFiles = createAsyncThunk<void, FormData, { rejectValue: strin
   "models/uploadFiles",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/files/upload", {
+      const response = await fetch(`${API_BASE}/api/files/upload`, {
         method: "POST",
         body: formData
       })
