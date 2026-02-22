@@ -43,6 +43,22 @@
     <a-camera id="ar-camera" position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false"></a-camera>
   </a-scene>
   <script>
+    window.addEventListener('load', function () {
+      // Попытка запросить камеру через mediaDevices (для отладки)
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            console.log('Camera access granted');
+            // Останавливаем поток, так как AR.js сам его возьмёт
+            stream.getTracks().forEach(track => track.stop());
+          })
+          .catch(function (err) {
+            console.error('Camera access denied:', err);
+            alert('Для работы AR необходимо разрешить доступ к камере');
+          });
+      }
+    });
+
     (function () {
       const params = new URLSearchParams(window.location.search);
       const modelUrl = params.get('model');
