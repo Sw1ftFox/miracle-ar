@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { FileTypes, type AppState, type FileDelete, type FileResponse, type ModelType, type SectionType } from "./types";
 import type { RootState } from "@/app/store";
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from "@/api/config";
 
 const initialState: AppState = {
   models: [],

@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { authType } from "./types";
 import type { RootState } from "@/app/store";
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from "@/api/config";
 
 const initialState: authType = {
   isAuth: false,
