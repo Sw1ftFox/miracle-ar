@@ -20,6 +20,7 @@ const AdminPage = () => {
   const changeSelectedSection = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     const id = target.id;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     isSectionType(id) && setSelectedSection(id);
   };
 
