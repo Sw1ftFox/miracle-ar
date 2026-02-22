@@ -3,8 +3,7 @@ import Link from "@shared/ui/link/Link";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from "@/api/config";
 
 const ARViewerPageHTML = () => {
   const { modelName } = useParams();
