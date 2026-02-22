@@ -28,15 +28,10 @@ const AdminPage = () => {
   };
 
   return (
-    <div>
+    <div className={styles.adminPage}>
       <h1>Панель администратора</h1>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
+        className={styles.headerActions}
       >
         <a href="/models" className={styles.return__btn}>
           ← Вернуться в меню

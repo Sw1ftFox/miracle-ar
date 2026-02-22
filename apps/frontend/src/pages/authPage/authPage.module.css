@@ -5,101 +5,203 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(145deg, #5e35b1 0%, #3949ab 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Лёгкий декоративный элемент поверх градиента */
+.auth::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .auth h1 {
   color: white;
-  font-size: 1.75rem;
-  font-weight: 300;
+  font-size: 2rem;
+  font-weight: 400;
   margin-bottom: 2.5rem;
   text-align: center;
   letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
 }
 
 .auth__form {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(80, 67, 194, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.auth__form:hover {
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
 .form__label {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.9rem 1.2rem;
   border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  border-radius: 16px;
+  transition: all 0.2s ease;
   background: #f8fafc;
+  cursor: text;
 }
 
 .form__label:focus-within {
-  border-color: #5043c2;
+  border-color: #5e35b1;
   background: white;
-  box-shadow: 0 0 0 3px rgba(80, 67, 194, 0.1);
+  box-shadow: 0 0 0 4px rgba(94, 53, 177, 0.15);
 }
 
 .form__img {
-  width: 20px;
-  height: 20px;
-  opacity: 0.6;
+  width: 22px;
+  height: 22px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.form__label:focus-within .form__img {
+  opacity: 0.9;
 }
 
 .form__input {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1rem;
+  font-size: 1.1rem;
   width: 100%;
   color: #2d3748;
+  font-weight: 400;
 }
 
 .form__input::placeholder {
   color: #a0aec0;
-}
-
-.form__input:focus {
-  outline: none;
+  font-weight: 300;
 }
 
 .form__submit {
   width: 100%;
-  padding: 1rem;
-  background: #5043c2;
+  padding: 1rem 1.5rem;
+  background: #5e35b1;
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3);
 }
 
 .form__submit:hover {
-  background: #4337b0;
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(80, 67, 194, 0.3);
+  background: #512da8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(94, 53, 177, 0.5);
 }
 
 .form__submit:active {
   transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3);
 }
 
+/* Планшеты и маленькие ноутбуки */
+@media (max-width: 768px) {
+  .auth h1 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .auth__form {
+    padding: 2rem;
+    max-width: 380px;
+  }
+}
+
+/* Мобильные устройства (до 480px) */
 @media (max-width: 480px) {
   .auth {
     padding: 1rem;
   }
 
-  .auth__form {
-    padding: 2rem 1.5rem;
-  }
-
   .auth h1 {
     font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth__form {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+
+  .form__label {
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .form__input {
+    font-size: 1rem;
+  }
+
+  .form__submit {
+    padding: 0.85rem;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Очень маленькие экраны (до 360px) */
+@media (max-width: 360px) {
+  .auth h1 {
+    font-size: 1.3rem;
+  }
+
+  .auth__form {
+    padding: 1.2rem;
+  }
+
+  .form__label {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .form__submit {
+    padding: 0.75rem;
+  }
+}
+
+/* Альбомная ориентация на мобильных */
+@media (max-height: 600px) and (orientation: landscape) {
+  .auth {
+    padding: 0.5rem;
+  }
+  
+  .auth h1 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .auth__form {
+    padding: 1.2rem;
+    max-width: 350px;
   }
 }

@@ -88,12 +88,14 @@
   line-height: 1.6;
   margin-bottom: 15px;
   font-size: 16px;
+  text-align: left;
 }
 .no__description {
   color: #90a4ae;
   font-style: italic;
   margin-bottom: 15px;
 }
+
 @media (max-width: 768px) {
   .model__card {
     grid-template-columns: 1fr;
@@ -116,9 +118,64 @@
     font-size: 1.4em;
     text-align: center;
   }
+}
 
-  .model__description,
-  .no__description {
-    text-align: center;
+/* Для узких экранов (мобильные) */
+@media (max-width: 480px) {
+  .model__card {
+    border-radius: 15px;
+  }
+
+  .image__container {
+    height: 300px;
+  }
+
+  .model__content {
+    padding: 15px;
+  }
+
+  .model__title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+
+  .model__description {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .btns {
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 10px 10px;
+  }
+
+  .btns button {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+  }
+}
+
+/* Для очень маленьких экранов (до 360px) */
+@media (max-width: 360px) {
+  .model__content {
+    padding: 10px;
+  }
+
+  .image__container {
+    height: 200px;
+  }
+
+  .model__title {
+    font-size: 1.1em;
+  }
+
+  .model__description {
+    font-size: 13px;
+  }
+
+  .btns {
+    padding: 0 10px 10px;
   }
 }

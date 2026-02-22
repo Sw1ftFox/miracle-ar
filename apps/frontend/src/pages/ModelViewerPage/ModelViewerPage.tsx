@@ -7,20 +7,19 @@ import ModelCanvas from "./ModelCanvas";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/app/store";
 import { fetchCurrentModel } from "@features/modelManagment/modelsSlice";
+import styles from "./ModelViewerPage.module.css";
 
 const ModelViewerPage = () => {
   const { modelName } = useParams();
   const [modelScale, setModelScale] = useState(1);
-  const [canvasKey, setCanvasKey] = useState(0);
 
   const { currentModel, isLoading, isError } = useSelector<RootState, AppState>(
-    (state) => state.modelsReducer
+    (state) => state.modelsReducer,
   );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(fetchCurrentModel(modelName || ""));
-    setCanvasKey((prev) => prev + 1);
   }, [modelName]);
 
   const increaseScale = () => {
@@ -87,79 +86,37 @@ const ModelViewerPage = () => {
   }
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        background: "#1a1a1a",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          zIndex: 1000,
-          background: "rgba(255,255,255,0.9)",
-          padding: "15px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          minWidth: "200px",
-        }}
-      >
-        <h4 style={{ margin: "0 0 10px 0", color: "#333" }}>Масштаб модели</h4>
+    <div className={styles.container}>
+      <div className={styles.controlsPanel}>
+        <h4 className={styles.panelTitle}>Масштаб модели</h4>
 
-        <div style={{ marginBottom: "10px", color: "#333" }}>
+        <div className={styles.scaleDisplay}>
           <strong>Текущий: {modelScale.toFixed(1)}x</strong>
         </div>
 
-        <div style={{ display: "flex", gap: "5px", marginBottom: "10px" }}>
+        <div className={styles.buttonGroup}>
           <button
             onClick={decreaseScale}
-            style={{
-              flex: 1,
-              padding: "8px",
-              background: "#ff4757",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className={`${styles.controlButton} ${styles.buttonDecrease}`}
           >
             -
           </button>
           <button
             onClick={increaseScale}
-            style={{
-              flex: 1,
-              padding: "8px",
-              background: "#2ed573",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className={`${styles.controlButton} ${styles.buttonIncrease}`}
           >
             +
           </button>
           <button
             onClick={resetScale}
-            style={{
-              flex: 1,
-              padding: "8px",
-              background: "#3742fa",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className={`${styles.controlButton} ${styles.buttonReset}`}
           >
             Сброс
           </button>
         </div>
 
-        <div style={{ marginBottom: "10px" }}>
-          <label style={{ fontSize: "12px", color: "#666" }}>
+        <div>
+          <label className={styles.sliderLabel}>
             Точная настройка:
             <input
               type="range"
@@ -168,7 +125,7 @@ const ModelViewerPage = () => {
               step="0.1"
               value={modelScale}
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
-              style={{ width: "100%", marginTop: "5px" }}
+              className={styles.sliderInput}
             />
           </label>
         </div>
