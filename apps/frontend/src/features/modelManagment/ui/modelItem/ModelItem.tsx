@@ -3,6 +3,7 @@ import type { ModelType } from "../../types";
 import styles from "./modelItem.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { API_BASE } from "@/api/config";
 
 type Props = {
   model: ModelType;
@@ -37,7 +38,7 @@ const ModelItem = ({ model }: Props) => {
       <div className={styles.model__card}>
         <div className={styles.image__container}>
           <img
-            src={model.previewUrl}
+            src={`${API_BASE}${model.previewUrl}`}
             alt={displayName}
             className={styles.model__image}
           />
