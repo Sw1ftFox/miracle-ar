@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/app/store";
 import { fetchCurrentModel } from "@features/modelManagment/modelsSlice";
 import styles from "./ModelViewerPage.module.css";
+import { API_BASE } from "@/api/config";
 
 const ModelViewerPage = () => {
   const { modelName } = useParams();
@@ -17,6 +18,9 @@ const ModelViewerPage = () => {
     (state) => state.modelsReducer,
   );
   const dispatch = useDispatch<AppDispatch>();
+  const fullModelUrl = currentModel?.modelUrl
+    ? `${API_BASE}${currentModel.modelUrl}`
+    : undefined;
 
   useEffect(() => {
     dispatch(fetchCurrentModel(modelName || ""));
@@ -145,7 +149,7 @@ const ModelViewerPage = () => {
 
       <ErrorBoundary>
         <ModelCanvas
-          modelUrl={currentModel?.modelUrl}
+          modelUrl={fullModelUrl}
           modelScale={modelScale}
         ></ModelCanvas>
       </ErrorBoundary>

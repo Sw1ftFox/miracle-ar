@@ -47,12 +47,13 @@
       const params = new URLSearchParams(window.location.search);
       const modelUrl = params.get('model');
       const markerUrl = params.get('marker');
+      const apiBase = params.get('apiBase') || '';
 
       if (modelUrl) {
-        document.querySelector('#model').setAttribute('src', modelUrl);
+        document.querySelector('#model').setAttribute('src', apiBase + modelUrl);
       }
       if (markerUrl) {
-        document.querySelector('a-marker').setAttribute('url', markerUrl);
+        document.querySelector('a-marker').setAttribute('url', apiBase + markerUrl);
       }
 
       // Слушаем сообщения от родителя

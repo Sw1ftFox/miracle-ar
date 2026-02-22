@@ -87,7 +87,7 @@ const ARViewerPageHTML = () => {
   // Формируем URL для iframe
   const iframeUrl =
     currentModel?.modelUrl && currentModel?.patternUrl
-      ? `/ar-scene.html?model=${encodeURIComponent(currentModel.modelUrl)}&marker=${encodeURIComponent(currentModel.patternUrl)}`
+      ? `/ar-scene.html?model=${encodeURIComponent(currentModel.modelUrl)}&marker=${encodeURIComponent(currentModel.patternUrl)}&apiBase=${encodeURIComponent(API_BASE)}`
       : "";
 
   const handleIframeLoad = () => {
