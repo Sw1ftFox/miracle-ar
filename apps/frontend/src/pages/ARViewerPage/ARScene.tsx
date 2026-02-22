@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import styles from "./ARScene.module.css";
 
 interface ARSceneProps {
   modelUrl: string | undefined;
@@ -55,80 +56,37 @@ const ARScene: React.FC<ARSceneProps> = ({
   }, [soundUrl]);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          zIndex: 1000,
-          background: "rgba(255,255,255,0.9)",
-          padding: "15px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          minWidth: "200px",
-        }}
-      >
-        <h4 style={{ margin: "0 0 10px 0", color: "#333" }}>Масштаб модели</h4>
+    <div className={styles.sceneContainer}>
+      <div className={styles.controlsPanel}>
+        <h4 className={styles.panelTitle}>Масштаб модели</h4>
 
-        <div style={{ marginBottom: "10px", color: "#333" }}>
+        <div className={styles.scaleDisplay}>
           <strong>Текущий: {modelScale.toFixed(1)}x</strong>
         </div>
 
-        <div style={{ display: "flex", gap: "5px", marginBottom: "10px" }}>
+        <div className={styles.buttonGroup}>
           <button
             onClick={decreaseScale}
-            style={{
-              flex: 1,
-              padding: "8px",
-              background: "#ff4757",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className={`${styles.controlButton} ${styles.buttonDecrease}`}
           >
             -
           </button>
           <button
             onClick={increaseScale}
-            style={{
-              flex: 1,
-              padding: "8px",
-              background: "#2ed573",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className={`${styles.controlButton} ${styles.buttonIncrease}`}
           >
             +
           </button>
           <button
             onClick={resetScale}
-            style={{
-              flex: 1,
-              padding: "8px",
-              background: "#3742fa",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className={`${styles.controlButton} ${styles.buttonReset}`}
           >
             Сброс
           </button>
         </div>
 
-        <div style={{ marginBottom: "10px" }}>
-          <label style={{ fontSize: "12px", color: "#666" }}>
+        <div>
+          <label className={styles.sliderLabel}>
             Точная настройка:
             <input
               type="range"
@@ -137,30 +95,23 @@ const ARScene: React.FC<ARSceneProps> = ({
               step="0.1"
               value={modelScale}
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
-              style={{ width: "100%", marginTop: "5px" }}
+              className={styles.sliderInput}
             />
           </label>
         </div>
       </div>
 
       {soundData && (
-        <div style={{ marginBottom: "10px" }}>
+        <div className={styles.soundControls}>
           <button
             onClick={() => audioRef.current?.play()}
-            style={{
-              width: "20%",
-              color: "white",
-            }}
+            className={styles.soundButton}
           >
             ▶ Включить звук
           </button>
           <button
             onClick={() => audioRef.current?.pause()}
-            style={{
-              width: "20%",
-              background: "white",
-              color: "#5e35b1",
-            }}
+            className={`${styles.soundButton} ${styles.soundButtonPause}`}
           >
             ⏸ Выключить звук
           </button>

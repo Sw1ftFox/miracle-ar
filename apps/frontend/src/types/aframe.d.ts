@@ -36,12 +36,13 @@ declare namespace JSX {
       material?: string;
       camera?: boolean | string;
       events?: string;
-      sound?:string;
+      sound?: string;
     };
     'a-camera': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
       position?: string;
       'look-controls'?: boolean | string;
       'wasd-controls'?: boolean | string;
+      fov?: string;
     };
     'a-box': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
       position?: string;
@@ -95,3 +96,4 @@ declare namespace JSX {
     };
   }
 }
+

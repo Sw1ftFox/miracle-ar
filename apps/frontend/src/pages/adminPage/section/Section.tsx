@@ -89,7 +89,7 @@ const Section = ({
   return (
     <div id={id}>
       <h2>{title}</h2>
-      <div id="items__list" className={styles.files}>
+      <div id="items__list" className={styles.filesList}>
         {files?.map((fileName) => {
           if (fileName !== "default.patt")
             return (
@@ -106,7 +106,6 @@ const Section = ({
       <form className={styles.upload__form} onSubmit={handleSubmit}>
         <input
           type={inputType}
-          className={styles.upload__btn}
           accept={accept}
           required={required}
           ref={fileInputRef}
@@ -121,34 +120,19 @@ const Section = ({
         </button>
       </form>
       {isLoading ? (
-        <UploadStatus
-          style={{
-            color: "black",
-            textAlign: "center",
-            marginTop: "20px",
-          }}
-          text="Загрузка..."
-        />
+        <div className={styles.uploadStatus} style={{ color: "#666" }}>
+          Загрузка...
+        </div>
       ) : null}
       {isSuccess ? (
-        <UploadStatus
-          style={{
-            color: "green",
-            textAlign: "center",
-            marginTop: "20px",
-          }}
-          text="Успешно!"
-        />
+        <div className={styles.uploadStatus} style={{ color: "green" }}>
+          Успешно!
+        </div>
       ) : null}
       {isError ? (
-        <UploadStatus
-          style={{
-            color: "red",
-            textAlign: "center",
-            marginTop: "20px",
-          }}
-          text={errorMessage}
-        />
+        <div className={styles.uploadStatus} style={{ color: "red" }}>
+          {errorMessage}
+        </div>
       ) : null}
     </div>
   );
