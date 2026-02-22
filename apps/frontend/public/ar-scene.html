@@ -11,7 +11,7 @@
   <!-- 2. AR.js 3.4.5 (специальная сборка для A-Frame) -->
   <script src="https://www.unpkg.com/@ar-js-org/ar.js@3.4.5/aframe/build/aframe-ar.js"></script>
 
-  3. A-Frame Extras
+  <!-- 3. A-Frame Extras -->
   <script src="https://cdn.jsdelivr.net"></script>
   <style>
     html,
@@ -43,19 +43,19 @@
     <a-camera id="ar-camera" position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false"></a-camera>
   </a-scene>
   <script>
-    window.addEventListener('load', function () {
-      // Попытка запросить камеру через mediaDevices (для отладки)
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(function (stream) {
-            // Останавливаем поток, так как AR.js сам его возьмёт
-            stream.getTracks().forEach(track => track.stop());
-          })
-          .catch(function (err) {
-            alert('Для работы AR необходимо разрешить доступ к камере');
-          });
-      }
-    });
+    // window.addEventListener('load', function () {
+    //   // Попытка запросить камеру через mediaDevices (для отладки)
+    //   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    //     navigator.mediaDevices.getUserMedia({ video: true })
+    //       .then(function (stream) {
+    //         // Останавливаем поток, так как AR.js сам его возьмёт
+    //         stream.getTracks().forEach(track => track.stop());
+    //       })
+    //       .catch(function (err) {
+    //         alert('Для работы AR необходимо разрешить доступ к камере');
+    //       });
+    //   }
+    // });
 
     (function () {
       const params = new URLSearchParams(window.location.search);
@@ -102,6 +102,8 @@
       }, 200);
     })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
 </body>
 
 </html>
