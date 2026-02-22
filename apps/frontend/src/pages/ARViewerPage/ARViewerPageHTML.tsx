@@ -37,7 +37,7 @@ const ARViewerPageHTML = () => {
       .then((res) => res.ok)
       .then((status) => {
         if (status) {
-          audioRef.current = new Audio(currentModel.soundUrl!);
+          audioRef.current = new Audio(`${API_BASE}${currentModel.soundUrl}`!);
           audioRef.current.loop = true;
           audioRef.current.preload = "auto";
         }
@@ -113,7 +113,7 @@ const ARViewerPageHTML = () => {
             zIndex: 1,
           }}
           title="AR Scene"
-          allow="camera; microphone"
+          allow="camera; microphone; autoplay; encrypted-media"
         />
       )}
 
