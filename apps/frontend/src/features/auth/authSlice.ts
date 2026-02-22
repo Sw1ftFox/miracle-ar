@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { authType } from "./types";
 import type { RootState } from "@/app/store";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const initialState: authType = {
   isAuth: false,
   isLoading: false,
@@ -13,7 +15,7 @@ export const loginAdmin = createAsyncThunk<boolean, string, { rejectValue: strin
   'auth/login',
   async (password: string, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/admin/authenticate", {
+      const response = await fetch(`${API_BASE}/api/admin/authenticate`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'

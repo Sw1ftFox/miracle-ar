@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const ARViewerPageHTML = () => {
   const { modelName } = useParams();
   const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
@@ -22,7 +24,7 @@ const ARViewerPageHTML = () => {
   // Загрузка модели по имени
   useEffect(() => {
     if (modelName) {
-      fetch(`/api/models/${modelName}/info`)
+      fetch(`${API_BASE}/api/models/${modelName}/info`)
         .then((res) => res.json())
         .then(setCurrentModel)
         .catch((err) => console.error(err));
