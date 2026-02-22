@@ -3,10 +3,20 @@ import ARScene from "@pages/ARViewerPage/ARScene";
 import Link from "@shared/ui/link/Link";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import styles from "./ARViewerPage.module.css";
 
 const ARViewerPage = () => {
   const { modelName } = useParams();
   const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
+  const [instructionsVisible, setInstructionsVisible] = useState(true);
+
+  useEffect(() => {
+    const timerId = setTimeout(() => setInstructionsVisible(false), 5000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, []);
 
   useEffect(() => {
     if (modelName) {
@@ -62,48 +72,21 @@ const ARViewerPage = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
+    <div className={styles.container}>
       <ARScene
         modelUrl={modelUrl}
         markerPatternUrl={markerPatternUrl}
         soundUrl={soundUrl}
       />
-      <div
-        style={{
-          position: "absolute",
-          bottom: "30px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1000,
-        }}
-      >
+      <div className={styles.backButtonContainer}>
         <Link content="Вернуться в меню" link="/models" />
       </div>
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "rgba(0, 0, 0, 0.8)",
-          color: "white",
-          padding: "20px",
-          borderRadius: "10px",
-          textAlign: "center",
-          zIndex: 1000,
-          maxWidth: "90%",
-        }}
-      >
-        <p>1. Разрешите доступ к камере</p>
-        <p>2. Наведите камеру на маркер</p>
-      </div>
+      {instructionsVisible && (
+        <div className={styles.instruction}>
+          <p>1. Разрешите доступ к камере</p>
+          <p>2. Наведите камеру на маркер</p>
+        </div>
+      )}
     </div>
   );
 };
