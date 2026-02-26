@@ -27,12 +27,12 @@ const ModelViewerPage = () => {
   }, [modelName]);
 
   const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.1, 10);
+    const newScale = Math.min(modelScale + 0.03, 10);
     setModelScale(newScale);
   };
 
   const decreaseScale = () => {
-    const newScale = Math.max(modelScale - 0.1, 0.1);
+    const newScale = Math.max(modelScale - 0.03, 0.01);
     setModelScale(newScale);
   };
 
@@ -95,7 +95,7 @@ const ModelViewerPage = () => {
         <h4 className={styles.panelTitle}>Масштаб модели</h4>
 
         <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(1)}x</strong>
+          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
         </div>
 
         <div className={styles.buttonGroup}>
@@ -124,9 +124,9 @@ const ModelViewerPage = () => {
             Точная настройка:
             <input
               type="range"
-              min="0.1"
+              min="0.01"
               max="10"
-              step="0.1"
+              step="0.03"
               value={modelScale}
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
               className={styles.sliderInput}
