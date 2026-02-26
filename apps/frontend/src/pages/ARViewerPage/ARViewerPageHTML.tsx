@@ -58,13 +58,13 @@ const ARViewerPageHTML = () => {
 
   // Функции масштабирования
   const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.1, 10);
+    const newScale = Math.min(modelScale + 0.03, 10);
     setModelScale(newScale);
     sendScaleToIframe(newScale);
   };
 
   const decreaseScale = () => {
-    const newScale = Math.max(modelScale - 0.1, 0.1);
+    const newScale = Math.max(modelScale - 0.03, 0.01);
     setModelScale(newScale);
     sendScaleToIframe(newScale);
   };
@@ -148,9 +148,9 @@ const ARViewerPageHTML = () => {
             Точная настройка:
             <input
               type="range"
-              min="0.1"
+              min="0.01"
               max="10"
-              step="0.1"
+              step="0.03"
               value={modelScale}
               onChange={(e) => {
                 const newScale = parseFloat(e.target.value);
