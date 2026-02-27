@@ -121,7 +121,7 @@ const ARViewerPageHTML = () => {
       <div className={styles.controlsPanel} style={{ zIndex: 10 }}>
         <h4 className={styles.panelTitle}>Масштаб модели</h4>
         <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(1)}x</strong>
+          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
         </div>
         <div className={styles.buttonGroup}>
           <button
