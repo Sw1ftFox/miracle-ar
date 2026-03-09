@@ -3,13 +3,13 @@ import {
   AuthPage,
   Error404Page,
   ModelsPage,
-  // ARViewerPage,
+  ARViewerPage,
   ModelViewerPage,
 } from "@/pages";
 import { Route, Routes, useLocation } from "react-router-dom";
 import BaseLayout from "./layouts/BaseLayout";
 import ARLayout from "./layouts/ARLayout";
-import ARViewerPageHTML from "@/pages/ARViewerPage/ARViewerPageHTML";
+// import ARViewerPageHTML from "@/pages/ARViewerPage/ARViewerPageHTML";
 
 function App() {
   const location = useLocation();
@@ -25,7 +25,7 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/models" element={<ModelsPage />} />
         <Route path="*" element={<Error404Page />} />
-        <Route path="/models/:modelName" element={<ARViewerPageHTML />} />
+        <Route path="/models/:modelName" element={<ARViewerPage />} />
         <Route path="/models/preview/:modelName" element={<ModelViewerPage />} />
       </Routes>
     </Layout>
