@@ -4,15 +4,35 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
 import { API_BASE } from "@/api/config";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 
 const ARViewerPageHTML = () => {
   const { modelName } = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
   const [instructionsVisible, setInstructionsVisible] = useState(true);
   const [modelScale, setModelScale] = useState(1);
   const [soundData, setSoundData] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "modelLoaded") {
+        setIsLoading(false);
+      }
+      if (event.data?.type === "modelError") {
+        setIsLoading(false);
+        setIsError(true);
+        setErrorMessage(event.data.error);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   // Инструкции исчезают через 5 секунд
   useEffect(() => {
@@ -23,10 +43,14 @@ const ARViewerPageHTML = () => {
   // Загрузка модели по имени
   useEffect(() => {
     if (modelName) {
+      setIsLoading(true);
       fetch(`${API_BASE}/api/models/${modelName}/info`)
         .then((res) => res.json())
         .then(setCurrentModel)
-        .catch((err) => console.error(err));
+        .catch((err: Error) => {
+          setIsError(true);
+          setErrorMessage(err.message);
+        });
     }
   }, [modelName]);
 
@@ -87,19 +111,24 @@ const ARViewerPageHTML = () => {
   // Формируем URL для iframe
   const iframeUrl =
     currentModel?.modelUrl && currentModel?.patternUrl
-      ? `/ar-scene.html?model=${encodeURIComponent(currentModel.modelUrl)}&marker=${encodeURIComponent(currentModel.patternUrl)}&apiBase=${encodeURIComponent(API_BASE)}`
+      ? `/ar-scene.html?model=${encodeURIComponent(currentModel.modelUrl)}
+        &marker=${encodeURIComponent(currentModel.patternUrl)}
+        &apiBase=${encodeURIComponent(API_BASE)}`
       : "";
 
   const handleIframeLoad = () => {
-    // Отправляем начальный масштаб после загрузки iframe
     sendScaleToIframe(modelScale);
   };
 
   return (
-    <div className={styles.container}>
-      {/* iframe с AR-сценой на заднем плане */}
-      {iframeUrl && (
-        <iframe
+      <div className={styles.container}>
+          {/* iframe с AR-сценой на заднем плане */}
+
+          {isError ? (
+              <div style={{ color: "red", fontWeight: "500" }}>{errorMessage}</div>
+      ) : null}
+          {iframeUrl && (
+          <iframe
           ref={iframeRef}
           src={iframeUrl}
           onLoad={handleIframeLoad}
@@ -116,37 +145,38 @@ const ARViewerPageHTML = () => {
           allow="camera; microphone; autoplay; encrypted-media"
         />
       )}
+          {isLoading ? <PageLoader /> : null}
 
-      {/* Элементы управления поверх iframe */}
-      <div className={styles.controlsPanel} style={{ zIndex: 10 }}>
-        <h4 className={styles.panelTitle}>Масштаб модели</h4>
-        <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
-        </div>
-        <div className={styles.buttonGroup}>
-          <button
+          {/* Элементы управления поверх iframe */}
+          <div className={styles.controlsPanel} style={{ zIndex: 10 }}>
+              <h4 className={styles.panelTitle}>Масштаб модели</h4>
+              <div className={styles.scaleDisplay}>
+                  <strong>Текущий: {modelScale.toFixed(2)}x</strong>
+              </div>
+              <div className={styles.buttonGroup}>
+                  <button
             onClick={decreaseScale}
             className={`${styles.controlButton} ${styles.buttonDecrease}`}
           >
-            -
-          </button>
-          <button
+                      -
+                  </button>
+                  <button
             onClick={increaseScale}
             className={`${styles.controlButton} ${styles.buttonIncrease}`}
           >
-            +
-          </button>
-          <button
+                      +
+                  </button>
+                  <button
             onClick={resetScale}
             className={`${styles.controlButton} ${styles.buttonReset}`}
           >
-            Сброс
-          </button>
-        </div>
-        <div>
-          <label className={styles.sliderLabel}>
-            Точная настройка:
-            <input
+                      Сброс
+                  </button>
+              </div>
+              <div>
+                  <label className={styles.sliderLabel}>
+                      Точная настройка:
+                      <input
               type="range"
               min="0.01"
               max="10"
@@ -159,38 +189,38 @@ const ARViewerPageHTML = () => {
               }}
               className={styles.sliderInput}
             />
-          </label>
-        </div>
-      </div>
+                  </label>
+              </div>
+          </div>
 
-      {soundData && (
-        <div className={styles.soundControls} style={{ zIndex: 10 }}>
-          <button
+          {soundData && (
+          <div className={styles.soundControls} style={{ zIndex: 10 }}>
+              <button
             onClick={() => audioRef.current?.play()}
             className={styles.soundButton}
           >
-            ▶ Включить звук
-          </button>
-          <button
+                  ▶ Включить звук
+              </button>
+              <button
             onClick={() => audioRef.current?.pause()}
             className={`${styles.soundButton} ${styles.soundButtonPause}`}
           >
-            ⏸ Выключить звук
-          </button>
-        </div>
+                  ⏸ Выключить звук
+              </button>
+          </div>
       )}
 
-      <div className={styles.backButtonContainer} style={{ zIndex: 10 }}>
-        <Link content="Вернуться в меню" link="/models" />
+          <div className={styles.backButtonContainer} style={{ zIndex: 10 }}>
+              <Link content="Вернуться в меню" link="/models" />
+          </div>
+
+          {instructionsVisible && (
+          <div className={styles.instruction} style={{ zIndex: 10 }}>
+              <p>1. Разрешите доступ к камере</p>
+              <p>2. Наведите камеру на маркер</p>
+          </div>
+      )}
       </div>
-
-      {instructionsVisible && (
-        <div className={styles.instruction} style={{ zIndex: 10 }}>
-          <p>1. Разрешите доступ к камере</p>
-          <p>2. Наведите камеру на маркер</p>
-        </div>
-      )}
-    </div>
   );
 };
 

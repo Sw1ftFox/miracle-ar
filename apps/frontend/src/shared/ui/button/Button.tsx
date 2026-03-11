@@ -16,9 +16,9 @@ const Button = ({
   type = "button",
 }: PropsType) => {
   return (
-    <button onClick={onClick} type={type} className={className} data-model={dataAttribute}>
-      {content}
-    </button>
+      <button onClick={onClick} type={type} className={className} data-model={dataAttribute}>
+          {content}
+      </button>
   );
 };
 

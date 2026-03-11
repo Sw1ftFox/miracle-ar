@@ -1,11 +1,11 @@
 export type ModelType = {
   id: string; // "Полонский" (имя без расширения)
   name: string; // "Полонский.glb"
-  previewUrl?: string; 
-  description?: string; 
-  modelUrl: string; 
-  patternUrl: string; 
-  soundUrl?: string; 
+  previewUrl?: string;
+  description?: string;
+  modelUrl: string;
+  patternUrl: string;
+  soundUrl?: string;
 }
 
 export type AppState = {
@@ -38,6 +38,11 @@ export function isSectionType(value: string): value is SectionType {
 export type FileResponse = {
   type: SectionType;
   data: string[];
+}
+
+export type FileDownload = {
+  type: SectionType;
+  fileName: string;
 }
 
 export type FileDelete = {

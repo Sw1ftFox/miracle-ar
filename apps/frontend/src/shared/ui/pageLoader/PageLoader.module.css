@@ -1,0 +1,13 @@
+.PageLoader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100%;
+  min-width: 100%;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background-color: #5e35b134;
+}
