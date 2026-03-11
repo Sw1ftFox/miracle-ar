@@ -22,10 +22,6 @@ export const loginAdmin = createAsyncThunk<boolean, string, { rejectValue: strin
         body: JSON.stringify({ password })
       })
 
-      if (!response.ok) {
-        throw new Error("Ошибка сервера!");
-      }
-
       const data = await response.json();
 
       if (data.authenticated) {

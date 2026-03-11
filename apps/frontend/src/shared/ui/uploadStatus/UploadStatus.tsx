@@ -1,4 +1,5 @@
 import { type CSSProperties } from "react";
+import cls from "./UploadStatus.module.css";
 
 type PropsType = {
   style: CSSProperties;
@@ -6,7 +7,7 @@ type PropsType = {
 };
 
 const UploadStatus = ({ style, text }: PropsType) => {
-  return <div style={style}>{text}</div>;
+  return <div style={style} className={cls.UploadStatus}>{text}</div>;
 };
 
 export default UploadStatus;

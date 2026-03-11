@@ -9,9 +9,9 @@ type PropsType = {
 
 const Link = ({ content = "", link = "/", style }: PropsType) => {
   return (
-    <NavLink style={style} className={styles.link} end to={link}>
-      {content}
-    </NavLink>
+      <NavLink style={style} className={styles.link} end to={link}>
+          {content}
+      </NavLink>
   );
 };
 

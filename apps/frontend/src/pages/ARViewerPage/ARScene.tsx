@@ -56,39 +56,39 @@ const ARScene: React.FC<ARSceneProps> = ({
   }, [soundUrl]);
 
   return (
-    <div className={styles.sceneContainer}>
-      <div className={styles.controlsPanel}>
-        <h4 className={styles.panelTitle}>Масштаб модели</h4>
+      <div className={styles.sceneContainer}>
+          <div className={styles.controlsPanel}>
+              <h4 className={styles.panelTitle}>Масштаб модели</h4>
 
-        <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
-        </div>
+              <div className={styles.scaleDisplay}>
+                  <strong>Текущий: {modelScale.toFixed(2)}x</strong>
+              </div>
 
-        <div className={styles.buttonGroup}>
-          <button
+              <div className={styles.buttonGroup}>
+                  <button
             onClick={decreaseScale}
             className={`${styles.controlButton} ${styles.buttonDecrease}`}
           >
-            -
-          </button>
-          <button
+                      -
+                  </button>
+                  <button
             onClick={increaseScale}
             className={`${styles.controlButton} ${styles.buttonIncrease}`}
           >
-            +
-          </button>
-          <button
+                      +
+                  </button>
+                  <button
             onClick={resetScale}
             className={`${styles.controlButton} ${styles.buttonReset}`}
           >
-            Сброс
-          </button>
-        </div>
+                      Сброс
+                  </button>
+              </div>
 
-        <div>
-          <label className={styles.sliderLabel}>
-            Точная настройка:
-            <input
+              <div>
+                  <label className={styles.sliderLabel}>
+                      Точная настройка:
+                      <input
               type="range"
               min="0.01"
               max="10"
@@ -97,28 +97,28 @@ const ARScene: React.FC<ARSceneProps> = ({
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
               className={styles.sliderInput}
             />
-          </label>
-        </div>
-      </div>
+                  </label>
+              </div>
+          </div>
 
-      {soundData && (
-        <div className={styles.soundControls}>
-          <button
+          {soundData && (
+          <div className={styles.soundControls}>
+              <button
             onClick={() => audioRef.current?.play()}
             className={styles.soundButton}
           >
-            ▶ Включить звук
-          </button>
-          <button
+                  ▶ Включить звук
+              </button>
+              <button
             onClick={() => audioRef.current?.pause()}
             className={`${styles.soundButton} ${styles.soundButtonPause}`}
           >
-            ⏸ Выключить звук
-          </button>
-        </div>
+                  ⏸ Выключить звук
+              </button>
+          </div>
       )}
 
-      <a-scene
+          <a-scene
         embedded
         arjs="sourceType: webcam; patternRatio: 0.75; debugUIEnabled: false; trackingMethod: best;"
         sound
@@ -127,40 +127,40 @@ const ARScene: React.FC<ARSceneProps> = ({
         cursor="rayOrigin: mouse"
         raycaster="objects: .clickable"
       >
-        {/* {soundData && (
+              {/* {soundData && (
           <a-assets>
             <audio id="model-sound" src={soundUrl} preload="auto"></audio>
           </a-assets>
         )} */}
-        {markerPatternUrl ? (
-          <a-marker
+              {markerPatternUrl ? (
+                  <a-marker
             type="pattern"
             url={markerPatternUrl}
             smooth
             smoothCount="10"
             smoothTolerance="0.01"
           >
-            <a-entity
+                      <a-entity
               gltf-model={modelUrl}
               animation-mixer="clip: *"
               sound-handler
               gltf-model-loaded="events: model-loaded;"
               scale={`${modelScale} ${modelScale} ${modelScale}`}
             />
-          </a-marker>
+                  </a-marker>
         ) : (
           ""
         )}
-        {/* {soundData && (
+              {/* {soundData && (
           <a-entity sound="src: #model-sound; autoplay: false; loop: true; volume: 0.5;" />
         )} */}
-        <a-camera
+              <a-camera
           position="0 0 0"
           look-controls="enabled: false"
           wasd-controls="enabled: false"
         ></a-camera>
-      </a-scene>
-    </div>
+          </a-scene>
+      </div>
   );
 };
 

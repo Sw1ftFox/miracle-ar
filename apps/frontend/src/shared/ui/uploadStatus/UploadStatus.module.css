@@ -1,0 +1,16 @@
+.UploadStatus {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  animation: ani 0.8s forwards;
+  font-weight: 400;
+}
+
+@keyframes ani {
+  0% {
+    transform: translateY(-150%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}

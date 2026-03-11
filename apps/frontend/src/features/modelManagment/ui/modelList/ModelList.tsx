@@ -5,10 +5,11 @@ import { type AppDispatch, type RootState } from "@app/store";
 import type { AppState } from "../../types";
 import { useEffect } from "react";
 import { fetchModels } from "../../modelsSlice";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 
 const ModelList = () => {
   const { models, isLoading } = useSelector<RootState, AppState>(
-    (state) => state.modelsReducer
+    (state) => state.modelsReducer,
   );
   const dispatch = useDispatch<AppDispatch>();
 
@@ -17,13 +18,13 @@ const ModelList = () => {
   }, []);
 
   return (
-    <div className={styles.models__gallery}>
-      {isLoading ? (
-        <div style={{ color: "black", textAlign: "center" }}>Загрузка...</div>
+      <div className={styles.models__gallery}>
+          {isLoading ? (
+              <PageLoader />
       ) : (
         models.map((model) => <ModelItem key={model.id} model={model} />)
       )}
-    </div>
+      </div>
   );
 };
 

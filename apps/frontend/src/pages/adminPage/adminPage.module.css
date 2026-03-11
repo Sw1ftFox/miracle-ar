@@ -67,6 +67,7 @@
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 /* Табы */
@@ -146,10 +147,18 @@
   white-space: nowrap;
 }
 
+.btn__download {
+  background: rgb(100, 181, 100);
+
+}
+.btn__delete {
+  background: #ff4757;
+
+}
+
 .files__item button {
   flex-shrink: 0;
   padding: 6px 14px;
-  background: #ff4757;
   color: white;
   border: none;
   border-radius: 6px;
@@ -159,7 +168,11 @@
   transition: background 0.2s;
 }
 
-.files__item button:hover {
+.btn__download:hover {
+  background: rgb(139, 207, 139);
+}
+
+.btn__delete:hover {
   background: #ff6b81;
 }
 
@@ -170,6 +183,7 @@
   gap: 15px;
   flex-wrap: wrap;
   margin-top: 20px;
+  margin-bottom: 30px;
 }
 
 .upload__form input[type="file"] {
@@ -202,13 +216,16 @@
   box-shadow: 0 8px 25px rgba(92, 107, 192, 0.4);
 }
 
-/* Статус загрузки */
-.uploadStatus {
-  margin-top: 20px;
-  padding: 10px;
-  border-radius: 8px;
+.file__label {
   text-align: center;
-  font-weight: 500;
+}
+
+.upload__status {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 /* Адаптивность */

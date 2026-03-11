@@ -42,31 +42,37 @@
     <a-camera id="ar-camera" position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false"></a-camera>
   </a-scene>
   <script>
-    // window.addEventListener('load', function () {
-    //   // Попытка запросить камеру через mediaDevices (для отладки)
-    //   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    //     navigator.mediaDevices.getUserMedia({ video: true })
-    //       .then(function (stream) {
-    //         // Останавливаем поток, так как AR.js сам его возьмёт
-    //         stream.getTracks().forEach(track => track.stop());
-    //       })
-    //       .catch(function (err) {
-    //         alert('Для работы AR необходимо разрешить доступ к камере');
-    //       });
-    //   }
-    // });
-
     (function () {
       const params = new URLSearchParams(window.location.search);
       const modelUrl = params.get('model');
       const markerUrl = params.get('marker');
       const apiBase = params.get('apiBase') || '';
 
+      const modelAsset = document.querySelector('#model');
+      const marker = document.querySelector('a-marker');
+      const sceneEl = document.querySelector('a-scene');
+      const modelEntity = document.querySelector('#ar-model');
+
+      function sendMessage(type, payload = {}) {
+        if (window.parent) {
+          window.parent.postMessage({ type, ...payload }, '*'); // '*' можно заменить на домен родителя для безопасности
+        }
+      }
+
       if (modelUrl) {
-        document.querySelector('#model').setAttribute('src', apiBase + modelUrl);
+        modelAsset.setAttribute('src', apiBase + modelUrl);
       }
       if (markerUrl) {
-        document.querySelector('a-marker').setAttribute('url', apiBase + markerUrl);
+        marker.setAttribute('url', apiBase + markerUrl);
+      }
+
+      if (modelEntity) {
+        modelEntity.addEventListener('model-loaded', () => {
+          sendMessage('modelLoaded');
+        });
+        modelEntity.addEventListener('model-error', () => {
+          sendMessage('modelError', { error: 'Failed to load model' });
+        });
       }
 
       // Слушаем сообщения от родителя
@@ -81,7 +87,6 @@
       });
 
       // Адаптация камеры при изменении размера окна iframe
-      const sceneEl = document.querySelector('a-scene');
       const resizeObserver = new ResizeObserver(() => {
         if (sceneEl && sceneEl.camera) {
           const width = window.innerWidth;

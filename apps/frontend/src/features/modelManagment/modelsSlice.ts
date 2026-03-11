@@ -1,5 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { FileTypes, type AppState, type FileDelete, type FileResponse, type ModelType, type SectionType } from "./types";
+import {
+  FileTypes,
+  type AppState,
+  type FileDelete,
+  type FileDownload,
+  type FileResponse,
+  type ModelType,
+  type SectionType
+} from "./types";
 import type { RootState } from "@/app/store";
 import { API_BASE } from "@/api/config";
 
@@ -71,7 +79,11 @@ export const fetchFiles = createAsyncThunk<FileResponse, SectionType, { rejectVa
   "models/fetchFiles",
   async (type, { rejectWithValue }) => {
     try {
-      const response = await fetch(type !== FileTypes.MODELS ? `${API_BASE}/api/models/${type}` : `${API_BASE}/api/models`);
+      const response = await fetch(
+        type !== FileTypes.MODELS
+          ? `${API_BASE}/api/models/${type}`
+          : `${API_BASE}/api/models`
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -88,6 +100,31 @@ export const fetchFiles = createAsyncThunk<FileResponse, SectionType, { rejectVa
         return rejectWithValue("Unknown error!");
       }
     }
+  }
+)
+export const downloadFile = createAsyncThunk<void, FileDownload, { rejectValue: string }>(
+  "models/downloadFile",
+  async (obj, { rejectWithValue }) => {
+    fetch(`${API_BASE}/api/files/${obj.type}/${obj.fileName}`).then(response => {
+      if (!response.ok) throw new Error('Failed to download');
+      return response.blob();
+    })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = obj.fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }).catch(err => {
+        if (err instanceof Error) {
+          return rejectWithValue(err.message);
+        } else {
+          return rejectWithValue("Unknown error!");
+        }
+      })
   }
 )
 export const deleteFile = createAsyncThunk<string | undefined, FileDelete, { rejectValue: string }>(
@@ -212,6 +249,17 @@ const modelsSlice = createSlice({
         state.isError = true;
         state.errorMessage = action.payload;
       })
+      .addCase(downloadFile.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(downloadFile.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(downloadFile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload;
+      })
       .addCase(deleteFile.pending, (state) => {
         state.isLoading = true;
       })
@@ -245,6 +293,7 @@ const { actions, reducer } = modelsSlice;
 export const { resetUploadState } = actions;
 
 export const selectModels = (state: RootState) => state.modelsReducer.models;
-export const selectModel = (state: RootState, name: string) => state.modelsReducer.models.find(model => model.name === name);
+export const selectModel = (state: RootState, name: string) =>
+  state.modelsReducer.models.find(model => model.name === name);
 
 export default reducer;

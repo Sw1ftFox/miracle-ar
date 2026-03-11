@@ -62,6 +62,11 @@ public class FileController {
         return storageService.serveImageFile(fileName);
     }
 
+    @GetMapping("/descriptions/{fileName:.+}")
+    public ResponseEntity<Resource> serveDescriptionFile(@PathVariable String fileName) {
+        return storageService.serveFile(fileName, "descriptions", "text/plain");
+    }
+
     @DeleteMapping("/models/{fileName:.+}")
     public ResponseEntity<?> deleteModelFile(@PathVariable String fileName) {
         return deleteFile(fileName, "models");
