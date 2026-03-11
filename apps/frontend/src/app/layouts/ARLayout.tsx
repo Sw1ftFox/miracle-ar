@@ -6,9 +6,9 @@ interface ARLayoutProps {
 
 const ARLayout: React.FC<ARLayoutProps> = ({ children }) => {
   return (
-    <div className={styles.ar__layout}>
-      {children}
-    </div>
+      <div className={styles.ar__layout}>
+          {children}
+      </div>
   );
 };
 

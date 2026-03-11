@@ -1,16 +1,21 @@
 import Button from "@shared/ui/button/Button";
 import { useState, type FormEvent } from "react";
-import { useDispatch } from "react-redux";
-import { type AppDispatch } from "@app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { type RootState, type AppDispatch } from "@app/store";
 import password from "@assets/icons/password.svg";
 import styles from "./authPage.module.css";
 import { loginAdmin } from "@/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import type { authType } from "@/features/auth/types";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 
 const AuthPage = () => {
   const [passwordInput, setPasswordInput] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { isLoading, isError, errorMessage } = useSelector<RootState, authType>(
+    (state) => state.authReducer,
+  );
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -28,15 +33,16 @@ const AuthPage = () => {
   };
 
   return (
-    <div className={styles.auth}>
-      <h1>Страница входа в панель администратора</h1>
-      <form
+      <div className={styles.auth}>
+          <h1>Страница входа в панель администратора</h1>
+          {isLoading ? <PageLoader /> : null}
+          <form
         onSubmit={handleSubmit}
         className={`${styles.auth__form} ${styles.form}`}
       >
-        <label className={styles.form__label} htmlFor="password">
-          <img className={styles.form__img} src={password} alt="" />
-          <input
+              <label className={styles.form__label} htmlFor="password">
+                  <img className={styles.form__img} src={password} alt="" />
+                  <input
             className={styles.form__input}
             id="password"
             name="password"
@@ -48,14 +54,17 @@ const AuthPage = () => {
             placeholder="Введите пароль"
             required
           />
-        </label>
-        <Button
+              </label>
+              <Button
           type="submit"
           className={styles.form__submit}
           content="Подтвердить"
         />
-      </form>
-    </div>
+          </form>
+          {isError ? (
+              <div style={{ color: "red", fontWeight: "500" }}>{errorMessage}</div>
+      ) : null}
+      </div>
   );
 };
 

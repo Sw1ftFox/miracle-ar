@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint:ts": "npx eslint \"**/*.{ts,tsx}\"",
+    "lint:ts:fix": "npx eslint \"**/*.{ts,tsx}\" --fix",
     "preview": "vite preview"
   },
   "dependencies": {
     "@react-three/drei": "^9.56.24",
     "@react-three/fiber": "^8.12.0",
     "@reduxjs/toolkit": "^2.9.1",
+    "classnames": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.2.0",
@@ -27,6 +29,8 @@
     "@types/three": "^0.150.1",
     "@vitejs/plugin-react": "^5.0.4",
     "eslint": "^9.36.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",

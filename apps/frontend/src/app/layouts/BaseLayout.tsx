@@ -6,11 +6,11 @@ interface BaseLayoutProps {
 
 const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
-    <div className={styles.base__layout}>
-      <div className={styles.base__container}>
-        {children}
+      <div className={styles.base__layout}>
+          <div className={styles.base__container}>
+              {children}
+          </div>
       </div>
-    </div>
   );
 };
 

@@ -14,7 +14,7 @@ const ModelViewerPage = () => {
   const { modelName } = useParams();
   const [modelScale, setModelScale] = useState(1);
 
-  const { currentModel, isLoading, isError } = useSelector<RootState, AppState>(
+  const { currentModel, isError } = useSelector<RootState, AppState>(
     (state) => state.modelsReducer,
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -40,27 +40,9 @@ const ModelViewerPage = () => {
     setModelScale(1);
   };
 
-  if (isLoading) {
-    return (
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          background: "#1a1a1a",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
-        }}
-      >
-        <div>Загрузка модели...</div>
-      </div>
-    );
-  }
-
   if (isError || !currentModel) {
     return (
-      <div
+        <div
         style={{
           width: "100vw",
           height: "100vh",
@@ -73,8 +55,8 @@ const ModelViewerPage = () => {
           padding: "20px",
         }}
       >
-        <h2>Ошибка загрузки модели</h2>
-        <Link
+            <h2>Ошибка загрузки модели</h2>
+            <Link
           content="Вернуться в меню"
           link="/models"
           style={{
@@ -85,44 +67,44 @@ const ModelViewerPage = () => {
             borderRadius: "4px",
           }}
         />
-      </div>
+        </div>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.controlsPanel}>
-        <h4 className={styles.panelTitle}>Масштаб модели</h4>
+      <div className={styles.container}>
+          <div className={styles.controlsPanel}>
+              <h4 className={styles.panelTitle}>Масштаб модели</h4>
 
-        <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
-        </div>
+              <div className={styles.scaleDisplay}>
+                  <strong>Текущий: {modelScale.toFixed(2)}x</strong>
+              </div>
 
-        <div className={styles.buttonGroup}>
-          <button
+              <div className={styles.buttonGroup}>
+                  <button
             onClick={decreaseScale}
             className={`${styles.controlButton} ${styles.buttonDecrease}`}
           >
-            -
-          </button>
-          <button
+                      -
+                  </button>
+                  <button
             onClick={increaseScale}
             className={`${styles.controlButton} ${styles.buttonIncrease}`}
           >
-            +
-          </button>
-          <button
+                      +
+                  </button>
+                  <button
             onClick={resetScale}
             className={`${styles.controlButton} ${styles.buttonReset}`}
           >
-            Сброс
-          </button>
-        </div>
+                      Сброс
+                  </button>
+              </div>
 
-        <div>
-          <label className={styles.sliderLabel}>
-            Точная настройка:
-            <input
+              <div>
+                  <label className={styles.sliderLabel}>
+                      Точная настройка:
+                      <input
               type="range"
               min="0.01"
               max="10"
@@ -131,11 +113,11 @@ const ModelViewerPage = () => {
               onChange={(e) => setModelScale(parseFloat(e.target.value))}
               className={styles.sliderInput}
             />
-          </label>
-        </div>
-      </div>
+                  </label>
+              </div>
+          </div>
 
-      <div
+          <div
         style={{
           position: "absolute",
           bottom: "30px",
@@ -144,16 +126,16 @@ const ModelViewerPage = () => {
           zIndex: 1000,
         }}
       >
-        <Link content="Вернуться в меню" link="/models" />
-      </div>
+              <Link content="Вернуться в меню" link="/models" />
+          </div>
 
-      <ErrorBoundary>
-        <ModelCanvas
+          <ErrorBoundary>
+              <ModelCanvas
           modelUrl={fullModelUrl}
           modelScale={modelScale}
         ></ModelCanvas>
-      </ErrorBoundary>
-    </div>
+          </ErrorBoundary>
+      </div>
   );
 };
 
