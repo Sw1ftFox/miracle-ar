@@ -12,6 +12,7 @@ import type { AppState } from "@features/modelManagment/types";
 import { isSectionType } from "@features/modelManagment/types";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import UploadStatus from "@/shared/ui/uploadStatus/UploadStatus";
+import { compressGLB } from "@features/modelManagment/utils/compressModel";
 
 type PropsType = {
   styles: CSSModuleClasses;
@@ -43,6 +44,12 @@ const Section = ({
   >((state) => state.modelsReducer);
   const dispatch = useDispatch<AppDispatch>();
 
+  const [compressEnabled, setCompressEnabled] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [compressError, setCompressError] = useState<string | null>(null);
+  const [originalSize, setOriginalSize] = useState<number | null>(null);
+  const [compressedSize, setCompressedSize] = useState<number | null>(null);
+
   const fileType = type + "s";
   useEffect(() => {
     if (isSectionType(fileType)) {
@@ -61,32 +68,48 @@ const Section = ({
       setIsFileLoaded(false);
       const timer = setTimeout(() => {
         dispatch(resetUploadState());
+        setCompressError(null);
       }, 3000);
       return () => clearTimeout(timer);
     }
   }, [dispatch, isSuccess, isError]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
     if (!selectedFile) return;
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
+    let fileToUpload: File | Blob = selectedFile;
+    const finalFileName = selectedFile.name;
 
+    // Сжатие для моделей
+    if (type === "model" && compressEnabled) {
+      setIsCompressing(true);
+      setCompressError(null);
+      try {
+        const compressedBlob = await compressGLB(selectedFile, "medium");
+        setCompressedSize(compressedBlob.size);
+        fileToUpload = compressedBlob;
+      } catch (err) {
+        console.error("Ошибка сжатия:", err);
+        setCompressError("Не удалось сжать модель");
+        setIsCompressing(false);
+        return;
+      }
+      setIsCompressing(false);
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileToUpload, finalFileName);
     const fileName = selectedFile.name;
     const modelName = fileName.replace(/\.[^/.]+$/, "");
     formData.append("modelName", modelName);
-
     formData.append("type", type);
 
     dispatch(uploadFiles(formData))
       .unwrap()
       .finally(() => {
         setSelectedFile(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
+        if (fileInputRef.current) fileInputRef.current.value = "";
       });
   };
 
@@ -138,6 +161,10 @@ const Section = ({
             const file = e.target.files?.[0] || null;
             setSelectedFile(file);
             setIsFileLoaded(true);
+            if (file) {
+              setOriginalSize(file.size);
+              setCompressedSize(null);
+            }
           }}
         />
         <span className={styles.file__label} style={{ color: "black" }}>
@@ -157,6 +184,24 @@ const Section = ({
           )}
         </span>
 
+        {type === "model" && selectedFile && (
+          <div className={styles.compressionOptions}>
+            <label>
+              <input
+                type="checkbox"
+                checked={compressEnabled}
+                onChange={(e) => setCompressEnabled(e.target.checked)}
+              />
+              Сжать модель для ускорения загрузки?
+            </label>
+            {isCompressing && <PageLoader />}
+            {compressError && (
+              <UploadStatus style={{ color: "red" }} text={compressError} />
+            )}
+          </div>
+        )}
+
+        <div style={{ flexBasis: "100%", height: "0" }}></div>
         <button type="submit" className={styles.btn}>
           {submitText}
         </button>
@@ -174,6 +219,17 @@ const Section = ({
           <UploadStatus style={{ color: "red" }} text={errorMessage} />
         ) : null}
       </div>
+
+      {originalSize && compressedSize && (
+        <div className={styles.compressionStats}>
+          <p>
+            Размер: {(originalSize / 1024).toFixed(2)} КБ →{" "}
+            {(compressedSize / 1024).toFixed(2)} КБ
+            <br />
+            Сжатие: {Math.round((1 - compressedSize / originalSize) * 100)}%
+          </p>
+        </div>
+      )}
     </div>
   );
 };
