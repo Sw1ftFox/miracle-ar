@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
     if (hasError) {
       return (
-          <div
+        <div
           style={{
             position: "fixed", 
             top: 0,
@@ -46,12 +46,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             padding: "20px",
           }}
         >
-              <h1 style={{ color: "#dc3545", marginBottom: "20px" }}>
-                  Что-то пошло не так 😔
-              </h1>
+          <h1 style={{ color: "#dc3545", marginBottom: "20px" }}>
+            Что-то пошло не так 😔
+          </h1>
 
-              {error && (
-              <div
+          {error && (
+            <div
               style={{
                 marginBottom: "20px",
                 padding: "15px",
@@ -62,10 +62,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 textAlign: "left",
               }}
             >
-                  <h3 style={{ marginBottom: "10px", color: "#495057" }}>
-                      Подробности ошибки:
-                  </h3>
-                  <pre
+              <h3 style={{ marginBottom: "10px", color: "#495057" }}>
+                Подробности ошибки:
+              </h3>
+              <pre
                 style={{
                   color: "#dc3545",
                   fontSize: "14px",
@@ -73,12 +73,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                   whiteSpace: "pre-wrap",
                 }}
               >
-                      {error.toString()}
-                  </pre>
-              </div>
+                {error.toString()}
+              </pre>
+            </div>
           )}
 
-              <div
+          <div
             style={{
               marginTop: "30px",
               display: "flex",
@@ -87,11 +87,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               alignItems: "center",
             }}
           >
-                  <button onClick={() => window.location.reload()}>
-                      Перезагрузить страницу
-                  </button>
-              </div>
+            <button onClick={() => window.location.reload()}>
+              Перезагрузить страницу
+            </button>
           </div>
+        </div>
       );
     }
 

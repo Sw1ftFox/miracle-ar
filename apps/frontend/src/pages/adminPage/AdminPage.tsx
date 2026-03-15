@@ -29,40 +29,40 @@ const AdminPage = () => {
   };
 
   return (
-      <div className={styles.adminPage}>
-          <h1>Панель администратора</h1>
-          <div className={styles.headerActions}>
-              <a href="/models" className={styles.return__btn}>
-                  ← Вернуться в меню
-              </a>
-              <button
+    <div className={styles.adminPage}>
+      <h1>Панель администратора</h1>
+      <div className={styles.headerActions}>
+        <a href="/models" className={styles.return__btn}>
+          ← Вернуться в меню
+        </a>
+        <button
           className={styles.download__btn}
           onClick={handleDownloadDefaultMarker}
         >
-                  Скачать маркер по умолчанию
-              </button>
-          </div>
+          Скачать маркер по умолчанию
+        </button>
+      </div>
 
-          <div className={styles.section}>
-              <div className={styles.tabs} onClick={changeSelectedSection}>
-                  {sectionData.map((section) => {
+      <div className={styles.section}>
+        <div className={styles.tabs} onClick={changeSelectedSection}>
+          {sectionData.map((section) => {
             return (
-                <button
+              <button
                 id={section.name}
                 className={`${styles.tab__btn} ${
                   selectedSection === section.name ? styles.active : ""
                 }`}
               >
-                    {section.buttonText}
-                </button>
+                {section.buttonText}
+              </button>
             );
           })}
-              </div>
+        </div>
 
-              {sectionData.map((section) => {
+        {sectionData.map((section) => {
           if (section.name === selectedSection) {
             return (
-                <Section
+              <Section
                 styles={styles}
                 type={section.type}
                 title={section.title}
@@ -75,8 +75,8 @@ const AdminPage = () => {
             );
           }
         })}
-          </div>
       </div>
+    </div>
   );
 };
 
