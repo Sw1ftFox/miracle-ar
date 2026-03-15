@@ -103,33 +103,33 @@ const Section = ({
   };
 
   return (
-      <div id={id}>
-          <h2>{title}</h2>
-          <div id="items__list" className={styles.filesList}>
-              {files?.map((fileName) => {
+    <div id={id}>
+      <h2>{title}</h2>
+      <div id="items__list" className={styles.filesList}>
+        {files?.map((fileName) => {
           if (fileName !== "default.patt")
             return (
-                <div className={styles.files__item}>
-                    <div className={styles.files__fileName}>{fileName}</div>
-                    <button
+              <div className={styles.files__item}>
+                <div className={styles.files__fileName}>{fileName}</div>
+                <button
                   className={styles.btn__download}
                   onClick={() => handleDownload(type + "s", fileName)}
                 >
-                        Скачать
-                    </button>
-                    <button
+                  Скачать
+                </button>
+                <button
                   className={styles.btn__delete}
                   onClick={() => handleDelete(type + "s", fileName)}
                 >
-                        Удалить
-                    </button>
-                </div>
+                  Удалить
+                </button>
+              </div>
             );
         })}
-          </div>
+      </div>
 
-          <form className={styles.upload__form} onSubmit={handleSubmit}>
-              <input
+      <form className={styles.upload__form} onSubmit={handleSubmit}>
+        <input
           type={inputType}
           accept={accept}
           required={required}
@@ -140,41 +140,41 @@ const Section = ({
             setIsFileLoaded(true);
           }}
         />
-              <span className={styles.file__label} style={{ color: "black" }}>
-                  {isFileLoaded ? (
-                      <span className={styles.file__label__text}>
-                          Выбранный файл
-                          <span
+        <span className={styles.file__label} style={{ color: "black" }}>
+          {isFileLoaded ? (
+            <span className={styles.file__label__text}>
+              Выбранный файл
+              <span
                 className={styles.file__label__name}
                 style={{ color: "green" }}
               >
-                              {" "}
-                              {selectedFile?.name}
-                          </span>
-                      </span>
+                {" "}
+                {selectedFile?.name}
+              </span>
+            </span>
           ) : (
             "Файл не выбран"
           )}
-              </span>
+        </span>
 
-              <button type="submit" className={styles.btn}>
-                  {submitText}
-              </button>
-          </form>
+        <button type="submit" className={styles.btn}>
+          {submitText}
+        </button>
+      </form>
 
-          <div className={styles.upload__status}>
-              {isLoading ? <PageLoader /> : null}
-              {isSuccess ? (
-                  <UploadStatus
+      <div className={styles.upload__status}>
+        {isLoading ? <PageLoader /> : null}
+        {isSuccess ? (
+          <UploadStatus
             style={{ color: "green", position: "absolute" }}
             text="Успешно!"
           />
         ) : null}
-              {isError ? (
-                  <UploadStatus style={{ color: "red" }} text={errorMessage} />
+        {isError ? (
+          <UploadStatus style={{ color: "red" }} text={errorMessage} />
         ) : null}
-          </div>
       </div>
+    </div>
   );
 };
 

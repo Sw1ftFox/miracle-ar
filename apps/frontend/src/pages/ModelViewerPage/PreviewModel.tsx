@@ -29,14 +29,14 @@ const PreviewModel = ({
   });
 
   return (
-      <group
+    <group
       ref={modelRef}
       position={position}
       scale={[scale, scale, scale]}
       rotation={rotation}
     >
-          {scene ? <primitive object={scene} /> : null}
-      </group>
+      {scene ? <primitive object={scene} /> : null}
+    </group>
   );
 };
 
