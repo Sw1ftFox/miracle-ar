@@ -180,6 +180,7 @@
 .upload__form {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 15px;
   flex-wrap: wrap;
   margin-top: 20px;
@@ -225,7 +226,7 @@
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 /* Адаптивность */
@@ -322,4 +323,75 @@
   .upload__form input[type="file"] {
     min-width: 100px;
   }
+}
+
+
+
+
+.compressionOptions label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Сам чекбокс */
+.compressionOptions input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #5e35b1; /* Основной цвет для современных браузеров */
+}
+
+.compressError {
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 4px;
+  color: #d32f2f;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Адаптация для планшетов */
+@media (max-width: 768px) {
+  .compressionOptions {
+    padding: 12px;
+  }
+  .qualitySelector {
+    padding-left: 15px;
+  }
+  .qualitySelector label {
+    font-size: 12px;
+  }
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 480px) {
+  .compressionOptions label {
+    font-size: 13px;
+  }
+  .qualitySelector p {
+    font-size: 13px;
+  }
+  .qualitySelector label {
+    font-size: 12px;
+  }
+}
+
+.compressionStats {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: #e8f5e9;
+  border-radius: 4px;
+  border: 1px solid #c8e6c9;
+  color: #2e7d32;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
 }
