@@ -10,8 +10,8 @@ type ModelCanvasType = {
 
 const ModelCanvas = ({ modelUrl, modelScale }: ModelCanvasType) => {
   return (
-      <Suspense fallback={<PageLoader />}>
-          <Canvas
+    <Suspense fallback={<PageLoader />}>
+      <Canvas
         camera={{
           position: [0, 0, 5],
           fov: 50, // Угол обзора камеры
@@ -24,22 +24,22 @@ const ModelCanvas = ({ modelUrl, modelScale }: ModelCanvasType) => {
           antialias: true,
         }}
       >
-              {/* 
+        {/* 
           Освещение сцены - обязательно для видимости моделей 
           AmbientLight - рассеянный свет со всех сторон
           DirectionalLight - направленный свет (как солнце)
         */}
-              <ambientLight intensity={0.6} />
-              <directionalLight position={[10, 10, 5]} intensity={1} />
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[10, 10, 5]} intensity={1} />
 
-              <PreviewModel
+        <PreviewModel
           modelUrl={modelUrl}
           position={[0, -1.3, 0]}
           scale={modelScale}
           autoRotate={true}
         />
-          </Canvas>
-      </Suspense>
+      </Canvas>
+    </Suspense>
   );
 };
 

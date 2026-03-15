@@ -36,21 +36,21 @@ const ModelItem = ({ model }: Props) => {
   if (model) {
     const displayName = removeFileExtension(model.name);
     return (
-        <div className={styles.model__card}>
-            <div className={styles.image__container}>
-                <img
+      <div className={styles.model__card}>
+        <div className={styles.image__container}>
+          <img
             src={
               model.previewUrl ? `${API_BASE}${model.previewUrl}` : alt_image
             }
             alt={displayName}
             className={styles.model__image}
           />
-            </div>
-            <div className={styles.model__content}>
-                <h3 className={styles.model__title}>{displayName}</h3>
-                <p className={styles.model__description}>{displayText}</p>
-                {shouldTruncate && (
-                <button
+        </div>
+        <div className={styles.model__content}>
+          <h3 className={styles.model__title}>{displayName}</h3>
+          <p className={styles.model__description}>{displayText}</p>
+          {shouldTruncate && (
+            <button
               onClick={() => setIsExpanded(!isExpanded)}
               style={{
                 color: "#673ab7",
@@ -58,42 +58,42 @@ const ModelItem = ({ model }: Props) => {
                 padding: "4px 8px",
               }}
             >
-                    {isExpanded ? "Скрыть подробности" : "Показать полностью"}
-                </button>
+              {isExpanded ? "Скрыть подробности" : "Показать полностью"}
+            </button>
           )}
-            </div>
-            <div className={styles.btns}>
-                <Button
+        </div>
+        <div className={styles.btns}>
+          <Button
             onClick={() => handleNavigate(displayName)}
             className={styles.view__btn}
             dataAttribute={model}
             content="Просмотр в AR"
           />
-                <Button
+          <Button
             onClick={() => handleNavigate(displayName, true)}
             className={styles.preview__btn}
             dataAttribute={model}
             content="Предпросмотр"
           />
-            </div>
         </div>
+      </div>
     );
   }
   return (
-      <div className={styles.model__card}>
-          <div className={styles.image__container}>
-              <div className={styles.no__image}>Картинка отсутствует</div>
-          </div>
-          <div className={styles.model__content}>
-              <p className={styles.no__description}>Описание отсутствует</p>
-              <p className={styles.pattern__warning}>⚠ Паттерн отсутствует</p>
-              <Button
+    <div className={styles.model__card}>
+      <div className={styles.image__container}>
+        <div className={styles.no__image}>Картинка отсутствует</div>
+      </div>
+      <div className={styles.model__content}>
+        <p className={styles.no__description}>Описание отсутствует</p>
+        <p className={styles.pattern__warning}>⚠ Паттерн отсутствует</p>
+        <Button
           className={styles.view__btn}
           dataAttribute={model}
           content="Просмотр в AR"
         />
-          </div>
       </div>
+    </div>
   );
 };
 

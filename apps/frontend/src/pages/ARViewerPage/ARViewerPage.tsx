@@ -79,22 +79,22 @@ const ARViewerPage = () => {
   }, []);
 
   return (
-      <div className={styles.container}>
-          <ARScene
+    <div className={styles.container}>
+      <ARScene
         modelUrl={modelUrl}
         markerPatternUrl={markerPatternUrl}
         soundUrl={soundUrl}
       />
-          <div className={styles.backButtonContainer}>
-              <Link content="Вернуться в меню" link="/models" />
-          </div>
-          {instructionsVisible && (
-          <div className={styles.instruction}>
-              <p>1. Разрешите доступ к камере</p>
-              <p>2. Наведите камеру на маркер</p>
-          </div>
-      )}
+      <div className={styles.backButtonContainer}>
+        <Link content="Вернуться в меню" link="/models" />
       </div>
+      {instructionsVisible && (
+        <div className={styles.instruction}>
+          <p>1. Разрешите доступ к камере</p>
+          <p>2. Наведите камеру на маркер</p>
+        </div>
+      )}
+    </div>
   );
 };
 

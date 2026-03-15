@@ -33,16 +33,16 @@ const AuthPage = () => {
   };
 
   return (
-      <div className={styles.auth}>
-          <h1>Страница входа в панель администратора</h1>
-          {isLoading ? <PageLoader /> : null}
-          <form
+    <div className={styles.auth}>
+      <h1>Страница входа в панель администратора</h1>
+      {isLoading ? <PageLoader /> : null}
+      <form
         onSubmit={handleSubmit}
         className={`${styles.auth__form} ${styles.form}`}
       >
-              <label className={styles.form__label} htmlFor="password">
-                  <img className={styles.form__img} src={password} alt="" />
-                  <input
+        <label className={styles.form__label} htmlFor="password">
+          <img className={styles.form__img} src={password} alt="" />
+          <input
             className={styles.form__input}
             id="password"
             name="password"
@@ -54,17 +54,17 @@ const AuthPage = () => {
             placeholder="Введите пароль"
             required
           />
-              </label>
-              <Button
+        </label>
+        <Button
           type="submit"
           className={styles.form__submit}
           content="Подтвердить"
         />
-          </form>
-          {isError ? (
-              <div style={{ color: "red", fontWeight: "500" }}>{errorMessage}</div>
+      </form>
+      {isError ? (
+        <div style={{ color: "red", fontWeight: "500" }}>{errorMessage}</div>
       ) : null}
-      </div>
+    </div>
   );
 };
 

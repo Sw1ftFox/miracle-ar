@@ -18,13 +18,13 @@ const ModelList = () => {
   }, []);
 
   return (
-      <div className={styles.models__gallery}>
-          {isLoading ? (
-              <PageLoader />
+    <div className={styles.models__gallery}>
+      {isLoading ? (
+        <PageLoader />
       ) : (
         models.map((model) => <ModelItem key={model.id} model={model} />)
       )}
-      </div>
+    </div>
   );
 };
 
