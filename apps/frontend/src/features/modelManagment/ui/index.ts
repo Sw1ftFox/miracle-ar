@@ -1,4 +1,2 @@
-import ModelList from "./modelList/ModelList";
-import ModelItem from "./modelItem/ModelItem";
-
-export { ModelList, ModelItem };
+export { ModelList } from "./ModelList/ModelList";
+export { ModelItem } from "./ModelItem/ModelItem";

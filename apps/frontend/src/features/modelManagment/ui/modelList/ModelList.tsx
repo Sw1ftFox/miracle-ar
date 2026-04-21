@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
-import ModelItem from "../modelItem/ModelItem";
-import styles from "./modelList.module.css";
+import styles from "./ModelList.module.css";
 import { type AppDispatch, type RootState } from "@app/store";
 import type { AppState } from "../../types";
 import { useEffect } from "react";
 import { fetchModels } from "../../modelsSlice";
-import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
+import { ModelItem } from "..";
 
-const ModelList = () => {
+export const ModelList = () => {
   const { models, isLoading } = useSelector<RootState, AppState>(
     (state) => state.modelsReducer,
   );
@@ -27,5 +27,3 @@ const ModelList = () => {
     </div>
   );
 };
-
-export default ModelList;

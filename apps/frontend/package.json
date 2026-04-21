@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "antd": "^6.3.6",
     "@gltf-transform/core": "^3.8.0",
     "@gltf-transform/functions": "^3.8.0",
     "@react-three/drei": "^9.56.24",

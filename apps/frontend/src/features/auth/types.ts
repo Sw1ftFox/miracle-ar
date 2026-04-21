@@ -1,4 +1,4 @@
-export type authType = {
+export type AuthType = {
   isAuth: boolean,
   isLoading: boolean,
   isError: boolean,
