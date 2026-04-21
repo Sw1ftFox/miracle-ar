@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { authType } from "./types";
+import type { AuthType } from "./types";
 import type { RootState } from "@/app/store";
-import { API_BASE } from "@/api/config";
+import { API_BASE } from "@/app/api/config";
+import { StorageService } from "@/shared/utils/StorageService";
 
-const initialState: authType = {
-  isAuth: false,
+const initialState: AuthType = {
+  isAuth: StorageService.getItem("isAuth"),
   isLoading: false,
   isError: false,
   errorMessage: "",
@@ -43,6 +44,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    logout: (state) => {
+      state.isAuth = false;
+      StorageService.removeItem("isAuth");
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -52,7 +57,7 @@ const authSlice = createSlice({
       .addCase(loginAdmin.fulfilled, (state) => {
         state.isLoading = false;
         state.isAuth = true;
-
+        StorageService.saveItem("isAuth", true)
       })
       .addCase(loginAdmin.rejected, (state, action) => {
         state.isLoading = false;
@@ -66,5 +71,7 @@ export const selectAuth = (state: RootState) => state.authReducer.isAuth;
 export const selectUserLoading = (state: RootState) => state.authReducer.isLoading;
 export const selectAuthError = (state: RootState) => state.authReducer.isError;
 export const selectAuthErrorMessage = (state: RootState) => state.authReducer.errorMessage;
+
+export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

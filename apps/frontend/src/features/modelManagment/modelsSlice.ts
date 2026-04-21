@@ -9,7 +9,7 @@ import {
   type SectionType
 } from "./types";
 import type { RootState } from "@/app/store";
-import { API_BASE } from "@/api/config";
+import { API_BASE } from "@/app/api/config";
 
 const initialState: AppState = {
   models: [],
@@ -227,6 +227,7 @@ const modelsSlice = createSlice({
       })
       .addCase(fetchCurrentModel.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
       })
       .addCase(fetchCurrentModel.fulfilled, (state, action) => {
         state.isLoading = false;

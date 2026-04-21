@@ -11,7 +11,6 @@ RUN npm run build
 # Stage 2: serve with nginx
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
-# Добавим конфиг nginx для поддержки SPA (перенаправление всех запросов на index.html)
 RUN echo 'server { \
     listen 80; \
     server_name _; \
