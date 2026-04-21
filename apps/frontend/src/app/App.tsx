@@ -1,16 +1,9 @@
-import {
-  AuthPage,
-  Error404Page,
-  ModelsPage,
-  // ARViewerPage,
-} from "@/pages";
-import { Route, Routes, useLocation } from "react-router-dom";
-import BaseLayout from "./layouts/BaseLayout";
-import ARLayout from "./layouts/ARLayout";
-import { ModelsPageAsync } from "@/pages/modelsPage/ModelsPage.async";
-import { AdminPageAsync } from "@/pages/adminPage/AdminPage.async";
-import { ARViewerPageHTMLAsync } from "@/pages/ARViewerPageHTML/ARViewerPageHTML.async";
-import { ModelViewerPageAsync } from "@/pages/ModelViewerPage/ModelViewerPage.async";
+import {} from "@/pages";
+import { useLocation } from "react-router-dom";
+import { AppRouter } from "./providers/router";
+import { ConfigProvider } from "antd";
+import { ARLayout } from "./layouts/ARLayout";
+import { BaseLayout } from "./layouts/BaseLayout";
 
 function App() {
   const location = useLocation();
@@ -19,20 +12,17 @@ function App() {
   const Layout = isARPage ? ARLayout : BaseLayout;
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<ModelsPageAsync />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/admin" element={<AdminPageAsync />} />
-        <Route path="/models" element={<ModelsPage />} />
-        <Route path="*" element={<Error404Page />} />
-        <Route path="/models/:modelName" element={<ARViewerPageHTMLAsync />} />
-        <Route
-          path="/models/preview/:modelName"
-          element={<ModelViewerPageAsync />}
-        />
-      </Routes>
-    </Layout>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#aa00ff",
+        },
+      }}
+    >
+      <Layout>
+        <AppRouter />
+      </Layout>
+    </ConfigProvider>
   );
 }
 

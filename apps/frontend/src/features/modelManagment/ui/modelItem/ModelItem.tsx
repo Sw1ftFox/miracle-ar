@@ -1,9 +1,9 @@
 import Button from "@shared/ui/button/Button";
 import type { ModelType } from "../../types";
-import styles from "./modelItem.module.css";
+import styles from "./ModelItem.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { API_BASE } from "@/api/config";
+import { API_BASE } from "@/app/api/config";
 import alt_image from "@assets/images/alt_image.png";
 
 type Props = {
@@ -14,7 +14,7 @@ const removeFileExtension = (filename: string): string => {
   return filename.replace(/\.[^/.]+$/, "");
 };
 
-const ModelItem = ({ model }: Props) => {
+export const ModelItem = ({ model }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const shouldTruncate = model.description
@@ -96,5 +96,3 @@ const ModelItem = ({ model }: Props) => {
     </div>
   );
 };
-
-export default ModelItem;

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Loader } from "../loader/Loader";
+import { Loader } from "../Loader/Loader";
 import cls from "./PageLoader.module.css";
 
 interface PageLoaderProps {
