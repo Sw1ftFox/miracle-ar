@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState, type AppDispatch } from "@app/store";
 import password from "@assets/icons/password.svg";
-import styles from "./authPage.module.css";
+import styles from "./AuthPage.module.css";
 import { loginAdmin } from "@/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";

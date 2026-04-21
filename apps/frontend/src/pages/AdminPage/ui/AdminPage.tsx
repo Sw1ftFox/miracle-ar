@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./adminPage.module.css";
+import styles from "./AdminPage.module.css";
 import { sectionData } from "../../../widgets/Section/sectionData";
 import {
   FileTypes,
