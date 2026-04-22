@@ -1,2 +1,2 @@
-export { ModelList } from "./ModelList/ModelList";
-export { ModelItem } from "./ModelItem/ModelItem";
+export { ModelList } from "./modelList/ModelList";
+export { ModelItem } from "./modelItem/ModelItem";
