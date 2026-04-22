@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import styles from "./ModelList.module.css";
+import styles from "./modelList.module.css";
 import { type AppDispatch, type RootState } from "@app/store";
 import type { AppState } from "../../types";
 import { useEffect } from "react";
