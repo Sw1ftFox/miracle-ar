@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
 import { API_BASE } from "@/app/api/config";
-import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
 
 export const ARViewerPageHTML = () => {
   const { modelName } = useParams();

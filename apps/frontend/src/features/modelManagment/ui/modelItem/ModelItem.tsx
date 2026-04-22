@@ -4,7 +4,7 @@ import styles from "./ModelItem.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { API_BASE } from "@/app/api/config";
-import alt_image from "@assets/images/alt_image.png";
+import alt_image from "@/shared/assets/images/alt_image.png";
 
 type Props = {
   model: ModelType;
