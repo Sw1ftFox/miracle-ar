@@ -1,21 +1,23 @@
+import { type AppDispatch, type RootState } from "@app/store";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
+import UploadStatus from "@/shared/ui/uploadStatus/UploadStatus";
+import { compressGLB } from "@/shared/utils/compressModel";
+import {
+  isSectionType,
+  type FilesState,
+} from "@/features/filesManagment/fileTypes";
 import {
   deleteFile,
   downloadFile,
   fetchFiles,
   resetUploadState,
   uploadFiles,
-} from "@features/modelManagment/modelsSlice";
-import { type AppDispatch, type RootState } from "@app/store";
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppState } from "@features/modelManagment/types";
-import { isSectionType } from "@features/modelManagment/types";
-import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
-import UploadStatus from "@/shared/ui/uploadStatus/UploadStatus";
-import { compressGLB } from "@/shared/utils/compressModel";
+} from "@/features/filesManagment/filesSlice";
+import styles from "./Section.module.css";
 
 type PropsType = {
-  styles: CSSModuleClasses;
   type: string;
   title: string;
   id: string;
@@ -26,7 +28,6 @@ type PropsType = {
 };
 
 export const Section = ({
-  styles,
   type,
   title,
   id,
@@ -40,8 +41,8 @@ export const Section = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { files, isLoading, isSuccess, isError, errorMessage } = useSelector<
     RootState,
-    AppState
-  >((state) => state.modelsReducer);
+    FilesState
+  >((state) => state.filesReducer);
   const dispatch = useDispatch<AppDispatch>();
 
   const [compressEnabled, setCompressEnabled] = useState(false);
@@ -169,15 +170,9 @@ export const Section = ({
         />
         <span className={styles.file__label} style={{ color: "black" }}>
           {isFileLoaded ? (
-            <span className={styles.file__label__text}>
+            <span>
               Выбранный файл
-              <span
-                className={styles.file__label__name}
-                style={{ color: "green" }}
-              >
-                {" "}
-                {selectedFile?.name}
-              </span>
+              <span style={{ color: "green" }}> {selectedFile?.name}</span>
             </span>
           ) : (
             "Файл не выбран"

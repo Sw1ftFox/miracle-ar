@@ -12,13 +12,17 @@
 
 /* Лёгкий декоративный элемент поверх градиента */
 .auth::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  background: radial-gradient(
+    circle at 20% 50%,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
   pointer-events: none;
 }
 
@@ -29,7 +33,7 @@
   margin-bottom: 2.5rem;
   text-align: center;
   letter-spacing: 0.5px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   position: relative;
   z-index: 1;
 }
@@ -45,7 +49,7 @@
   transition: all 0.3s ease;
   position: relative;
   z-index: 1;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .auth__form:hover {
@@ -97,34 +101,6 @@
   font-weight: 300;
 }
 
-.form__submit {
-  width: 100%;
-  padding: 1rem 1.5rem;
-  background: #5e35b1;
-  color: white;
-  border: none;
-  border-radius: 16px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 2rem;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3);
-}
-
-.form__submit:hover {
-  background: #512da8;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(94, 53, 177, 0.5);
-}
-
-.form__submit:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3);
-}
-
 /* Планшеты и маленькие ноутбуки */
 @media (max-width: 768px) {
   .auth h1 {
@@ -162,12 +138,6 @@
   .form__input {
     font-size: 1rem;
   }
-
-  .form__submit {
-    padding: 0.85rem;
-    font-size: 1rem;
-    margin-top: 1.5rem;
-  }
 }
 
 /* Очень маленькие экраны (до 360px) */
@@ -183,10 +153,6 @@
   .form__label {
     padding: 0.6rem 0.8rem;
   }
-
-  .form__submit {
-    padding: 0.75rem;
-  }
 }
 
 /* Альбомная ориентация на мобильных */
@@ -194,7 +160,7 @@
   .auth {
     padding: 0.5rem;
   }
-  
+
   .auth h1 {
     font-size: 1.3rem;
     margin-bottom: 1rem;

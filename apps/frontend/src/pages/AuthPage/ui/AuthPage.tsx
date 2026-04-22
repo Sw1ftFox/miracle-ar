@@ -1,4 +1,3 @@
-import Button from "@shared/ui/button/Button";
 import { useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState, type AppDispatch } from "@app/store";
@@ -7,7 +6,8 @@ import styles from "./AuthPage.module.css";
 import { loginAdmin } from "@/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
-import type { AuthType } from "@/features/auth/types";
+import type { AuthType } from "@/features/auth/authTypes";
+import { Button } from "antd";
 
 export const AuthPage = () => {
   const [passwordInput, setPasswordInput] = useState("");
@@ -36,10 +36,7 @@ export const AuthPage = () => {
     <div className={styles.auth}>
       <h1>Страница входа в панель администратора</h1>
       {isLoading ? <PageLoader /> : null}
-      <form
-        onSubmit={handleSubmit}
-        className={`${styles.auth__form} ${styles.form}`}
-      >
+      <form onSubmit={handleSubmit} className={`${styles.auth__form} `}>
         <label className={styles.form__label} htmlFor="password">
           <img className={styles.form__img} src={password} alt="" />
           <input
@@ -56,10 +53,22 @@ export const AuthPage = () => {
           />
         </label>
         <Button
-          type="submit"
-          className={styles.form__submit}
-          content="Подтвердить"
-        />
+          htmlType="submit"
+          variant="solid"
+          color="purple"
+          style={{
+            width: "100%",
+            padding: "1.2rem 1.5rem",
+            borderRadius: 16,
+            fontSize: "1rem",
+            fontWeight: 600,
+            marginTop: "2rem",
+            boxShadow: "0 4px 15px rgba(94, 53, 177, 0.3)",
+            letterSpacing: 0.5,
+          }}
+        >
+          Подтвердить
+        </Button>
       </form>
       {isError ? (
         <div style={{ color: "red", fontWeight: "500" }}>{errorMessage}</div>

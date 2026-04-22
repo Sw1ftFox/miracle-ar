@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AuthType } from "./types";
+import type { AuthType } from "./authTypes";
 import type { RootState } from "@/app/store";
 import { API_BASE } from "@/app/api/config";
 import { StorageService } from "@/shared/utils/StorageService";

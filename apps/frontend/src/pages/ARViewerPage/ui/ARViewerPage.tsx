@@ -1,4 +1,4 @@
-import type { ModelType } from "@features/modelManagment/types";
+import type { ModelType } from "@/features/modelManagment/modelTypes";
 import Link from "@shared/ui/link/Link";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";

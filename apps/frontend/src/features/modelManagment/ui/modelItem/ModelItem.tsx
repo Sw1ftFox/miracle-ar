@@ -1,17 +1,14 @@
-import Button from "@shared/ui/button/Button";
-import type { ModelType } from "../../types";
+import type { ModelType } from "../../modelTypes";
 import styles from "./modelItem.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { API_BASE } from "@/app/api/config";
 import alt_image from "@/shared/assets/images/alt_image.png";
+import { removeFileExtension } from "@/shared/utils/removeFileExtension";
+import { Button } from "antd";
 
 type Props = {
   model: ModelType;
-};
-
-const removeFileExtension = (filename: string): string => {
-  return filename.replace(/\.[^/.]+$/, "");
 };
 
 export const ModelItem = ({ model }: Props) => {
@@ -33,9 +30,10 @@ export const ModelItem = ({ model }: Props) => {
     }
   };
 
+  let content = null;
   if (model) {
     const displayName = removeFileExtension(model.name);
-    return (
+    content = (
       <div className={styles.model__card}>
         <div className={styles.image__container}>
           <img
@@ -50,7 +48,9 @@ export const ModelItem = ({ model }: Props) => {
           <h3 className={styles.model__title}>{displayName}</h3>
           <p className={styles.model__description}>{displayText}</p>
           {shouldTruncate && (
-            <button
+            <Button
+              color="purple"
+              variant="outlined"
               onClick={() => setIsExpanded(!isExpanded)}
               style={{
                 color: "#673ab7",
@@ -59,40 +59,40 @@ export const ModelItem = ({ model }: Props) => {
               }}
             >
               {isExpanded ? "Скрыть подробности" : "Показать полностью"}
-            </button>
+            </Button>
           )}
         </div>
         <div className={styles.btns}>
           <Button
+            color="purple"
+            variant="solid"
             onClick={() => handleNavigate(displayName)}
-            className={styles.view__btn}
-            dataAttribute={model}
-            content="Просмотр в AR"
-          />
+            data-model={model}
+            style={{
+              padding: 20,
+              fontWeight: 500,
+              borderRadius: 12,
+            }}
+          >
+            Просмотр в AR
+          </Button>
           <Button
+            color="purple"
+            variant="solid"
             onClick={() => handleNavigate(displayName, true)}
-            className={styles.preview__btn}
-            dataAttribute={model}
-            content="Предпросмотр"
-          />
+            data-model={model}
+            style={{
+              padding: 20,
+              fontWeight: 500,
+              borderRadius: 12,
+            }}
+          >
+            Предпросмотр
+          </Button>
         </div>
       </div>
     );
   }
-  return (
-    <div className={styles.model__card}>
-      <div className={styles.image__container}>
-        <div className={styles.no__image}>Картинка отсутствует</div>
-      </div>
-      <div className={styles.model__content}>
-        <p className={styles.no__description}>Описание отсутствует</p>
-        <p className={styles.pattern__warning}>⚠ Паттерн отсутствует</p>
-        <Button
-          className={styles.view__btn}
-          dataAttribute={model}
-          content="Просмотр в AR"
-        />
-      </div>
-    </div>
-  );
+
+  return <>{content}</>;
 };

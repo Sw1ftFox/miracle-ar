@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { AppState } from "@features/modelManagment/types";
 import Link from "@shared/ui/link/Link";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,12 +8,13 @@ import styles from "./ModelViewerPage.module.css";
 import { API_BASE } from "@/app/api/config";
 import ErrorBoundary from "@/app/providers/ErrorBoundary/ErrorBoundary";
 import { ModelCanvas } from "@/widgets/ModelCanvas";
+import type { ModelState } from "@/features/modelManagment/modelTypes";
 
 export const ModelViewerPage = () => {
   const { modelName } = useParams();
   const [modelScale, setModelScale] = useState(1);
 
-  const { currentModel, isError } = useSelector<RootState, AppState>(
+  const { currentModel, isError } = useSelector<RootState, ModelState>(
     (state) => state.modelsReducer,
   );
   const dispatch = useDispatch<AppDispatch>();
