@@ -11,12 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "antd": "^6.3.6",
     "@gltf-transform/core": "^3.8.0",
     "@gltf-transform/functions": "^3.8.0",
     "@react-three/drei": "^9.56.24",
     "@react-three/fiber": "^8.12.0",
     "@reduxjs/toolkit": "^2.9.1",
+    "antd": "^6.3.6",
     "classnames": "^2.5.1",
     "meshoptimizer": "^0.20.0",
     "react": "^18.2.0",

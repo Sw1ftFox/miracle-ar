@@ -1,10 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import ErrorBoundary from "@/app/providers/ErrorBoundary/ErrorBoundary";
-import { AuthPage } from "@/pages";
-import { AdminPageAsync } from "@/pages/AdminPage/ui/AdminPage.async";
-import { ARViewerPageHTMLAsync } from "@/pages/ARViewerPageHTML/ui/ARViewerPageHTML.async";
-import { ModelsPageAsync } from "@/pages/ModelsPage/ui/ModelsPage.async";
-import { ModelViewerPageAsync } from "@/pages/ModelViewerPage/ui/ModelViewerPage.async";
+import { AdminPageAsync } from "@/pages/AdminPage";
+import { ARViewerPageHTMLAsync } from "@/pages/ARViewerPageHTML";
+import { AuthPage } from "@/pages/AuthPage";
+import { ModelsPageAsync } from "@/pages/ModelsPage";
+import { ModelViewerPageAsync } from "@/pages/ModelViewerPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import ProtectedRoute from "@/shared/ui/ProtectedRoute/ProtectedRoute";
 import type { RouteProps } from "react-router-dom";

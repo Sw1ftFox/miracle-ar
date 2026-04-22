@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./AdminPage.module.css";
-import { sectionData } from "../../../widgets/Section/sectionData";
+import { sectionData } from "@/widgets/Section/sectionData";
 import {
   FileTypes,
   isSectionType,
