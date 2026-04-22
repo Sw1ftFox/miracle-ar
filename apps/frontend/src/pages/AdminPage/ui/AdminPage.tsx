@@ -11,7 +11,7 @@ import type { AppDispatch } from "@app/store";
 import { downloadDefaultMarker } from "@features/modelManagment/modelsSlice";
 import { Link } from "react-router-dom";
 import { logout } from "@/features/auth/authSlice";
-import { Section } from "../../../widgets/Section";
+import { Section } from "@/widgets/Section";
 
 export const AdminPage = () => {
   const [selectedSection, setSelectedSection] = useState<SectionType>(
