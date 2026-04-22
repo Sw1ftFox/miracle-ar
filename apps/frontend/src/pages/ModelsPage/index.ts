@@ -1,1 +1,1 @@
-export { ModelsPage } from "./ui/ModelsPage";
+export { ModelsPageAsync } from "./ui/ModelsPage.async";

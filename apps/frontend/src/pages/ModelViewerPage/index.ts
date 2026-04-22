@@ -1,1 +1,1 @@
-export { ModelViewerPage } from "./ui/ModelViewerPage";
+export { ModelViewerPageAsync } from "./ui/ModelViewerPage.async";

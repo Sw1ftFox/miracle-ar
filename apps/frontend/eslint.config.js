@@ -26,8 +26,8 @@ export default defineConfig([
       react: reactPlugin,
     },
     rules: {
-      indent: ["error", 2], 
-      "react/jsx-indent": ["error", 2], 
+      indent: ["error", 2],
+      "react/jsx-indent": ["error", 2],
       "react/jsx-indent-props": ["error", 2],
       "import/prefer-default-export": "off",
       "react/react-in-jsx-scope": "off",

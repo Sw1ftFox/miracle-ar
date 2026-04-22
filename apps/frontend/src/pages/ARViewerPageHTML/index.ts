@@ -1,1 +1,1 @@
-export { ARViewerPageHTML } from "./ui/ARViewerPageHTML";
+export { ARViewerPageHTMLAsync } from "./ui/ARViewerPageHTML.async";
