@@ -1,4 +1,3 @@
-import {} from "@/pages";
 import { useLocation } from "react-router-dom";
 import { AppRouter } from "./providers/router";
 import { ConfigProvider } from "antd";
