@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
 import { PreviewModel } from "@/widgets/PreviewModel";
 
 type ModelCanvasType = {
