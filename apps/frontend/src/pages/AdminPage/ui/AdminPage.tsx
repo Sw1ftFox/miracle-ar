@@ -1,17 +1,17 @@
 import { useState } from "react";
 import styles from "./AdminPage.module.css";
 import { sectionData } from "@/widgets/Section/sectionData";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@app/store";
+import { Link } from "react-router-dom";
+import { logout } from "@/features/auth/authSlice";
+import { Section } from "@/widgets/Section";
 import {
   FileTypes,
   isSectionType,
   type SectionType,
-} from "@features/modelManagment/types";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@app/store";
-import { downloadDefaultMarker } from "@features/modelManagment/modelsSlice";
-import { Link } from "react-router-dom";
-import { logout } from "@/features/auth/authSlice";
-import { Section } from "@/widgets/Section";
+} from "@/features/filesManagment/fileTypes";
+import { downloadDefaultMarker } from "@/features/filesManagment/filesSlice";
 
 export const AdminPage = () => {
   const [selectedSection, setSelectedSection] = useState<SectionType>(
@@ -41,7 +41,6 @@ export const AdminPage = () => {
         >
           ← Вернуться в меню
         </Link>
-        {/* <a href="/models"></a> */}
         <button
           className={styles.download__btn}
           onClick={handleDownloadDefaultMarker}
@@ -70,7 +69,6 @@ export const AdminPage = () => {
           if (section.name === selectedSection) {
             return (
               <Section
-                styles={styles}
                 type={section.type}
                 title={section.title}
                 id={section.id}

@@ -6,11 +6,17 @@ import tseslint from "typescript-eslint";
 import importPlugin from "eslint-plugin-import";
 import reactPlugin from "eslint-plugin-react";
 import { defineConfig, globalIgnores } from "eslint/config";
+import cssModules from "eslint-plugin-css-modules";
 
 export default defineConfig([
   globalIgnores(["dist"]),
   {
     files: ["**/*.{ts,tsx}"],
+    settings: {
+      "css-modules": {
+        basePath: "./",
+      },
+    },
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -24,6 +30,7 @@ export default defineConfig([
     plugins: {
       import: importPlugin,
       react: reactPlugin,
+      "css-modules": cssModules,
     },
     rules: {
       indent: ["error", 2],
@@ -45,6 +52,8 @@ export default defineConfig([
       "import/no-extraneous-dependencies": "warn",
       "no-underscore-dangle": "off",
       "max-len": ["error", { ignoreComments: true, code: 100 }],
+      "css-modules/no-unused-class": "warn",
+      "css-modules/no-undef-class": "error",
     },
   },
 ]);
