@@ -1,6 +1,6 @@
 import Button from "@shared/ui/button/Button";
 import type { ModelType } from "../../types";
-import styles from "./ModelItem.module.css";
+import styles from "./modelItem.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { API_BASE } from "@/app/api/config";
