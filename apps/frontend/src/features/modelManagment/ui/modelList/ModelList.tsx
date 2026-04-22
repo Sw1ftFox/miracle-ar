@@ -4,7 +4,7 @@ import { type AppDispatch, type RootState } from "@app/store";
 import type { AppState } from "../../types";
 import { useEffect } from "react";
 import { fetchModels } from "../../modelsSlice";
-import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import { ModelItem } from "..";
 
 export const ModelList = () => {
