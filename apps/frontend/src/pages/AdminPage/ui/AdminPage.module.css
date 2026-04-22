@@ -149,11 +149,9 @@
 
 .btn__download {
   background: rgb(100, 181, 100);
-
 }
 .btn__delete {
   background: #ff4757;
-
 }
 
 .files__item button {
@@ -324,9 +322,6 @@
     min-width: 100px;
   }
 }
-
-
-
 
 .compressionOptions label {
   display: flex;
