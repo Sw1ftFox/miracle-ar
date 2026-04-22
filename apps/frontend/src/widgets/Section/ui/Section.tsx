@@ -10,8 +10,8 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppState } from "@features/modelManagment/types";
 import { isSectionType } from "@features/modelManagment/types";
-import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
-import UploadStatus from "@/shared/ui/UploadStatus/UploadStatus";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
+import UploadStatus from "@/shared/ui/uploadStatus/UploadStatus";
 import { compressGLB } from "@/shared/utils/compressModel";
 
 type PropsType = {
