@@ -6,7 +6,7 @@ import password from "@assets/icons/password.svg";
 import styles from "./AuthPage.module.css";
 import { loginAdmin } from "@/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
-import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
+import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import type { AuthType } from "@/features/auth/types";
 
 export const AuthPage = () => {
