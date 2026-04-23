@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
 import { API_BASE } from "@/app/api/config";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
+import { useModelScale } from "@/shared/hooks/useModelScale";
+import { ControlsPanel } from "@/shared/ui/ControlsPanel/ControlsPanel";
 
 export const ARViewerPageHTML = () => {
   const { modelName } = useParams();
@@ -13,7 +15,6 @@ export const ARViewerPageHTML = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
   const [instructionsVisible, setInstructionsVisible] = useState(true);
-  const [modelScale, setModelScale] = useState(1);
   const [soundData, setSoundData] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -34,13 +35,11 @@ export const ARViewerPageHTML = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  // Инструкции исчезают через 5 секунд
   useEffect(() => {
     const timerId = setTimeout(() => setInstructionsVisible(false), 5000);
     return () => clearTimeout(timerId);
   }, []);
 
-  // Загрузка модели по имени
   useEffect(() => {
     if (modelName) {
       setIsLoading(true);
@@ -54,7 +53,6 @@ export const ARViewerPageHTML = () => {
     }
   }, [modelName]);
 
-  // Загрузка звука
   useEffect(() => {
     if (!currentModel?.soundUrl) return;
     fetch(`${API_BASE}${currentModel.soundUrl}`)
@@ -80,25 +78,6 @@ export const ARViewerPageHTML = () => {
     };
   }, [currentModel]);
 
-  // Функции масштабирования
-  const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.03, 10);
-    setModelScale(newScale);
-    sendScaleToIframe(newScale);
-  };
-
-  const decreaseScale = () => {
-    const newScale = Math.max(modelScale - 0.03, 0.01);
-    setModelScale(newScale);
-    sendScaleToIframe(newScale);
-  };
-
-  const resetScale = () => {
-    setModelScale(1);
-    sendScaleToIframe(1);
-  };
-
-  // Отправка масштаба в iframe
   const sendScaleToIframe = (scale: number) => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
@@ -108,7 +87,14 @@ export const ARViewerPageHTML = () => {
     }
   };
 
-  // Формируем URL для iframe
+  const {
+    decreaseScale,
+    increaseScale,
+    modelScale,
+    resetScale,
+    setModelScale,
+  } = useModelScale(sendScaleToIframe);
+
   const iframeUrl =
     currentModel?.modelUrl && currentModel?.patternUrl
       ? `/ar-scene.html?model=${encodeURIComponent(currentModel.modelUrl)}
@@ -122,8 +108,6 @@ export const ARViewerPageHTML = () => {
 
   return (
     <div className={styles.container}>
-      {/* iframe с AR-сценой на заднем плане */}
-
       {isError ? (
         <div style={{ color: "red", fontWeight: "500" }}>{errorMessage}</div>
       ) : null}
@@ -147,51 +131,14 @@ export const ARViewerPageHTML = () => {
       )}
       {isLoading ? <PageLoader /> : null}
 
-      {/* Элементы управления поверх iframe */}
-      <div className={styles.controlsPanel} style={{ zIndex: 10 }}>
-        <h4 className={styles.panelTitle}>Масштаб модели</h4>
-        <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
-        </div>
-        <div className={styles.buttonGroup}>
-          <button
-            onClick={decreaseScale}
-            className={`${styles.controlButton} ${styles.buttonDecrease}`}
-          >
-            -
-          </button>
-          <button
-            onClick={increaseScale}
-            className={`${styles.controlButton} ${styles.buttonIncrease}`}
-          >
-            +
-          </button>
-          <button
-            onClick={resetScale}
-            className={`${styles.controlButton} ${styles.buttonReset}`}
-          >
-            Сброс
-          </button>
-        </div>
-        <div>
-          <label className={styles.sliderLabel}>
-            Точная настройка:
-            <input
-              type="range"
-              min="0.01"
-              max="10"
-              step="0.03"
-              value={modelScale}
-              onChange={(e) => {
-                const newScale = parseFloat(e.target.value);
-                setModelScale(newScale);
-                sendScaleToIframe(newScale);
-              }}
-              className={styles.sliderInput}
-            />
-          </label>
-        </div>
-      </div>
+      <ControlsPanel
+        decreaseScale={decreaseScale}
+        increaseScale={increaseScale}
+        resetScale={resetScale}
+        setModelScale={setModelScale}
+        modelScale={modelScale}
+        sendScaleToIframe={sendScaleToIframe}
+      />
 
       {soundData && (
         <div className={styles.soundControls} style={{ zIndex: 10 }}>
