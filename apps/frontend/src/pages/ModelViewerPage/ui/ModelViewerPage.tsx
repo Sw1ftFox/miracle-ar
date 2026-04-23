@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "@shared/ui/link/Link";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,10 +9,19 @@ import { API_BASE } from "@/app/api/config";
 import ErrorBoundary from "@/app/providers/ErrorBoundary/ErrorBoundary";
 import { ModelCanvas } from "@/widgets/ModelCanvas";
 import type { ModelState } from "@/features/modelManagment/modelTypes";
+import { useModelScale } from "@/shared/hooks/useModelScale";
+import { ControlsPanel } from "@/shared/ui/ControlsPanel/ControlsPanel";
 
 export const ModelViewerPage = () => {
   const { modelName } = useParams();
-  const [modelScale, setModelScale] = useState(1);
+
+  const {
+    decreaseScale,
+    increaseScale,
+    modelScale,
+    resetScale,
+    setModelScale,
+  } = useModelScale();
 
   const { currentModel, isError } = useSelector<RootState, ModelState>(
     (state) => state.modelsReducer,
@@ -25,20 +34,6 @@ export const ModelViewerPage = () => {
   useEffect(() => {
     dispatch(fetchCurrentModel(modelName || ""));
   }, [modelName]);
-
-  const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.03, 10);
-    setModelScale(newScale);
-  };
-
-  const decreaseScale = () => {
-    const newScale = Math.max(modelScale - 0.03, 0.01);
-    setModelScale(newScale);
-  };
-
-  const resetScale = () => {
-    setModelScale(1);
-  };
 
   if (isError) {
     return (
@@ -73,49 +68,13 @@ export const ModelViewerPage = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.controlsPanel}>
-        <h4 className={styles.panelTitle}>Масштаб модели</h4>
-
-        <div className={styles.scaleDisplay}>
-          <strong>Текущий: {modelScale.toFixed(2)}x</strong>
-        </div>
-
-        <div className={styles.buttonGroup}>
-          <button
-            onClick={decreaseScale}
-            className={`${styles.controlButton} ${styles.buttonDecrease}`}
-          >
-            -
-          </button>
-          <button
-            onClick={increaseScale}
-            className={`${styles.controlButton} ${styles.buttonIncrease}`}
-          >
-            +
-          </button>
-          <button
-            onClick={resetScale}
-            className={`${styles.controlButton} ${styles.buttonReset}`}
-          >
-            Сброс
-          </button>
-        </div>
-
-        <div>
-          <label className={styles.sliderLabel}>
-            Точная настройка:
-            <input
-              type="range"
-              min="0.01"
-              max="10"
-              step="0.03"
-              value={modelScale}
-              onChange={(e) => setModelScale(parseFloat(e.target.value))}
-              className={styles.sliderInput}
-            />
-          </label>
-        </div>
-      </div>
+      <ControlsPanel
+        decreaseScale={decreaseScale}
+        increaseScale={increaseScale}
+        resetScale={resetScale}
+        setModelScale={setModelScale}
+        modelScale={modelScale}
+      />
 
       <div
         style={{

@@ -2,6 +2,7 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import { PreviewModel } from "@/widgets/PreviewModel";
+import { OrbitControls } from "@react-three/drei";
 
 type ModelCanvasType = {
   modelUrl: string | undefined;
@@ -32,11 +33,18 @@ export const ModelCanvas = ({ modelUrl, modelScale }: ModelCanvasType) => {
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
 
+        <OrbitControls
+          enableRotate={true}
+          rotateSpeed={1.0}
+          enableZoom={true}
+          enablePan={false}
+        />
+
         <PreviewModel
           modelUrl={modelUrl}
           position={[0, -1.3, 0]}
           scale={modelScale}
-          autoRotate={true}
+          autoRotate={false}
         />
       </Canvas>
     </Suspense>
