@@ -13,6 +13,7 @@ export const FileTypes = {
   PREVIEWS: "previews",
   DESCRIPTIONS: "descriptions",
   PATTERNS: "patterns",
+  VIDEOS: "videos",
 } as const;
 
 export type SectionType = typeof FileTypes[keyof typeof FileTypes];

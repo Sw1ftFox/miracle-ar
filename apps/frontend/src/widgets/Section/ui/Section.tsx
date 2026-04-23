@@ -125,7 +125,6 @@ export const Section = ({
       dispatch(deleteFile({ type, fileName }));
     }
   };
-
   return (
     <div id={id}>
       <h2>{title}</h2>
