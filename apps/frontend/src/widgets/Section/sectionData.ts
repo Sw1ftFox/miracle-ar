@@ -11,6 +11,17 @@ export const sectionData = [
     submitText: "Загрузить модель"
   },
   {
+    name: "videos",
+    type: "video",
+    buttonText: "Видео",
+    title: "Видео (формат .mp4)",
+    id: "video-section",
+    inputType: "file",
+    accept: ".mp4",
+    required: true,
+    submitText: "Загрузить видео",
+  },
+  {
     name: "sounds",
     type: "sound",
     buttonText: "Звуки",
@@ -54,17 +65,6 @@ export const sectionData = [
     required: true,
     submitText: "Загрузить паттерн",
   },
-  {
-    name: "videos",
-    type: "video",
-    buttonText: "Видео",
-    title: "Видео (формат .mp4)",
-    id: "video-section",
-    inputType: "file",
-    accept: ".mp4",
-    required: true,
-    submitText: "Загрузить видео",
-  }
 ]
 
 

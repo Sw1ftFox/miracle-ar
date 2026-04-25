@@ -11,6 +11,7 @@ public class ModelDto {
     private String modelUrl;
     private String patternUrl;
     private String soundUrl;
+    private String videoUrl;
     private Boolean isCurrent;
 
     public FullInfo() {
@@ -65,6 +66,14 @@ public class ModelDto {
       this.soundUrl = soundUrl;
     }
 
+    public String getVideoUrl() {
+      return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+      this.videoUrl = videoUrl;
+    }
+
     public Boolean getIsCurrent() {
       return isCurrent;
     }
@@ -81,6 +90,7 @@ public class ModelDto {
     private String modelUrl;
     private String patternUrl;
     private String soundUrl;
+    private String videoUrl;
     private Long fileSize;
     private LocalDateTime createdAt;
 
@@ -134,6 +144,14 @@ public class ModelDto {
 
     public void setSoundUrl(String soundUrl) {
       this.soundUrl = soundUrl;
+    }
+
+    public String getVideoUrl() { 
+      return videoUrl; 
+    }
+    
+    public void setVideoUrl(String videoUrl) { 
+      this.videoUrl = videoUrl;
     }
 
     public Long getFileSize() {

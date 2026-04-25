@@ -55,6 +55,7 @@ public class StorageService {
             info.setModelUrl("/api/files/models/" + modelFile);
             info.setPatternUrl("/api/files/patterns/" + baseName + ".patt");
             info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
+            info.setVideoUrl(findVideoFile(baseName));
             info.setIsCurrent(modelFile.equals(currentModel));
 
             models.add(info);
@@ -90,6 +91,7 @@ public class StorageService {
         info.setModelUrl("/api/files/models/" + modelName);
         info.setPatternUrl("/api/files/patterns/" + baseName + ".patt");
         info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
+        info.setVideoUrl(findVideoFile(baseName));
 
         try {
             info.setFileSize(Files.size(modelPath));
@@ -196,6 +198,17 @@ public class StorageService {
             }
         }
         return "";
+    }
+
+    private String findVideoFile(String baseName) {
+        String[] videoExtensions = { ".mp4", ".webm", ".mov" };
+        for (String ext : videoExtensions) {
+            Path videoPath = Paths.get(storageLocation, VIDEOS_DIR, baseName + ext);
+            if (Files.exists(videoPath)) {
+                return "/api/files/videos/" + baseName + ext;
+            }
+        }
+        return null;
     }
 
     public ResponseEntity<Resource> serveFile(String fileName, String fileType, String contentType) {
