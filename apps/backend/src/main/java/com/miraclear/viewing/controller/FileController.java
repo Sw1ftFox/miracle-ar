@@ -92,6 +92,16 @@ public class FileController {
         return deleteFile(fileName, "descriptions");
     }
 
+    @GetMapping("/videos/{fileName:.+}")
+    public ResponseEntity<Resource> serveVideoFile(@PathVariable String fileName) {
+        return storageService.serveVideoFile(fileName);
+    }
+
+    @DeleteMapping("/videos/{fileName:.+}")
+    public ResponseEntity<?> deleteVideoFile(@PathVariable String fileName) {
+        return deleteFile(fileName, "videos");
+    }
+
     private ResponseEntity<?> deleteFile(String fileName, String fileType) {
         try {
             System.out.println("Delete request - File: " + fileName + ", Type: " + fileType);
