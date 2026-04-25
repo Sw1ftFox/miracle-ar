@@ -12,8 +12,13 @@ import {
   type SectionType,
 } from "@/features/filesManagment/fileTypes";
 import { downloadDefaultMarker } from "@/features/filesManagment/filesSlice";
+import { Button, Grid } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+
+const { useBreakpoint } = Grid;
 
 export const AdminPage = () => {
+  const screens = useBreakpoint();
   const [selectedSection, setSelectedSection] = useState<SectionType>(
     FileTypes.MODELS,
   );
@@ -34,19 +39,35 @@ export const AdminPage = () => {
     <div className={styles.adminPage}>
       <h1>Панель администратора</h1>
       <div className={styles.headerActions}>
-        <Link
-          to="/models"
-          className={styles.return__btn}
-          onClick={() => logout()}
-        >
-          ← Вернуться в меню
+        <Link to={"/models"}>
+          <Button
+            variant="outlined"
+            color="purple"
+            style={{
+              fontWeight: 600,
+              padding: 18,
+              borderRadius: 12,
+              fontSize: screens.xs ? "0.8rem" : "",
+            }}
+            onClick={() => logout()}
+          >
+            <ArrowLeftOutlined /> Вернуться в меню
+          </Button>
         </Link>
-        <button
-          className={styles.download__btn}
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+            textWrap: "auto",
+            fontSize: screens.xs ? "0.8rem" : "",
+          }}
           onClick={handleDownloadDefaultMarker}
         >
           Скачать маркер по умолчанию
-        </button>
+        </Button>
       </div>
 
       <div className={styles.section}>

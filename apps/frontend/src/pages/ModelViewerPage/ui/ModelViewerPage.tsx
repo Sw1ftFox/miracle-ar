@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import Link from "@shared/ui/link/Link";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/app/store";
 import { fetchCurrentModel } from "@features/modelManagment/modelsSlice";
@@ -11,6 +10,7 @@ import { ModelCanvas } from "@/widgets/ModelCanvas";
 import type { ModelState } from "@/features/modelManagment/modelTypes";
 import { useModelScale } from "@/shared/hooks/useModelScale";
 import { ControlsPanel } from "@/shared/ui/ControlsPanel/ControlsPanel";
+import { Button } from "antd";
 
 export const ModelViewerPage = () => {
   const { modelName } = useParams();
@@ -51,17 +51,19 @@ export const ModelViewerPage = () => {
         }}
       >
         <h2>Ошибка загрузки модели</h2>
-        <Link
-          content="Вернуться в меню"
-          link="/models"
-          style={{
-            marginTop: "20px",
-            padding: "10px 20px",
-            background: "white",
-            color: "#1a1a1a",
-            borderRadius: "4px",
-          }}
-        />
+        <Link to={"/models"}>
+          <Button
+            variant="solid"
+            color="purple"
+            style={{
+              fontWeight: 600,
+              padding: 18,
+              borderRadius: 12,
+            }}
+          >
+            Вернуться в меню
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -85,7 +87,19 @@ export const ModelViewerPage = () => {
           zIndex: 100,
         }}
       >
-        <Link content="Вернуться в меню" link="/models" />
+        <Link to={"/models"}>
+          <Button
+            variant="solid"
+            color="purple"
+            style={{
+              fontWeight: 600,
+              padding: 18,
+              borderRadius: 12,
+            }}
+          >
+            Вернуться в меню
+          </Button>
+        </Link>
       </div>
 
       <ErrorBoundary>

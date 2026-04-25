@@ -16,6 +16,16 @@ import {
   uploadFiles,
 } from "@/features/filesManagment/filesSlice";
 import styles from "./Section.module.css";
+import {
+  Button,
+  Grid,
+  message,
+  Upload,
+  type GetProp,
+  type UploadFile,
+  type UploadProps,
+} from "antd";
+import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 
 type PropsType = {
   type: string;
@@ -27,17 +37,12 @@ type PropsType = {
   submitText: string;
 };
 
-export const Section = ({
-  type,
-  title,
-  id,
-  inputType,
-  accept,
-  required,
-  submitText,
-}: PropsType) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>();
-  const [isFileLoaded, setIsFileLoaded] = useState<boolean>(false);
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+const { useBreakpoint } = Grid;
+
+export const Section = ({ type, title, id, accept, submitText }: PropsType) => {
+  const screens = useBreakpoint();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { files, isLoading, isSuccess, isError, errorMessage } = useSelector<
     RootState,
@@ -50,6 +55,7 @@ export const Section = ({
   const [compressError, setCompressError] = useState<string | null>(null);
   const [originalSize, setOriginalSize] = useState<number | null>(null);
   const [compressedSize, setCompressedSize] = useState<number | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const fileType = type + "s";
   useEffect(() => {
@@ -59,14 +65,7 @@ export const Section = ({
   }, []);
 
   useEffect(() => {
-    if (isSectionType(fileType) && isSuccess) {
-      dispatch(fetchFiles(fileType));
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
     if (isSuccess || isError) {
-      setIsFileLoaded(false);
       const timer = setTimeout(() => {
         dispatch(resetUploadState());
         setCompressError(null);
@@ -77,17 +76,20 @@ export const Section = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!selectedFile) return;
+    if (!fileList[0]) return;
 
-    let fileToUpload: File | Blob = selectedFile;
-    const finalFileName = selectedFile.name;
+    let fileToUpload: UploadFile<unknown> | Blob = fileList[0];
+    const finalFileName = fileList[0].name;
 
     // Сжатие для моделей
     if (type === "model" && compressEnabled) {
       setIsCompressing(true);
       setCompressError(null);
       try {
-        const compressedBlob = await compressGLB(selectedFile, "medium");
+        const compressedBlob = await compressGLB(
+          fileList[0] as FileType,
+          "medium",
+        );
         setCompressedSize(compressedBlob.size);
         fileToUpload = compressedBlob;
       } catch (err) {
@@ -100,16 +102,25 @@ export const Section = ({
     }
 
     const formData = new FormData();
-    formData.append("file", fileToUpload, finalFileName);
-    const fileName = selectedFile.name;
+    formData.append("file", fileToUpload as FileType, finalFileName);
+    const fileName = fileList[0].name;
     const modelName = fileName.replace(/\.[^/.]+$/, "");
     formData.append("modelName", modelName);
     formData.append("type", type);
 
     dispatch(uploadFiles(formData))
       .unwrap()
+      .then(() => {
+        message.success("Успешно загружено!");
+        if (isSectionType(fileType)) {
+          dispatch(fetchFiles(fileType));
+        }
+      })
+      .catch(() => {
+        message.error("Ошибка загрузки!");
+      })
       .finally(() => {
-        setSelectedFile(null);
+        setFileList([]);
         if (fileInputRef.current) fileInputRef.current.value = "";
       });
   };
@@ -122,7 +133,14 @@ export const Section = ({
 
   const handleDelete = (type: string, fileName: string) => {
     if (isSectionType(type)) {
-      dispatch(deleteFile({ type, fileName }));
+      dispatch(deleteFile({ type, fileName }))
+        .unwrap()
+        .then(() => {
+          message.success("Успешно удалено!");
+        })
+        .catch(() => {
+          message.error("Ошибка удаления!");
+        });
     }
   };
   return (
@@ -134,51 +152,53 @@ export const Section = ({
             return (
               <div className={styles.files__item}>
                 <div className={styles.files__fileName}>{fileName}</div>
-                <button
-                  className={styles.btn__download}
+                <Button
+                  variant="outlined"
+                  color="green"
+                  style={{
+                    fontWeight: 500,
+                  }}
                   onClick={() => handleDownload(type + "s", fileName)}
                 >
                   Скачать
-                </button>
-                <button
-                  className={styles.btn__delete}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="danger"
+                  style={{
+                    fontWeight: 500,
+                  }}
                   onClick={() => handleDelete(type + "s", fileName)}
                 >
                   Удалить
-                </button>
+                </Button>
               </div>
             );
         })}
       </div>
 
       <form className={styles.upload__form} onSubmit={handleSubmit}>
-        <input
-          type={inputType}
+        <Upload
           accept={accept}
-          required={required}
-          ref={fileInputRef}
-          onChange={(e) => {
-            const file = e.target.files?.[0] || null;
-            setSelectedFile(file);
-            setIsFileLoaded(true);
+          name="file"
+          maxCount={1}
+          fileList={fileList}
+          beforeUpload={(file) => {
+            setFileList([file]);
             if (file) {
-              setOriginalSize(file.size);
+              setOriginalSize(file?.size || 0);
               setCompressedSize(null);
             }
+            return false;
           }}
-        />
-        <span className={styles.file__label} style={{ color: "black" }}>
-          {isFileLoaded ? (
-            <span>
-              Выбранный файл
-              <span style={{ color: "green" }}> {selectedFile?.name}</span>
-            </span>
-          ) : (
-            "Файл не выбран"
-          )}
-        </span>
+          onRemove={() => {
+            setFileList([]);
+          }}
+        >
+          <Button icon={<UploadOutlined />}>Прикрепить файл</Button>
+        </Upload>
 
-        {type === "model" && selectedFile && (
+        {type === "model" && fileList.length > 0 && (
           <div className={styles.compressionOptions}>
             <label>
               <input
@@ -196,19 +216,27 @@ export const Section = ({
         )}
 
         <div style={{ flexBasis: "100%", height: "0" }}></div>
-        <button type="submit" className={styles.btn}>
-          {submitText}
-        </button>
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 500,
+            padding: screens.xs ? 0 : 18,
+            borderRadius: 12,
+            fontSize: screens.xs ? "" : "1rem",
+            display: "flex",
+            margin: screens.xs ? "" : "0 auto",
+          }}
+          htmlType="submit"
+          disabled={fileList.length <= 0}
+        >
+          <DownloadOutlined /> {submitText}
+        </Button>
       </form>
 
       <div className={styles.upload__status}>
         {isLoading ? <PageLoader /> : null}
-        {isSuccess ? (
-          <UploadStatus
-            style={{ color: "green", position: "absolute" }}
-            text="Успешно!"
-          />
-        ) : null}
+
         {isError ? (
           <UploadStatus style={{ color: "red" }} text={errorMessage} />
         ) : null}

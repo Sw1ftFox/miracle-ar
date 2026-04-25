@@ -21,43 +21,6 @@
   gap: 15px;
 }
 
-.return__btn,
-.download__btn {
-  padding: 12px 25px;
-  text-decoration: none;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(92, 107, 192, 0.3);
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.return__btn {
-  background: transparent;
-  color: #5e35b1;
-  border: 2px solid #5e35b1;
-}
-
-.return__btn:hover {
-  transform: translateY(-2px);
-  background: rgba(94, 53, 177, 0.05);
-}
-
-.download__btn {
-  background: linear-gradient(45deg, #3949ab, #5e35b1);
-  color: white;
-}
-
-.download__btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(92, 107, 192, 0.4);
-}
-
 .section {
   background: white;
   border-radius: 16px;
@@ -124,11 +87,6 @@
     align-items: stretch;
   }
 
-  .return__btn {
-    width: 100%;
-    text-align: center;
-  }
-
   .tabs {
     overflow-x: auto;
     background-color: transparent;
@@ -150,19 +108,10 @@
   .adminPage h1 {
     font-size: 1.5rem;
   }
-
-  .return__btn {
-    padding: 5px;
-  }
 }
 
 @media (max-width: 360px) {
   .adminPage {
     padding: 1rem 0.5rem;
-  }
-
-  .tab__btn {
-    padding: 8px 12px;
-    font-size: 13px;
   }
 }

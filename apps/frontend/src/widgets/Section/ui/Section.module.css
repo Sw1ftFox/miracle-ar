@@ -28,63 +28,14 @@
   white-space: nowrap;
 }
 
-.btn__download {
-  background: rgb(100, 181, 100);
-}
-.btn__delete {
-  background: #ff4757;
-}
-
-.btn__download:hover {
-  background: rgb(139, 207, 139);
-}
-
-.btn__delete:hover {
-  background: #ff6b81;
-}
-
 .upload__form {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 15px;
   flex-wrap: wrap;
   margin-top: 20px;
   margin-bottom: 30px;
-}
-
-.upload__form input[type="file"] {
-  flex: 1;
-  min-width: 200px;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #f9fafb;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.btn {
-  padding: 10px 20px;
-  background: linear-gradient(45deg, #3949ab, #5e35b1);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(92, 107, 192, 0.3);
-  white-space: nowrap;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(92, 107, 192, 0.4);
-}
-
-.file__label {
-  text-align: center;
 }
 
 .upload__status {
@@ -95,18 +46,6 @@
   margin-bottom: 40px;
 }
 
-.files__item button {
-  flex-shrink: 0;
-  padding: 6px 14px;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
 @media (max-width: 768px) {
   .upload__form {
     flex-direction: column;
@@ -114,10 +53,6 @@
   }
 
   .upload__form input[type="file"] {
-    width: 100%;
-  }
-
-  .btn {
     width: 100%;
   }
 }
