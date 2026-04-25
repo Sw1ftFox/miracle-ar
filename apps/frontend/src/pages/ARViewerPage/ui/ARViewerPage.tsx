@@ -1,10 +1,10 @@
 import type { ModelType } from "@/features/modelManagment/modelTypes";
-import Link from "@shared/ui/link/Link";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./ARViewerPage.module.css";
 import { API_BASE } from "@/app/api/config";
 import { ARScene } from "@/widgets/ARScene";
+import { Button } from "antd";
 
 export const ARViewerPage = () => {
   const { modelName } = useParams();
@@ -86,7 +86,19 @@ export const ARViewerPage = () => {
         soundUrl={soundUrl}
       />
       <div className={styles.backButtonContainer}>
-        <Link content="Вернуться в меню" link="/models" />
+        <Link to={"/models"}>
+          <Button
+            variant="solid"
+            color="purple"
+            style={{
+              fontWeight: 600,
+              padding: 18,
+              borderRadius: 12,
+            }}
+          >
+            Вернуться в меню
+          </Button>
+        </Link>
       </div>
       {instructionsVisible && (
         <div className={styles.instruction}>

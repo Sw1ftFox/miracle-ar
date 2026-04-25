@@ -1,12 +1,12 @@
 import type { ModelType } from "@/features/modelManagment/modelTypes";
-import Link from "@shared/ui/link/Link";
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
 import { API_BASE } from "@/app/api/config";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import { useModelScale } from "@/shared/hooks/useModelScale";
 import { ControlsPanel } from "@/shared/ui/ControlsPanel/ControlsPanel";
+import { Button } from "antd";
 
 export const ARViewerPageHTML = () => {
   const { modelName } = useParams();
@@ -158,7 +158,19 @@ export const ARViewerPageHTML = () => {
       )}
 
       <div className={styles.backButtonContainer}>
-        <Link content="Вернуться в меню" link="/models" />
+        <Link to={"/models"}>
+          <Button
+            variant="solid"
+            color="purple"
+            style={{
+              fontWeight: 600,
+              padding: 18,
+              borderRadius: 12,
+            }}
+          >
+            Вернуться в меню
+          </Button>
+        </Link>
       </div>
 
       {instructionsVisible && (
