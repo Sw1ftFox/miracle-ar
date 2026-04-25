@@ -186,7 +186,7 @@ export const Section = ({
                 checked={compressEnabled}
                 onChange={(e) => setCompressEnabled(e.target.checked)}
               />
-              Сжать модель для ускорения загрузки?
+              Сжать модель (рекомендуется)?
             </label>
             {isCompressing && <PageLoader />}
             {compressError && (

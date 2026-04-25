@@ -6,6 +6,7 @@ import { API_BASE } from "@/app/api/config";
 import alt_image from "@/shared/assets/images/alt_image.png";
 import { removeFileExtension } from "@/shared/utils/removeFileExtension";
 import { Button } from "antd";
+import ReactPlayer from "react-player";
 
 type Props = {
   model: ModelType;
@@ -36,13 +37,39 @@ export const ModelItem = ({ model }: Props) => {
     content = (
       <div className={styles.model__card}>
         <div className={styles.image__container}>
-          <img
-            src={
-              model.previewUrl ? `${API_BASE}${model.previewUrl}` : alt_image
-            }
-            alt={displayName}
-            className={styles.model__image}
-          />
+          {model.videoUrl ? (
+            <ReactPlayer
+              playing={true}
+              controls={true}
+              volume={1}
+              src={
+                model.videoUrl || "https://www.youtube.com/watch?v=LXb3EKWsInQ"
+              }
+              light={
+                <img
+                  src={
+                    model.previewUrl
+                      ? `${API_BASE}${model.previewUrl}`
+                      : alt_image
+                  }
+                  alt={displayName}
+                  className={styles.model__image}
+                />
+              }
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          ) : (
+            <img
+              src={
+                model.previewUrl ? `${API_BASE}${model.previewUrl}` : alt_image
+              }
+              alt={displayName}
+              className={styles.model__image}
+            />
+          )}
         </div>
         <div className={styles.model__content}>
           <h3 className={styles.model__title}>{displayName}</h3>
@@ -78,7 +105,7 @@ export const ModelItem = ({ model }: Props) => {
           </Button>
           <Button
             color="purple"
-            variant="solid"
+            variant="outlined"
             onClick={() => handleNavigate(displayName, true)}
             data-model={model}
             style={{

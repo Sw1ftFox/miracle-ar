@@ -6,6 +6,7 @@ export type ModelType = {
   modelUrl: string;
   patternUrl: string;
   soundUrl?: string;
+  videoUrl?: string;
 }
 
 export type ModelState = {
