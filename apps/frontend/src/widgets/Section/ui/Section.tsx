@@ -3,14 +3,11 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import UploadStatus from "@/shared/ui/uploadStatus/UploadStatus";
-import { compressGLB } from "@/shared/utils/compressModel";
 import {
   isSectionType,
   type FilesState,
 } from "@/features/filesManagment/fileTypes";
 import {
-  deleteFile,
-  downloadFile,
   fetchFiles,
   resetUploadState,
   uploadFiles,
@@ -26,8 +23,12 @@ import {
   type UploadProps,
 } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
+import { useCompressModel } from "@/shared/hooks/useCompressModel";
+import { CompressionStats } from "@/shared/ui/CompressionStats/CompressionStats";
+import CompressionOptions from "@/shared/ui/CompressionOptions/CompressionOptions";
+import { FilesList } from "@/widgets/FilesList";
 
-type PropsType = {
+type SectionProps = {
   type: string;
   title: string;
   id: string;
@@ -41,21 +42,36 @@ type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const { useBreakpoint } = Grid;
 
-export const Section = ({ type, title, id, accept, submitText }: PropsType) => {
+export const Section = ({
+  type,
+  title,
+  id,
+  accept,
+  submitText,
+}: SectionProps) => {
   const screens = useBreakpoint();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { files, isLoading, isSuccess, isError, errorMessage } = useSelector<
+  const { isLoading, isSuccess, isError, errorMessage } = useSelector<
     RootState,
     FilesState
   >((state) => state.filesReducer);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [compressEnabled, setCompressEnabled] = useState(false);
-  const [isCompressing, setIsCompressing] = useState(false);
-  const [compressError, setCompressError] = useState<string | null>(null);
-  const [originalSize, setOriginalSize] = useState<number | null>(null);
-  const [compressedSize, setCompressedSize] = useState<number | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const {
+    compressModel,
+    setCompressError,
+    setOriginalSize,
+    setCompressedSize,
+    compressEnabled,
+    setCompressEnabled,
+    isCompressing,
+    compressError,
+    originalSize,
+    compressedSize,
+    fileToUpload,
+  } = useCompressModel();
 
   const fileType = type + "s";
   useEffect(() => {
@@ -78,31 +94,19 @@ export const Section = ({ type, title, id, accept, submitText }: PropsType) => {
     e.preventDefault();
     if (!fileList[0]) return;
 
-    let fileToUpload: UploadFile<unknown> | Blob = fileList[0];
     const finalFileName = fileList[0].name;
 
-    // Сжатие для моделей
-    if (type === "model" && compressEnabled) {
-      setIsCompressing(true);
-      setCompressError(null);
-      try {
-        const compressedBlob = await compressGLB(
-          fileList[0] as FileType,
-          "medium",
-        );
-        setCompressedSize(compressedBlob.size);
-        fileToUpload = compressedBlob;
-      } catch (err) {
-        console.error("Ошибка сжатия:", err);
-        setCompressError("Не удалось сжать модель");
-        setIsCompressing(false);
-        return;
-      }
-      setIsCompressing(false);
+    if (type === "model") {
+      compressModel(fileList[0]);
     }
-
     const formData = new FormData();
-    formData.append("file", fileToUpload as FileType, finalFileName);
+    formData.append(
+      "file",
+      type === "modell"
+        ? (fileToUpload as FileType)
+        : (fileList[0] as FileType),
+      finalFileName,
+    );
     const fileName = fileList[0].name;
     const modelName = fileName.replace(/\.[^/.]+$/, "");
     formData.append("modelName", modelName);
@@ -125,57 +129,10 @@ export const Section = ({ type, title, id, accept, submitText }: PropsType) => {
       });
   };
 
-  const handleDownload = (type: string, fileName: string) => {
-    if (isSectionType(type)) {
-      dispatch(downloadFile({ type, fileName }));
-    }
-  };
-
-  const handleDelete = (type: string, fileName: string) => {
-    if (isSectionType(type)) {
-      dispatch(deleteFile({ type, fileName }))
-        .unwrap()
-        .then(() => {
-          message.success("Успешно удалено!");
-        })
-        .catch(() => {
-          message.error("Ошибка удаления!");
-        });
-    }
-  };
   return (
     <div id={id}>
       <h2>{title}</h2>
-      <div id="items__list" className={styles.filesList}>
-        {files?.map((fileName) => {
-          if (fileName !== "default.patt")
-            return (
-              <div className={styles.files__item}>
-                <div className={styles.files__fileName}>{fileName}</div>
-                <Button
-                  variant="outlined"
-                  color="green"
-                  style={{
-                    fontWeight: 500,
-                  }}
-                  onClick={() => handleDownload(type + "s", fileName)}
-                >
-                  Скачать
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="danger"
-                  style={{
-                    fontWeight: 500,
-                  }}
-                  onClick={() => handleDelete(type + "s", fileName)}
-                >
-                  Удалить
-                </Button>
-              </div>
-            );
-        })}
-      </div>
+      <FilesList sectionType={type} sectionId={id} />
 
       <form className={styles.upload__form} onSubmit={handleSubmit}>
         <Upload
@@ -199,20 +156,12 @@ export const Section = ({ type, title, id, accept, submitText }: PropsType) => {
         </Upload>
 
         {type === "model" && fileList.length > 0 && (
-          <div className={styles.compressionOptions}>
-            <label>
-              <input
-                type="checkbox"
-                checked={compressEnabled}
-                onChange={(e) => setCompressEnabled(e.target.checked)}
-              />
-              Сжать модель (рекомендуется)?
-            </label>
-            {isCompressing && <PageLoader />}
-            {compressError && (
-              <UploadStatus style={{ color: "red" }} text={compressError} />
-            )}
-          </div>
+          <CompressionOptions
+            compressEnabled={compressEnabled}
+            compressError={compressError}
+            isCompressing={isCompressing}
+            setCompressEnabled={setCompressEnabled}
+          />
         )}
 
         <div style={{ flexBasis: "100%", height: "0" }}></div>
@@ -243,14 +192,10 @@ export const Section = ({ type, title, id, accept, submitText }: PropsType) => {
       </div>
 
       {originalSize && compressedSize && (
-        <div className={styles.compressionStats}>
-          <p>
-            Размер: {(originalSize / 1024).toFixed(2)} КБ →{" "}
-            {(compressedSize / 1024).toFixed(2)} КБ
-            <br />
-            Сжатие: {Math.round((1 - compressedSize / originalSize) * 100)}%
-          </p>
-        </div>
+        <CompressionStats
+          compressedSize={compressedSize}
+          originalSize={originalSize}
+        />
       )}
     </div>
   );

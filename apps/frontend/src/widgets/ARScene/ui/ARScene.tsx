@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./ARScene.module.css";
+import { useModelScale } from "@/shared/hooks/useModelScale";
 
 interface ARSceneProps {
   modelUrl: string | undefined;
@@ -12,23 +13,15 @@ export const ARScene: React.FC<ARSceneProps> = ({
   markerPatternUrl,
   soundUrl,
 }) => {
-  const [modelScale, setModelScale] = useState(1);
+  const {
+    modelScale,
+    increaseScale,
+    decreaseScale,
+    resetScale,
+    setModelScale,
+  } = useModelScale();
   const [soundData, setSoundData] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const increaseScale = () => {
-    const newScale = Math.min(modelScale + 0.03, 10);
-    setModelScale(newScale);
-  };
-
-  const decreaseScale = () => {
-    const newScale = Math.max(modelScale - 0.03, 0.01);
-    setModelScale(newScale);
-  };
-
-  const resetScale = () => {
-    setModelScale(1);
-  };
 
   useEffect(() => {
     if (!soundUrl) return;

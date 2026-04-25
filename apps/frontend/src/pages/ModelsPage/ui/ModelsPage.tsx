@@ -1,4 +1,4 @@
-import { ModelList } from "@/features/modelManagment";
+import { ModelList } from "@/widgets/modelList";
 import { Button } from "antd";
 import { Link } from "react-router-dom";
 

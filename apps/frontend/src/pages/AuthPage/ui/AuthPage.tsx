@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState, type AppDispatch } from "@app/store";
-import password from "@/shared/assets/icons/password.svg";
 import styles from "./AuthPage.module.css";
 import { loginAdmin } from "@/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
 import type { AuthType } from "@/features/auth/authTypes";
-import { Button } from "antd";
+import { Button, Input } from "antd";
+import { LockOutlined } from "@ant-design/icons";
 
 export const AuthPage = () => {
   const [passwordInput, setPasswordInput] = useState("");
@@ -38,9 +38,13 @@ export const AuthPage = () => {
       {isLoading ? <PageLoader /> : null}
       <form onSubmit={handleSubmit} className={`${styles.auth__form} `}>
         <label className={styles.form__label} htmlFor="password">
-          <img className={styles.form__img} src={password} alt="" />
-          <input
-            className={styles.form__input}
+          <LockOutlined
+            style={{
+              color: "grey",
+              fontSize: "1.3rem",
+            }}
+          />
+          <Input.Password
             id="password"
             name="password"
             type="password"
@@ -50,6 +54,9 @@ export const AuthPage = () => {
             }}
             placeholder="Введите пароль"
             required
+            style={{
+              fontSize: "1rem",
+            }}
           />
         </label>
         <Button
