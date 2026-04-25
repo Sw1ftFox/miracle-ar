@@ -106,4 +106,14 @@ public class ModelController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/videos")
+    public ResponseEntity<List<String>> getAllVideoFiles() {
+        try {
+            List<String> videos = storageService.getVideoFiles();
+            return ResponseEntity.ok(videos);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

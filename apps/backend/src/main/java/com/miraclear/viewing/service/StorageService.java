@@ -39,6 +39,7 @@ public class StorageService {
     private final String PREVIEWS_DIR = "previews";
     private final String SOUNDS_DIR = "sounds";
     private final String DESCRIPTIONS_DIR = "descriptions";
+    private final String VIDEOS_DIR = "videos";
 
     public List<ModelDto.FullInfo> getAllModelsWithFullInfo() throws IOException {
         List<String> modelFiles = listModelFiles();
@@ -124,6 +125,22 @@ public class StorageService {
         return listFilesByType(SOUNDS_DIR, ".mp3");
     }
 
+    public List<String> getVideoFiles() throws IOException {
+        Path videosPath = Paths.get(storageLocation, VIDEOS_DIR);
+        if (!Files.exists(videosPath)) {
+            return Collections.emptyList();
+        }
+        return Files.walk(videosPath, 1)
+                .filter(Files::isRegularFile)
+                .filter(path -> {
+                    String name = path.getFileName().toString().toLowerCase();
+                    return name.endsWith(".mp4") || name.endsWith(".webm") || name.endsWith(".mov");
+                })
+                .map(path -> path.getFileName().toString())
+                .collect(Collectors.toList());
+    }
+
+
     public List<String> getPatternFiles() throws IOException {
         return listFilesByType(MARKERS_DIR, ".patt");
     }
@@ -205,18 +222,31 @@ public class StorageService {
         }
     }
 
+    public ResponseEntity<Resource> serveVideoFile(String fileName) {
+        String extension = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+        String contentType = switch (extension) {
+            case ".mp4" -> "video/mp4";
+            case ".webm" -> "video/webm";
+            case ".mov" -> "video/quicktime";
+            default -> "application/octet-stream";
+        };
+        return serveFile(fileName, "videos", contentType);
+    }
+
     private String getSubDirectory(String fileType) {
         switch (fileType) {
             case "models":
                 return MODELS_DIR;
             case "patterns":
-                return MARKERS_DIR; // markers -> patterns в URL
+                return MARKERS_DIR;
             case "previews":
                 return PREVIEWS_DIR; 
             case "sounds":
                 return SOUNDS_DIR;
             case "descriptions":
                 return DESCRIPTIONS_DIR;
+            case "videos":
+                return VIDEOS_DIR;
             default:
                 return "";
         }
@@ -256,7 +286,7 @@ public class StorageService {
         String baseName = getBaseName(modelName);
         boolean deletedAny = false;
 
-        String[] fileTypes = { ".glb", ".patt", ".mp3", ".txt", ".jpg", ".jpeg", ".png" };
+        String[] fileTypes = { ".glb", ".patt", ".mp3", ".txt", ".jpg", ".jpeg", ".png", ".mp4", ".webm", ".mov" };
         Map<String, String> dirMapping = Map.of(
                 ".glb", MODELS_DIR,
                 ".patt", MARKERS_DIR,
@@ -264,7 +294,10 @@ public class StorageService {
                 ".txt", DESCRIPTIONS_DIR,
                 ".jpg", PREVIEWS_DIR,
                 ".jpeg", PREVIEWS_DIR,
-                ".png", PREVIEWS_DIR);
+                ".png", PREVIEWS_DIR,
+                ".mp4", VIDEOS_DIR,
+                ".webm", VIDEOS_DIR,
+               ".mov", VIDEOS_DIR);
 
         for (String ext : fileTypes) {
             String dir = dirMapping.get(ext);
@@ -347,6 +380,8 @@ public class StorageService {
                 return SOUNDS_DIR;
             case "description":
                 return DESCRIPTIONS_DIR;
+            case "video": 
+                return VIDEOS_DIR;
             default:
                 return "";
         }
@@ -377,6 +412,11 @@ public class StorageService {
             case "sound":
                 if (!".mp3".equals(extension)) {
                     throw new IllegalArgumentException("Для звуков разрешены только файлы MP3");
+                }
+                break;
+            case "video":
+                if (!Arrays.asList(".mp4", ".webm", ".mov").contains(extension)) {
+                    throw new IllegalArgumentException("Для видео разрешены только файлы MP4, WEBM, MOV");
                 }
                 break;
             default:
