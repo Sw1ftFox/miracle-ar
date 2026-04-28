@@ -52,3 +52,24 @@ git clone https://github.com/Sw1ftFox/miracle-ar.git
 cd miracle-ar/apps/backend
 .\mvnw spring-boot:run
 ```
+
+## 📂 Структура фронтенд части проекта (основные модули)
+
+```
+apps/frontend/
+├── public/               # Статика (index.html, ar-scene.html, vendor/ с A‑Frame)
+├── src/
+│   ├── app/              # Глобальные провайдеры, layouts, роутинг, store RTK
+│   ├── features/         # Слайсы Redux (auth, filesManagment, modelManagment)
+│   ├── pages/            # Страницы (ленивые) – Admin, ARViewer, Auth, Models, ModelViewer, NotFound
+│   ├── shared/           # UI‑компоненты, хуки, утилиты, конфиги
+│   │   ├── ui/           # (Loader, PageLoader, ProtectedRoute, UploadStatus, CompressionOptions, VideoPlayer...)
+│   │   └── utils/        # compressModel, StorageService, removeFileExtension
+│   ├── widgets/          # Крупные компоненты (ARScene, ModelCanvas, Section, FilesList, ModelItem...)
+│   ├── index.css
+│   └── main.tsx
+├── Dockerfile            # Сборка фронтенда для деплоя
+├── vite.config.ts
+├── package.json
+└── tsconfig.json
+```
