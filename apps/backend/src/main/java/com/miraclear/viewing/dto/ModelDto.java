@@ -17,7 +17,6 @@ public class ModelDto {
     public FullInfo() {
     }
 
-    // геттеры и сеттеры
     public String getName() {
       return name;
     }
@@ -97,7 +96,6 @@ public class ModelDto {
     public DetailInfo() {
     }
 
-    // геттеры и сеттеры
     public String getName() {
       return name;
     }

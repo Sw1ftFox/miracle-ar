@@ -50,7 +50,6 @@ public class AppConfigDto {
     }
   }
 
-  // геттеры и сеттеры
   public String getCurrentModel() {
     return currentModel;
   }

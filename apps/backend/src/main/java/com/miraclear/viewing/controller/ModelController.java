@@ -1,11 +1,20 @@
 package com.miraclear.viewing.controller;
 
 import com.miraclear.viewing.dto.ModelDto;
+import com.miraclear.viewing.entity.ModelCategory;
+import com.miraclear.viewing.repository.CategoryRepository;
+import com.miraclear.viewing.repository.ModelCategoryRepository;
 import com.miraclear.viewing.service.StorageService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
+import com.miraclear.viewing.entity.Category;
 
 @RestController
 @RequestMapping("/api/models")
@@ -115,5 +124,27 @@ public class ModelController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @Autowired private ModelCategoryRepository modelCategoryRepository;
+    @Autowired private CategoryRepository categoryRepository;
+
+    @PostMapping("/{modelName}/categories")
+    public ResponseEntity<?> assignCategoriesToModel(@PathVariable String modelName,
+                                                    @RequestBody List<Long> categoryIds) {
+        modelCategoryRepository.deleteByModelFileName(modelName);
+        for (Long catId : categoryIds) {
+            Category cat = categoryRepository.findById(catId).orElseThrow();
+            ModelCategory mc = new ModelCategory(modelName, cat);
+            modelCategoryRepository.save(mc);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/categories/{id}/models")
+    public List<String> getModelsByCategory(@PathVariable Long id) {
+        return modelCategoryRepository.findByCategoryId(id).stream()
+                .map(ModelCategory::getModelFileName)
+                .collect(Collectors.toList());
     }
 }
