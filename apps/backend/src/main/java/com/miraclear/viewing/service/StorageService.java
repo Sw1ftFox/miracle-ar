@@ -1,6 +1,7 @@
 package com.miraclear.viewing.service;
 
 import com.miraclear.viewing.dto.ModelDto;
+import com.miraclear.viewing.repository.ModelRepository;
 import com.miraclear.viewing.dto.AppConfigDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.miraclear.viewing.entity.Model;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +43,12 @@ public class StorageService {
     private final String DESCRIPTIONS_DIR = "descriptions";
     private final String VIDEOS_DIR = "videos";
 
+    private final ModelRepository modelRepository;
+
+    public StorageService(ModelRepository modelRepository) {
+        this.modelRepository = modelRepository;
+    }
+
     public List<ModelDto.FullInfo> getAllModelsWithFullInfo() throws IOException {
         List<String> modelFiles = listModelFiles();
         List<ModelDto.FullInfo> models = new ArrayList<>();
@@ -49,7 +57,11 @@ public class StorageService {
             String baseName = getBaseName(modelFile);
             ModelDto.FullInfo info = new ModelDto.FullInfo();
 
-            info.setName(modelFile);
+            String displayName = modelRepository.findByFileName(baseName)
+                    .map(Model::getDisplayName)
+                    .orElse(baseName);
+
+            info.setName(displayName);   
             info.setPreviewUrl(findImageFile(baseName));
             info.setDescription(getDescriptionContent(baseName));
             info.setModelUrl("/api/files/models/" + modelFile);
@@ -60,7 +72,6 @@ public class StorageService {
 
             models.add(info);
         }
-
         return models;
     }
 
@@ -85,7 +96,10 @@ public class StorageService {
         String baseName = getBaseName(modelName);
         ModelDto.DetailInfo info = new ModelDto.DetailInfo();
 
-        info.setName(modelName);
+        String displayName = modelRepository.findByFileName(baseName)
+                .map(Model::getDisplayName)
+                .orElse(baseName);
+        info.setName(displayName);   
         info.setPreviewUrl(findImageFile(baseName));
         info.setDescription(getDescriptionContent(baseName));
         info.setModelUrl("/api/files/models/" + modelName);

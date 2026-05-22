@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import com.miraclear.viewing.repository.ModelRepository;
+import com.miraclear.viewing.entity.Model;
 
 import java.util.Map;
 
@@ -14,19 +16,36 @@ import java.util.Map;
 public class FileController {
 
     private final StorageService storageService;
+    private final ModelRepository modelRepository;
 
-    public FileController(StorageService storageService) {
+    public FileController(StorageService storageService, ModelRepository modelRepository) {
         this.storageService = storageService;
+        this.modelRepository = modelRepository;      
     }
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("type") String type,
-            @RequestParam("modelName") String modelName) {
+            @RequestParam("modelName") String modelName,
+            @RequestParam(value = "displayName", required = false) String displayName) {
 
         try {
             String result = storageService.saveFileWithModelAssociation(file, type, modelName);
+            if ("model".equals(type)) {
+                String baseName = modelName; 
+                String finalDisplayName = (displayName != null && !displayName.isBlank()) ? displayName : baseName;
+                if (!modelRepository.existsByFileName(baseName)) {
+                    Model model = new Model();
+                    model.setFileName(baseName);
+                    model.setDisplayName(finalDisplayName);
+                    modelRepository.save(model);
+                } else {
+                    Model existing = modelRepository.findByFileName(baseName).get();
+                    existing.setDisplayName(finalDisplayName);
+                    modelRepository.save(existing);
+                }
+            }
             return ResponseEntity.ok(Map.of("message", result));
 
         } catch (IllegalArgumentException e) {
@@ -35,6 +54,7 @@ public class FileController {
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Ошибка при загрузке файла: " + e.getMessage()));
         }
+
     }
 
     @GetMapping("/patterns/default")
