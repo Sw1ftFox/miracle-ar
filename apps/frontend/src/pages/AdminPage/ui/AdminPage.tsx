@@ -3,7 +3,7 @@ import styles from "./AdminPage.module.css";
 import { sectionData } from "@/widgets/Section/sectionData";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@app/store";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { logout } from "@/features/auth/authSlice";
 import { Section } from "@/widgets/Section";
 import {
@@ -14,10 +14,23 @@ import {
 import { downloadDefaultMarker } from "@/features/filesManagment/filesSlice";
 import { Button, Grid } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ModelAdminList } from "@/widgets/ModelAdminList";
+import { CategoryAdminList } from "@/widgets/CategoryAdminList";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 const { useBreakpoint } = Grid;
 
 export const AdminPage = () => {
+  const { role } = useAuth();
+  const isAdmin = role === "ROLE_ADMIN";
+
+  const filteredSections = sectionData.filter((section) => {
+    if (section.type === "categories" && !isAdmin) return false;
+    return true;
+  });
+
+  const navigate = useNavigate();
+
   const screens = useBreakpoint();
   const [selectedSection, setSelectedSection] = useState<SectionType>(
     FileTypes.MODELS,
@@ -39,21 +52,22 @@ export const AdminPage = () => {
     <div className={styles.adminPage}>
       <h1>Панель администратора</h1>
       <div className={styles.headerActions}>
-        <Link to={"/models"}>
-          <Button
-            variant="outlined"
-            color="purple"
-            style={{
-              fontWeight: 600,
-              padding: 18,
-              borderRadius: 12,
-              fontSize: screens.xs ? "0.8rem" : "",
-            }}
-            onClick={() => logout()}
-          >
-            <ArrowLeftOutlined /> Вернуться в меню
-          </Button>
-        </Link>
+        <Button
+          variant="outlined"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+            fontSize: screens.xs ? "0.8rem" : "",
+          }}
+          onClick={() => {
+            dispatch(logout());
+            navigate("/");
+          }}
+        >
+          <ArrowLeftOutlined /> Вернуться в меню
+        </Button>
         <Button
           variant="solid"
           color="purple"
@@ -72,7 +86,7 @@ export const AdminPage = () => {
 
       <div className={styles.section}>
         <div className={styles.tabs} onClick={changeSelectedSection}>
-          {sectionData.map((section) => {
+          {filteredSections.map((section) => {
             return (
               <button
                 id={section.name}
@@ -86,10 +100,17 @@ export const AdminPage = () => {
           })}
         </div>
 
-        {sectionData.map((section) => {
+        {filteredSections.map((section) => {
           if (section.name === selectedSection) {
+            if (section.type === "models") {
+              return <ModelAdminList key={section.name} />;
+            }
+            if (section.type === "categories") {
+              return <CategoryAdminList key={section.name} />;
+            }
             return (
               <Section
+                key={section.name}
                 type={section.type}
                 title={section.title}
                 id={section.id}
@@ -100,6 +121,7 @@ export const AdminPage = () => {
               />
             );
           }
+          return null;
         })}
       </div>
     </div>

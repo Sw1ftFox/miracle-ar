@@ -13,9 +13,19 @@ public class ModelDto {
     private String soundUrl;
     private String videoUrl;
     private Boolean isCurrent;
+    private String fileName;
+    private String displayName;
 
     public FullInfo() {
     }
+
+    public String getFileName() { return fileName; }
+    
+    public void setFileName(String fileName) { this.fileName = fileName; }
+
+    public String getDisplayName() { return displayName; }
+    
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
 
     public String getName() {
       return name;
@@ -92,10 +102,20 @@ public class ModelDto {
     private String videoUrl;
     private Long fileSize;
     private LocalDateTime createdAt;
+    private String fileName;
+    private String displayName;
 
     public DetailInfo() {
     }
+  
+    public String getFileName() { return fileName; }
+    
+    public void setFileName(String fileName) { this.fileName = fileName; }
 
+    public String getDisplayName() { return displayName; }
+    
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+  
     public String getName() {
       return name;
     }

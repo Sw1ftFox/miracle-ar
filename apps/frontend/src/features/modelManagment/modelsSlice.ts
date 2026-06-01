@@ -67,6 +67,18 @@ export const fetchCurrentModel = createAsyncThunk<ModelType, string, { rejectVal
     }
   }
 )
+export const fetchModelsByCategory = createAsyncThunk(
+  "models/fetchByCategory",
+  async (categoryId: number, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/models/categories/${categoryId}/full`);
+      if (!response.ok) throw new Error("Failed to fetch");
+      return await response.json();
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 
 const modelsSlice = createSlice({
   name: "models",
@@ -79,19 +91,29 @@ const modelsSlice = createSlice({
         state.isLoading = false;
         state.models = action.payload;
       })
+      .addCase(fetchModelsByCategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.models = action.payload;
+      })
       .addCase(fetchCurrentModel.fulfilled, (state, action) => {
         state.isLoading = false;
         state.currentModel = action.payload;
       })
-      .addMatcher(isAnyOf(fetchModels.pending, fetchCurrentModel.pending), (state) => {
-        state.isLoading = true;
-        state.isError = false;
-      })
-      .addMatcher(isAnyOf(fetchModels.rejected, fetchCurrentModel.rejected), (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.errorMessage = action.payload;
-      })
+      .addMatcher(isAnyOf(
+        fetchModels.pending,
+        fetchCurrentModel.pending,
+        fetchModelsByCategory.pending), (state) => {
+          state.isLoading = true;
+          state.isError = false;
+        })
+      .addMatcher(isAnyOf(
+        fetchModels.rejected,
+        fetchCurrentModel.rejected,
+        fetchModelsByCategory.rejected), (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          state.errorMessage = action.payload;
+        })
   }
 })
 

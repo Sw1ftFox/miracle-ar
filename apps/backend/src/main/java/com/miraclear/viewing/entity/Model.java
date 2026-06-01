@@ -16,6 +16,7 @@ public class Model {
 
     private String displayName;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String previewUrl;

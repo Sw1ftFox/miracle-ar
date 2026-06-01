@@ -1,6 +1,6 @@
 import type { ModelType } from "@/features/modelManagment/modelTypes";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styles from "./ARViewerPage.module.css";
 import { API_BASE } from "@/app/api/config";
 import { ARScene } from "@/widgets/ARScene";
@@ -10,6 +10,10 @@ export const ARViewerPage = () => {
   const { modelName } = useParams();
   const [currentModel, setCurrentModel] = useState<ModelType | null>(null);
   const [instructionsVisible, setInstructionsVisible] = useState(true);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || "/";
 
   useEffect(() => {
     const timerId = setTimeout(() => setInstructionsVisible(false), 5000);
@@ -78,6 +82,10 @@ export const ARViewerPage = () => {
     };
   }, []);
 
+  const handleBack = () => {
+    navigate(from);
+  };
+
   return (
     <div className={styles.container}>
       <ARScene
@@ -86,19 +94,18 @@ export const ARViewerPage = () => {
         soundUrl={soundUrl}
       />
       <div className={styles.backButtonContainer}>
-        <Link to={"/models"}>
-          <Button
-            variant="solid"
-            color="purple"
-            style={{
-              fontWeight: 600,
-              padding: 18,
-              borderRadius: 12,
-            }}
-          >
-            Вернуться в меню
-          </Button>
-        </Link>
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+          }}
+          onClick={handleBack}
+        >
+          Вернуться в меню
+        </Button>
       </div>
       {instructionsVisible && (
         <div className={styles.instruction}>

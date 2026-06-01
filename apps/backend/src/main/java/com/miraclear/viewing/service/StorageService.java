@@ -69,6 +69,8 @@ public class StorageService {
             info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
             info.setVideoUrl(findVideoFile(baseName));
             info.setIsCurrent(modelFile.equals(currentModel));
+            info.setFileName(baseName);
+            info.setDisplayName(displayName); 
 
             models.add(info);
         }
@@ -106,6 +108,8 @@ public class StorageService {
         info.setPatternUrl("/api/files/patterns/" + baseName + ".patt");
         info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
         info.setVideoUrl(findVideoFile(baseName));
+        info.setFileName(baseName);
+        info.setDisplayName(displayName);
 
         try {
             info.setFileSize(Files.size(modelPath));

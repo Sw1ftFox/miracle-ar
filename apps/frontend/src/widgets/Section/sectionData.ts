@@ -1,7 +1,7 @@
 export const sectionData = [
   {
     name: "models",
-    type: "model",
+    type: "models",
     buttonText: "Модели",
     title: "3D Модели (формат .glb)",
     id: "models-section",
@@ -9,6 +9,17 @@ export const sectionData = [
     accept: ".glb",
     required: true,
     submitText: "Загрузить модель"
+  },
+  {
+    name: "categories",
+    type: "categories",
+    buttonText: "Категории",
+    title: "Управление категориями",
+    id: "categories-section",
+    inputType: "text",
+    accept: "",
+    required: false,
+    submitText: "",
   },
   {
     name: "videos",
@@ -43,17 +54,17 @@ export const sectionData = [
     required: true,
     submitText: "Загрузить картинку",
   },
-  {
-    name: "descriptions",
-    type: "description",
-    buttonText: "Описания",
-    title: "Описания (формат .txt)",
-    id: "descriptions-section",
-    inputType: "file",
-    accept: ".txt",
-    required: true,
-    submitText: "Загрузить описание",
-  },
+  // {
+  //   name: "descriptions",
+  //   type: "description",
+  //   buttonText: "Описания",
+  //   title: "Описания (формат .txt)",
+  //   id: "descriptions-section",
+  //   inputType: "file",
+  //   accept: ".txt",
+  //   required: true,
+  //   submitText: "Загрузить описание",
+  // },
   {
     name: "patterns",
     type: "pattern",

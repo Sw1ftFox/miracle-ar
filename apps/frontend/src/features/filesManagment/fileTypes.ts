@@ -9,9 +9,10 @@ export type FilesState = {
 export const FileTypes = {
   DEFAULT: "default",
   MODELS: "models",
+  CATEGORIES: "categories",
   SOUNDS: "sounds",
   PREVIEWS: "previews",
-  DESCRIPTIONS: "descriptions",
+  // DESCRIPTIONS: "descriptions",
   PATTERNS: "patterns",
   VIDEOS: "videos",
 } as const;

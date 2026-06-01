@@ -1,6 +1,6 @@
-import { useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Group } from "three";
 
 interface PreviewModelProps {
@@ -20,7 +20,25 @@ export const PreviewModel = ({
 }: PreviewModelProps) => {
   const modelRef = useRef<Group>(null);
 
-  const { scene } = useGLTF(modelUrl || "", true);
+  const { scene, animations } = useGLTF(modelUrl || "", true);
+
+  const { actions } = useAnimations(animations, modelRef);
+
+  useEffect(() => {
+    if (actions) {
+      const firstAction = Object.values(actions)[0];
+
+      if (firstAction) {
+        firstAction.reset().play();
+      }
+    }
+
+    return () => {
+      if (actions) {
+        Object.values(actions).forEach((action) => action?.stop());
+      }
+    };
+  }, [actions]);
 
   useFrame((_, delta) => {
     if (modelRef.current && autoRotate) {

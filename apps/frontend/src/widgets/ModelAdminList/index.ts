@@ -1,0 +1,1 @@
+export { ModelAdminList } from './ui/ModelAdminList';

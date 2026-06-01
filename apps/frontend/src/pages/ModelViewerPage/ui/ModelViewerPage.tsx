@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/app/store";
 import { fetchCurrentModel } from "@features/modelManagment/modelsSlice";
@@ -14,6 +14,10 @@ import { Button } from "antd";
 
 export const ModelViewerPage = () => {
   const { modelName } = useParams();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || "/";
 
   const {
     decreaseScale,
@@ -35,6 +39,10 @@ export const ModelViewerPage = () => {
     dispatch(fetchCurrentModel(modelName || ""));
   }, [modelName]);
 
+  const handleBack = () => {
+    navigate(from);
+  };
+
   if (isError) {
     return (
       <div
@@ -51,19 +59,18 @@ export const ModelViewerPage = () => {
         }}
       >
         <h2>Ошибка загрузки модели</h2>
-        <Link to={"/models"}>
-          <Button
-            variant="solid"
-            color="purple"
-            style={{
-              fontWeight: 600,
-              padding: 18,
-              borderRadius: 12,
-            }}
-          >
-            Вернуться в меню
-          </Button>
-        </Link>
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+          }}
+          onClick={handleBack}
+        >
+          Вернуться в меню
+        </Button>
       </div>
     );
   }
@@ -87,19 +94,18 @@ export const ModelViewerPage = () => {
           zIndex: 100,
         }}
       >
-        <Link to={"/models"}>
-          <Button
-            variant="solid"
-            color="purple"
-            style={{
-              fontWeight: 600,
-              padding: 18,
-              borderRadius: 12,
-            }}
-          >
-            Вернуться в меню
-          </Button>
-        </Link>
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+          }}
+          onClick={handleBack}
+        >
+          Вернуться в меню
+        </Button>
       </div>
 
       <ErrorBoundary>

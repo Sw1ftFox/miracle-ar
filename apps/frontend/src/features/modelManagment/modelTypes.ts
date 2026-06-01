@@ -1,6 +1,8 @@
 export type ModelType = {
-  id: string; // "Полонский" (имя без расширения)
-  name: string; // "Полонский.glb"
+  id: number;
+  name: string;
+  fileName: string;
+  displayName?: string;
   previewUrl?: string;
   description?: string;
   modelUrl: string;

@@ -32,29 +32,13 @@ public class FileController {
 
         try {
             String result = storageService.saveFileWithModelAssociation(file, type, modelName);
-            if ("model".equals(type)) {
-                String baseName = modelName; 
-                String finalDisplayName = (displayName != null && !displayName.isBlank()) ? displayName : baseName;
-                if (!modelRepository.existsByFileName(baseName)) {
-                    Model model = new Model();
-                    model.setFileName(baseName);
-                    model.setDisplayName(finalDisplayName);
-                    modelRepository.save(model);
-                } else {
-                    Model existing = modelRepository.findByFileName(baseName).get();
-                    existing.setDisplayName(finalDisplayName);
-                    modelRepository.save(existing);
-                }
-            }
             return ResponseEntity.ok(Map.of("message", result));
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Ошибка при загрузке файла: " + e.getMessage()));
         }
-
     }
 
     @GetMapping("/patterns/default")
