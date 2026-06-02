@@ -21,8 +21,6 @@ export const ModelItem = ({ model }: Props) => {
     [model.description],
   );
 
-  console.log(model);
-
   const displayText = useMemo(() => {
     if (!model.description) return "";
     if (isExpanded) return model.description;

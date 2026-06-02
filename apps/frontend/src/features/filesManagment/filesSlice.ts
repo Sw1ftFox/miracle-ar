@@ -176,19 +176,19 @@ const filesSlice = createSlice({
         downloadFile.pending,
         deleteFile.pending,
         uploadFiles.pending), (state) => {
-          state.isLoading = true;
-          state.isSuccess = false;
-          state.isError = false;
-        })
+        state.isLoading = true;
+        state.isSuccess = false;
+        state.isError = false;
+      })
       .addMatcher(isAnyOf(
         fetchFiles.rejected,
         downloadFile.rejected,
         deleteFile.rejected,
         uploadFiles.rejected), (state, action) => {
-          state.isLoading = false;
-          state.isError = true;
-          state.errorMessage = action.payload;
-        })
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload;
+      })
   }
 })
 

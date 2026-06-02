@@ -1,6 +1,7 @@
 package com.miraclear.viewing.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ModelResponseDto {
     private Long id;
@@ -13,6 +14,7 @@ public class ModelResponseDto {
     private String videoUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<Long> categoryIds;
 
     // Геттеры и сеттеры
     public Long getId() { return id; }
@@ -44,4 +46,7 @@ public class ModelResponseDto {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public List<Long> getCategoryIds() { return categoryIds; }
+    public void setCategoryIds(List<Long> categoryIds) { this.categoryIds = categoryIds; }
 }

@@ -25,6 +25,9 @@ import {
 } from "@/features/categories/categoriesSlice";
 import type { ModelType } from "@/features/modelManagment/modelTypes";
 import { removeFileExtension } from "@/shared/utils/removeFileExtension";
+import { useCompressModel } from "@/shared/hooks/useCompressModel";
+import { CompressionStats } from "@/shared/ui/CompressionStats/CompressionStats";
+import CompressionOptions from "@/shared/ui/CompressionOptions/CompressionOptions";
 
 interface ModelFormProps {
   visible: boolean;
@@ -73,66 +76,109 @@ export const ModelForm = ({
   );
   const [filesToDelete, setFilesToDelete] = useState<Record<string, string>>(
     {},
-  ); // type → полное имя файла
+  );
 
+  const {
+    compressModel,
+    setCompressError,
+    setOriginalSize,
+    setCompressedSize,
+    compressEnabled,
+    setCompressEnabled,
+    isCompressing,
+    compressError,
+    originalSize,
+    compressedSize,
+  } = useCompressModel();
+
+  // Загружаем категории при открытии формы
   useEffect(() => {
     if (visible) {
       dispatch(fetchCategories());
-      if (editingModel) {
-        form.setFieldsValue(editingModel);
-        setFileList({
-          model: createFileFromUrl(
-            `/api/files/models/${editingModel.fileName}.glb`,
-            editingModel.fileName,
-            "model",
-          ),
-          pattern: createFileFromUrl(
-            editingModel.patternUrl,
-            editingModel.fileName,
-            "pattern",
-          ),
-          preview: createFileFromUrl(
-            editingModel.previewUrl,
-            editingModel.fileName,
-            "preview",
-          ),
-          sound: createFileFromUrl(
-            editingModel.soundUrl,
-            editingModel.fileName,
-            "sound",
-          ),
-          video: createFileFromUrl(
-            editingModel.videoUrl,
-            editingModel.fileName,
-            "video",
-          ),
+    }
+  }, [visible, dispatch]);
+
+  // Основной эффект: сброс формы и установка полей, кроме категорий
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+      setUploading(false);
+
+      dispatch(fetchCategories())
+        .unwrap()
+        .then(() => {
+          if (editingModel) {
+            form.setFieldsValue({
+              fileName: editingModel.fileName,
+              displayName: editingModel.displayName,
+              description: editingModel.description,
+              // categoryIds установим отдельно, когда категории загрузятся
+            });
+            setFileList({
+              model: createFileFromUrl(
+                `/api/files/models/${editingModel.fileName}.glb`,
+                editingModel.fileName,
+                "model",
+              ),
+              pattern: createFileFromUrl(
+                editingModel.patternUrl,
+                editingModel.fileName,
+                "pattern",
+              ),
+              preview: createFileFromUrl(
+                editingModel.previewUrl,
+                editingModel.fileName,
+                "preview",
+              ),
+              sound: createFileFromUrl(
+                editingModel.soundUrl,
+                editingModel.fileName,
+                "sound",
+              ),
+              video: createFileFromUrl(
+                editingModel.videoUrl,
+                editingModel.fileName,
+                "video",
+              ),
+            });
+            setRemovedFileTypes(new Set());
+            setFilesToDelete({});
+          } else {
+            setFileList({});
+            setRemovedFileTypes(new Set());
+            setFilesToDelete({});
+          }
+        })
+        .catch(() => {
+          message.error("Не удалось загрузить категории");
         });
-        setRemovedFileTypes(new Set());
-        setFilesToDelete({}); // сброс
-      } else {
-        form.resetFields();
-        setFileList({});
-        setRemovedFileTypes(new Set());
-        setFilesToDelete({});
-        setUploading(false);
-      }
     }
   }, [visible, editingModel, form, dispatch]);
+
+  // Отдельно устанавливаем категории, когда categories загружены и редактируется модель
+  useEffect(() => {
+    if (visible && editingModel && categories.length > 0) {
+      console.log("Setting categoryIds:", editingModel.categoryIds);
+      console.log("Available categories:", categories);
+      form.setFieldsValue({ categoryIds: editingModel.categoryIds || [] });
+    }
+  }, [visible, editingModel, categories, form]);
 
   const handleFileChange = (type: string, fileList: UploadFile[]) => {
     const file = fileList[0];
     if (type === "model" && file && file.originFileObj) {
       const name = removeFileExtension(file.originFileObj.name);
       form.setFieldsValue({ fileName: name });
+      setCompressError(null);
+      setOriginalSize(file.originFileObj.size || 0);
+      setCompressedSize(null);
     }
-    // Снимаем пометку удаления, только если загружен новый файл
     if (file && file.originFileObj) {
       setRemovedFileTypes((prev) => {
         const next = new Set(prev);
         next.delete(type);
         return next;
       });
-      // Также сбрасываем запись в filesToDelete
       setFilesToDelete((prev) => {
         const next = { ...prev };
         delete next[type];
@@ -145,7 +191,7 @@ export const ModelForm = ({
   const handleRemove = (type: string) => {
     const file = fileList[type as keyof typeof fileList];
     if (file && file.name) {
-      setFilesToDelete((prev) => ({ ...prev, [type]: file.name })); // запоминаем полное имя
+      setFilesToDelete((prev) => ({ ...prev, [type]: file.name }));
     }
     setRemovedFileTypes((prev) => new Set(prev).add(type));
     setFileList((prev) => ({ ...prev, [type]: undefined }));
@@ -155,24 +201,50 @@ export const ModelForm = ({
     try {
       setUploading(true);
 
-      // загрузка новых файлов
+      const modelFile = fileList.model;
+      let fileToUpload: File | Blob | undefined;
+
+      if (modelFile && modelFile.originFileObj) {
+        if (!editingModel) {
+          fileToUpload = await compressModel(modelFile);
+        } else {
+          fileToUpload = modelFile.originFileObj as File;
+        }
+      }
+
       const uploadPromises = [];
+
+      if (fileToUpload) {
+        const formData = new FormData();
+        const finalFile =
+          fileToUpload instanceof File
+            ? fileToUpload
+            : new File([fileToUpload], values.fileName + ".glb", {
+              type: fileToUpload.type,
+            });
+        formData.append("file", finalFile);
+        formData.append("type", "model");
+        formData.append("modelName", values.fileName);
+        uploadPromises.push(dispatch(uploadFiles(formData)).unwrap());
+      }
+
       for (const [fileType, file] of Object.entries(fileList)) {
+        if (fileType === "model") continue;
         if (file && file.originFileObj) {
           const formData = new FormData();
           formData.append("file", file.originFileObj as File);
-          formData.append("type", fileType === "model" ? "model" : fileType);
+          formData.append("type", fileType);
           formData.append("modelName", values.fileName);
           uploadPromises.push(dispatch(uploadFiles(formData)).unwrap());
         }
       }
+
       await Promise.all(uploadPromises);
 
-      // удаление файлов, помеченных на удаление
       const deletePromises = [];
       for (const type of removedFileTypes) {
         const pluralType = PLURAL_TYPE_MAP[type];
-        const fileNameToDelete = filesToDelete[type]; // полное имя (с расширением)
+        const fileNameToDelete = filesToDelete[type];
         if (fileNameToDelete) {
           deletePromises.push(
             dispatch(
@@ -186,7 +258,6 @@ export const ModelForm = ({
       }
       await Promise.all(deletePromises);
 
-      // формирование URL для модели
       const resolveUrl = (
         type: string,
         defaultExt: string,
@@ -228,8 +299,9 @@ export const ModelForm = ({
         await dispatch(
           updateModel({ id: editingModel.id, data: modelData }),
         ).unwrap();
-        const categoryIds = values.categoryIds || [];
-        if (categoryIds.length) {
+
+        const categoryIds: number[] = values.categoryIds || [];
+        if (categoryIds.length > 0) {
           await dispatch(
             assignCategories({ modelName: values.fileName, categoryIds }),
           ).unwrap();
@@ -237,12 +309,12 @@ export const ModelForm = ({
         message.success("Модель обновлена");
       } else {
         await dispatch(createModel(modelData)).unwrap();
-        let categoryIds = values.categoryIds || [];
+        let categoryIds: number[] = values.categoryIds || [];
         if (categoryIds.length === 0) {
           const otherCategory = categories.find((c) => c.name === "Другие");
           if (otherCategory) categoryIds = [otherCategory.id];
         }
-        if (categoryIds.length) {
+        if (categoryIds.length > 0) {
           await dispatch(
             assignCategories({ modelName: values.fileName, categoryIds }),
           ).unwrap();
@@ -265,26 +337,45 @@ export const ModelForm = ({
   ) => {
     if (isModelFile && editingModel) return null;
     return (
-      <Form.Item label={label}>
-        <Upload
-          accept={accept}
-          maxCount={1}
-          beforeUpload={() => false}
-          fileList={
-            fileList[fileType as keyof typeof fileList]
-              ? [fileList[fileType as keyof typeof fileList]!]
-              : []
-          }
-          onChange={({ fileList }) => handleFileChange(fileType, fileList)}
-          onRemove={() => handleRemove(fileType)}
-        >
-          <Button icon={<UploadOutlined />}>
-            {fileList[fileType as keyof typeof fileList]
-              ? "Заменить"
-              : "Загрузить"}
-          </Button>
-        </Upload>
-      </Form.Item>
+      <>
+        <Form.Item label={label}>
+          <Upload
+            accept={accept}
+            maxCount={1}
+            beforeUpload={() => false}
+            fileList={
+              fileList[fileType as keyof typeof fileList]
+                ? [fileList[fileType as keyof typeof fileList]!]
+                : []
+            }
+            onChange={({ fileList }) => handleFileChange(fileType, fileList)}
+            onRemove={() => handleRemove(fileType)}
+          >
+            <Button icon={<UploadOutlined />}>
+              {fileList[fileType as keyof typeof fileList]
+                ? "Заменить"
+                : "Загрузить"}
+            </Button>
+          </Upload>
+        </Form.Item>
+        {!editingModel && fileType === "model" && fileList.model && (
+          <CompressionOptions
+            compressEnabled={compressEnabled}
+            compressError={compressError}
+            isCompressing={isCompressing}
+            setCompressEnabled={setCompressEnabled}
+          />
+        )}
+        {!editingModel &&
+          fileType === "model" &&
+          originalSize &&
+          compressedSize && (
+          <CompressionStats
+            originalSize={originalSize}
+            compressedSize={compressedSize}
+          />
+        )}
+      </>
     );
   };
 

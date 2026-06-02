@@ -9,6 +9,7 @@ export type ModelType = {
   previewUrl?: string | null;
   soundUrl?: string | null;
   videoUrl?: string | null;
+  categoryIds?: number[];
 }
 
 export type ModelState = {

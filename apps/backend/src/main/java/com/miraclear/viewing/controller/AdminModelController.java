@@ -2,6 +2,7 @@ package com.miraclear.viewing.controller;
 
 import com.miraclear.viewing.dto.ModelResponseDto;
 import com.miraclear.viewing.entity.Model;
+import com.miraclear.viewing.repository.ModelCategoryRepository;
 import com.miraclear.viewing.repository.ModelRepository;
 import com.miraclear.viewing.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class AdminModelController {
     @Autowired
     private StorageService storageService;
 
+    @Autowired
+    private ModelCategoryRepository modelCategoryRepository;
+
     private ModelResponseDto convertToDto(Model model) {
         ModelResponseDto dto = new ModelResponseDto();
         dto.setId(model.getId());
@@ -37,6 +41,13 @@ public class AdminModelController {
         dto.setVideoUrl(model.getVideoUrl());
         dto.setCreatedAt(model.getCreatedAt());
         dto.setUpdatedAt(model.getUpdatedAt());
+
+        List<Long> categoryIds = modelCategoryRepository.findByModelFileName(model.getFileName())
+            .stream()
+            .map(mc -> mc.getCategory().getId())
+            .collect(Collectors.toList());
+        dto.setCategoryIds(categoryIds);
+
         return dto;
     }
 

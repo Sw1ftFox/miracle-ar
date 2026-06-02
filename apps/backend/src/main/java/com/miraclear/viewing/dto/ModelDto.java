@@ -1,6 +1,7 @@
 package com.miraclear.viewing.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ModelDto {
 
@@ -15,6 +16,7 @@ public class ModelDto {
     private Boolean isCurrent;
     private String fileName;
     private String displayName;
+    private List<Long> categoryIds;
 
     public FullInfo() {
     }
@@ -90,6 +92,14 @@ public class ModelDto {
     public void setIsCurrent(Boolean isCurrent) {
       this.isCurrent = isCurrent;
     }
+
+    public List<Long> getCategoryIds() {
+      return categoryIds;
+    }
+
+    public void setCategoryIds(List<Long> categoryIds) {
+      this.categoryIds = categoryIds;
+    }
   }
 
   public static class DetailInfo {
@@ -104,6 +114,7 @@ public class ModelDto {
     private LocalDateTime createdAt;
     private String fileName;
     private String displayName;
+    private List<Long> categoryIds;
 
     public DetailInfo() {
     }
@@ -186,6 +197,14 @@ public class ModelDto {
 
     public void setCreatedAt(LocalDateTime createdAt) {
       this.createdAt = createdAt;
+    }
+
+    public List<Long> getCategoryIds() {
+      return categoryIds;
+    }
+
+    public void setCategoryIds(List<Long> categoryIds) {
+      this.categoryIds = categoryIds;
     }
   }
 }

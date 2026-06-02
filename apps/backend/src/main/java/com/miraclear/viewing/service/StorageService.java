@@ -1,6 +1,7 @@
 package com.miraclear.viewing.service;
 
 import com.miraclear.viewing.dto.ModelDto;
+import com.miraclear.viewing.repository.ModelCategoryRepository;
 import com.miraclear.viewing.repository.ModelRepository;
 import com.miraclear.viewing.dto.AppConfigDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,9 +45,11 @@ public class StorageService {
     private final String VIDEOS_DIR = "videos";
 
     private final ModelRepository modelRepository;
+    private final ModelCategoryRepository modelCategoryRepository;    
 
-    public StorageService(ModelRepository modelRepository) {
+    public StorageService(ModelRepository modelRepository, ModelCategoryRepository modelCategoryRepository) {
         this.modelRepository = modelRepository;
+        this.modelCategoryRepository = modelCategoryRepository;
     }
 
     public List<ModelDto.FullInfo> getAllModelsWithFullInfo() throws IOException {
@@ -57,9 +60,21 @@ public class StorageService {
             String baseName = getBaseName(modelFile);
             ModelDto.FullInfo info = new ModelDto.FullInfo();
 
-            String displayName = modelRepository.findByFileName(baseName)
-                    .map(Model::getDisplayName)
-                    .orElse(baseName);
+            Optional<Model> modelOpt = modelRepository.findByFileName(baseName);
+            String displayName = modelOpt.map(Model::getDisplayName).orElse(baseName);
+            info.setName(displayName);
+            info.setFileName(baseName);
+            info.setDisplayName(displayName);
+
+            List<Long> categoryIds = modelCategoryRepository.findByModelFileName(baseName)
+                    .stream()
+                    .map(mc -> mc.getCategory().getId())
+                    .collect(Collectors.toList());
+            info.setCategoryIds(categoryIds);
+
+            // String displayName = modelRepository.findByFileName(baseName)
+            //         .map(Model::getDisplayName)
+            //         .orElse(baseName);
 
             info.setName(displayName);   
             info.setPreviewUrl(findImageFile(baseName));
@@ -97,6 +112,12 @@ public class StorageService {
 
         String baseName = getBaseName(modelName);
         ModelDto.DetailInfo info = new ModelDto.DetailInfo();
+
+        List<Long> categoryIds = modelCategoryRepository.findByModelFileName(baseName)
+                .stream()
+                .map(mc -> mc.getCategory().getId())
+                .collect(Collectors.toList());
+        info.setCategoryIds(categoryIds);
 
         String displayName = modelRepository.findByFileName(baseName)
                 .map(Model::getDisplayName)
