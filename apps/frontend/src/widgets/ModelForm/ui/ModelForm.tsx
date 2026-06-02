@@ -12,7 +12,7 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadFile } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadFiles } from "@/features/filesManagment/filesSlice";
+import { uploadFiles, deleteFile } from "@/features/filesManagment/filesSlice";
 import type { AppDispatch, RootState } from "@/app/store";
 import {
   assignCategories,
@@ -32,6 +32,24 @@ interface ModelFormProps {
   editingModel?: ModelType | null;
 }
 
+const PLURAL_TYPE_MAP: Record<string, string> = {
+  model: "models",
+  pattern: "patterns",
+  preview: "previews",
+  sound: "sounds",
+  video: "videos",
+};
+
+const createFileFromUrl = (
+  url: string | null | undefined,
+  fileName: string,
+  type?: string,
+): UploadFile | undefined => {
+  if (!url) return undefined;
+  const name = url.split("/").pop() || fileName;
+  return { uid: `${type || "file"}-${name}`, name, status: "done", url };
+};
+
 export const ModelForm = ({
   visible,
   onClose,
@@ -50,15 +68,52 @@ export const ModelForm = ({
     sound?: UploadFile;
     video?: UploadFile;
   }>({});
+  const [removedFileTypes, setRemovedFileTypes] = useState<Set<string>>(
+    new Set(),
+  );
+  const [filesToDelete, setFilesToDelete] = useState<Record<string, string>>(
+    {},
+  ); // type → полное имя файла
 
   useEffect(() => {
     if (visible) {
       dispatch(fetchCategories());
       if (editingModel) {
         form.setFieldsValue(editingModel);
+        setFileList({
+          model: createFileFromUrl(
+            `/api/files/models/${editingModel.fileName}.glb`,
+            editingModel.fileName,
+            "model",
+          ),
+          pattern: createFileFromUrl(
+            editingModel.patternUrl,
+            editingModel.fileName,
+            "pattern",
+          ),
+          preview: createFileFromUrl(
+            editingModel.previewUrl,
+            editingModel.fileName,
+            "preview",
+          ),
+          sound: createFileFromUrl(
+            editingModel.soundUrl,
+            editingModel.fileName,
+            "sound",
+          ),
+          video: createFileFromUrl(
+            editingModel.videoUrl,
+            editingModel.fileName,
+            "video",
+          ),
+        });
+        setRemovedFileTypes(new Set());
+        setFilesToDelete({}); // сброс
       } else {
         form.resetFields();
         setFileList({});
+        setRemovedFileTypes(new Set());
+        setFilesToDelete({});
         setUploading(false);
       }
     }
@@ -70,13 +125,37 @@ export const ModelForm = ({
       const name = removeFileExtension(file.originFileObj.name);
       form.setFieldsValue({ fileName: name });
     }
+    // Снимаем пометку удаления, только если загружен новый файл
+    if (file && file.originFileObj) {
+      setRemovedFileTypes((prev) => {
+        const next = new Set(prev);
+        next.delete(type);
+        return next;
+      });
+      // Также сбрасываем запись в filesToDelete
+      setFilesToDelete((prev) => {
+        const next = { ...prev };
+        delete next[type];
+        return next;
+      });
+    }
     setFileList((prev) => ({ ...prev, [type]: file }));
+  };
+
+  const handleRemove = (type: string) => {
+    const file = fileList[type as keyof typeof fileList];
+    if (file && file.name) {
+      setFilesToDelete((prev) => ({ ...prev, [type]: file.name })); // запоминаем полное имя
+    }
+    setRemovedFileTypes((prev) => new Set(prev).add(type));
+    setFileList((prev) => ({ ...prev, [type]: undefined }));
   };
 
   const onFinish = async (values: any) => {
     try {
       setUploading(true);
 
+      // загрузка новых файлов
       const uploadPromises = [];
       for (const [fileType, file] of Object.entries(fileList)) {
         if (file && file.originFileObj) {
@@ -89,20 +168,54 @@ export const ModelForm = ({
       }
       await Promise.all(uploadPromises);
 
-      const fileUrls: Partial<ModelType> = {};
-      if (fileList.preview && fileList.preview.originFileObj) {
-        const ext = fileList.preview.originFileObj.name.split(".").pop();
-        fileUrls.previewUrl = `/api/files/previews/${values.fileName}.${ext}`;
+      // удаление файлов, помеченных на удаление
+      const deletePromises = [];
+      for (const type of removedFileTypes) {
+        const pluralType = PLURAL_TYPE_MAP[type];
+        const fileNameToDelete = filesToDelete[type]; // полное имя (с расширением)
+        if (fileNameToDelete) {
+          deletePromises.push(
+            dispatch(
+              deleteFile({
+                type: pluralType as any,
+                fileName: fileNameToDelete,
+              }),
+            ).unwrap(),
+          );
+        }
       }
-      if (fileList.pattern) {
-        fileUrls.patternUrl = `/api/files/patterns/${values.fileName}.patt`;
-      }
-      if (fileList.sound) {
-        fileUrls.soundUrl = `/api/files/sounds/${values.fileName}.mp3`;
-      }
-      if (fileList.video) {
-        fileUrls.videoUrl = `/api/files/videos/${values.fileName}.mp4`;
-      }
+      await Promise.all(deletePromises);
+
+      // формирование URL для модели
+      const resolveUrl = (
+        type: string,
+        defaultExt: string,
+      ): string | null | undefined => {
+        const file = fileList[type as keyof typeof fileList];
+        if (removedFileTypes.has(type)) return null;
+        if (file && file.originFileObj) {
+          const ext = file.originFileObj.name.split(".").pop() || defaultExt;
+          return `/api/files/${type}s/${values.fileName}.${ext}`;
+        }
+        if (editingModel) {
+          const editingUrls: Record<string, string | undefined | null> = {
+            model: `/api/files/models/${editingModel.fileName}.glb`,
+            pattern: editingModel.patternUrl,
+            preview: editingModel.previewUrl,
+            sound: editingModel.soundUrl,
+            video: editingModel.videoUrl,
+          };
+          return editingUrls[type];
+        }
+        return undefined;
+      };
+
+      const fileUrls: Partial<ModelType> = {
+        previewUrl: resolveUrl("preview", "png"),
+        patternUrl: resolveUrl("pattern", "patt"),
+        soundUrl: resolveUrl("sound", "mp3"),
+        videoUrl: resolveUrl("video", "mp4"),
+      };
 
       const modelData: Partial<ModelType> = {
         fileName: values.fileName,
@@ -110,39 +223,30 @@ export const ModelForm = ({
         description: values.description,
         ...fileUrls,
       };
+
       if (editingModel && editingModel.id) {
         await dispatch(
           updateModel({ id: editingModel.id, data: modelData }),
         ).unwrap();
-
         const categoryIds = values.categoryIds || [];
         if (categoryIds.length) {
           await dispatch(
             assignCategories({ modelName: values.fileName, categoryIds }),
           ).unwrap();
         }
-
         message.success("Модель обновлена");
       } else {
         await dispatch(createModel(modelData)).unwrap();
-
         let categoryIds = values.categoryIds || [];
         if (categoryIds.length === 0) {
           const otherCategory = categories.find((c) => c.name === "Другие");
-          if (otherCategory) {
-            categoryIds = [otherCategory.id];
-          } else {
-            console.warn(
-              "Category 'Другие' not found, model not assigned to any category",
-            );
-          }
+          if (otherCategory) categoryIds = [otherCategory.id];
         }
         if (categoryIds.length) {
           await dispatch(
             assignCategories({ modelName: values.fileName, categoryIds }),
           ).unwrap();
         }
-
         message.success("Модель создана");
       }
       onClose();
@@ -151,6 +255,37 @@ export const ModelForm = ({
     } finally {
       setUploading(false);
     }
+  };
+
+  const renderUpload = (
+    label: string,
+    accept: string,
+    fileType: string,
+    isModelFile?: boolean,
+  ) => {
+    if (isModelFile && editingModel) return null;
+    return (
+      <Form.Item label={label}>
+        <Upload
+          accept={accept}
+          maxCount={1}
+          beforeUpload={() => false}
+          fileList={
+            fileList[fileType as keyof typeof fileList]
+              ? [fileList[fileType as keyof typeof fileList]!]
+              : []
+          }
+          onChange={({ fileList }) => handleFileChange(fileType, fileList)}
+          onRemove={() => handleRemove(fileType)}
+        >
+          <Button icon={<UploadOutlined />}>
+            {fileList[fileType as keyof typeof fileList]
+              ? "Заменить"
+              : "Загрузить"}
+          </Button>
+        </Upload>
+      </Form.Item>
+    );
   };
 
   return (
@@ -171,7 +306,7 @@ export const ModelForm = ({
           <Form.Item
             name="displayName"
             label="Отображаемое название"
-            rules={[{ required: true, message: "Введите название модели" }]}
+            rules={[{ required: true }]}
           >
             <Input placeholder="например: 3D Модель" />
           </Form.Item>
@@ -191,69 +326,11 @@ export const ModelForm = ({
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}
           >
-            {!editingModel ? (
-              <Form.Item label="3D модель (GLB)">
-                <Upload
-                  accept=".glb"
-                  maxCount={1}
-                  beforeUpload={() => false}
-                  fileList={fileList.model ? [fileList.model] : []}
-                  onChange={({ fileList }) =>
-                    handleFileChange("model", fileList)
-                  }
-                >
-                  <Button icon={<UploadOutlined />}>Загрузить</Button>
-                </Upload>
-              </Form.Item>
-            ) : null}
-            <Form.Item label="Маркер (patt)">
-              <Upload
-                accept=".patt"
-                maxCount={1}
-                beforeUpload={() => false}
-                fileList={fileList.pattern ? [fileList.pattern] : []}
-                onChange={({ fileList }) =>
-                  handleFileChange("pattern", fileList)
-                }
-              >
-                <Button icon={<UploadOutlined />}>Загрузить</Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item label="Превью (jpg/png)">
-              <Upload
-                accept="image/*"
-                maxCount={1}
-                beforeUpload={() => false}
-                fileList={fileList.preview ? [fileList.preview] : []}
-                onChange={({ fileList }) =>
-                  handleFileChange("preview", fileList)
-                }
-              >
-                <Button icon={<UploadOutlined />}>Загрузить</Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item label="Звук (mp3)">
-              <Upload
-                accept=".mp3"
-                maxCount={1}
-                beforeUpload={() => false}
-                fileList={fileList.sound ? [fileList.sound] : []}
-                onChange={({ fileList }) => handleFileChange("sound", fileList)}
-              >
-                <Button icon={<UploadOutlined />}>Загрузить</Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item label="Видео (mp4/webm)">
-              <Upload
-                accept=".mp4,.webm,.mov"
-                maxCount={1}
-                beforeUpload={() => false}
-                fileList={fileList.video ? [fileList.video] : []}
-                onChange={({ fileList }) => handleFileChange("video", fileList)}
-              >
-                <Button icon={<UploadOutlined />}>Загрузить</Button>
-              </Upload>
-            </Form.Item>
+            {renderUpload("3D модель (GLB)", ".glb", "model", true)}
+            {renderUpload("Маркер (patt)", ".patt", "pattern")}
+            {renderUpload("Превью (jpg/png)", "image/*", "preview")}
+            {renderUpload("Звук (mp3)", ".mp3", "sound")}
+            {renderUpload("Видео (mp4/webm)", ".mp4,.webm,.mov", "video")}
           </div>
           <Form.Item>
             <Button

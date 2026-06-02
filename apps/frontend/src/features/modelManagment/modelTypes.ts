@@ -3,12 +3,12 @@ export type ModelType = {
   name: string;
   fileName: string;
   displayName?: string;
-  previewUrl?: string;
   description?: string;
   modelUrl: string;
-  patternUrl: string;
-  soundUrl?: string;
-  videoUrl?: string;
+  patternUrl: string | null;
+  previewUrl?: string | null;
+  soundUrl?: string | null;
+  videoUrl?: string | null;
 }
 
 export type ModelState = {
