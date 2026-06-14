@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "proxy": {
+    "/api": {
+      "target": "http://186.246.13.122",
+      "changeOrigin": true
+    }
+  }
+}
