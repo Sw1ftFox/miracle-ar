@@ -1,4 +1,4 @@
-import { selectAuth } from "@/features/auth/authSlice";
+import type { RootState } from "@/app/store";
 import { StorageService } from "@/shared/utils/StorageService";
 import type { FC, JSX } from "react";
 import { useSelector } from "react-redux";
@@ -9,17 +9,20 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
-  const isAuth = useSelector(selectAuth);
+  const tokenFromRedux = useSelector<RootState>(
+    (state) => state.authReducer.token,
+  );
+  const role = useSelector<RootState>((state) => state.authReducer.role);
+
   const location = useLocation();
 
-  const checkAuth = () => {
-    const localIsAuth = StorageService.getItem("isAuth");
+  const hasToken = !!tokenFromRedux || !!StorageService.getItem("authToken");
 
-    return localIsAuth && isAuth;
-  };
+  const isAllowed =
+    hasToken && (role === "ROLE_ADMIN" || role === "ROLE_MODERATOR");
 
-  if (!checkAuth()) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+  if (!isAllowed) {
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   return children;

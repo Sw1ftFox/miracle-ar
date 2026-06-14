@@ -1,10 +1,9 @@
 import type { ModelType } from "../../../features/modelManagment/modelTypes";
 import styles from "./modelItem.module.css";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { API_BASE } from "@/app/api/config";
 import alt_image from "@/shared/assets/images/alt_image.png";
-import { removeFileExtension } from "@/shared/utils/removeFileExtension";
 import { Button } from "antd";
 import { VideoPlayer } from "@/shared/ui/VideoPlayer/VideoPlayer";
 
@@ -14,26 +13,32 @@ type Props = {
 
 export const ModelItem = ({ model }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const shouldTruncate = model.description
-    ? model.description?.length > 150
-    : false;
-  const displayText = isExpanded
-    ? model.description
-    : `${model.description?.substring(0, 150)}${shouldTruncate ? "..." : ""}`;
-
+  const location = useLocation();
   const navigate = useNavigate();
-  const handleNavigate = (displayName: string, preview?: boolean) => {
+
+  const shouldTruncate = useMemo(
+    () => (model.description ? model.description.length > 150 : false),
+    [model.description],
+  );
+
+  const displayText = useMemo(() => {
+    if (!model.description) return "";
+    if (isExpanded) return model.description;
+    return `${model.description.substring(0, 150)}${shouldTruncate ? "..." : ""}`;
+  }, [model.description, isExpanded, shouldTruncate]);
+
+  const handleNavigate = (fileName: string, preview?: boolean) => {
     if (!preview) {
-      navigate(`/models/${displayName}`);
+      navigate(`/models/${fileName}`, { state: { from: location.pathname } });
     } else {
-      navigate(`/models/preview/${displayName}`);
+      navigate(`/models/preview/${fileName}`, {
+        state: { from: location.pathname },
+      });
     }
   };
 
   let content = null;
   if (model) {
-    const displayName = removeFileExtension(model.name);
     content = (
       <div className={styles.model__card}>
         <div className={styles.image__container}>
@@ -42,7 +47,7 @@ export const ModelItem = ({ model }: Props) => {
               videoUrl={model.videoUrl}
               imageUrl={model.previewUrl}
               altImage={alt_image}
-              altText={displayName}
+              altText={model.displayName || model.fileName}
               className={styles.model__image}
             />
           ) : (
@@ -50,13 +55,15 @@ export const ModelItem = ({ model }: Props) => {
               src={
                 model.previewUrl ? `${API_BASE}${model.previewUrl}` : alt_image
               }
-              alt={displayName}
+              alt={model.displayName || model.fileName}
               className={styles.model__image}
             />
           )}
         </div>
         <div className={styles.model__content}>
-          <h3 className={styles.model__title}>{displayName}</h3>
+          <h3 className={styles.model__title}>
+            {model.displayName || model.fileName}
+          </h3>
           <p className={styles.model__description}>{displayText}</p>
           {shouldTruncate && (
             <Button
@@ -77,7 +84,7 @@ export const ModelItem = ({ model }: Props) => {
           <Button
             color="purple"
             variant="solid"
-            onClick={() => handleNavigate(displayName)}
+            onClick={() => handleNavigate(model.fileName)}
             data-model={model}
             style={{
               padding: 20,
@@ -90,7 +97,7 @@ export const ModelItem = ({ model }: Props) => {
           <Button
             color="purple"
             variant="outlined"
-            onClick={() => handleNavigate(displayName, true)}
+            onClick={() => handleNavigate(model.fileName, true)}
             data-model={model}
             style={{
               padding: 20,

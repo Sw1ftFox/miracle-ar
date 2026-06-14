@@ -5,10 +5,12 @@ import { API_BASE } from "@/app/api/config";
 import { StorageService } from "@/shared/utils/StorageService";
 
 const initialState: AuthType = {
-  isAuth: StorageService.getItem("isAuth"),
+  isAuth: !!StorageService.getItem('authToken'),
   isLoading: false,
   isError: false,
-  errorMessage: "",
+  errorMessage: '',
+  token: StorageService.getItem('authToken') || null,
+  role: StorageService.getItem('userRole') || null,
 }
 
 export const loginAdmin = createAsyncThunk<boolean, string, { rejectValue: string }>(
@@ -40,17 +42,58 @@ export const loginAdmin = createAsyncThunk<boolean, string, { rejectValue: strin
   }
 )
 
+export const loginWithJWT = createAsyncThunk<
+  { token: string; email: string; role: string },
+  { email: string; password: string },
+  { rejectValue: string }
+>('auth/loginWithJWT', async ({ email, password }, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      return rejectWithValue(error);
+    }
+    const data = await response.json();
+    return data;
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  } catch (err: unknown) {
+    return rejectWithValue('Network error');
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     logout: (state) => {
       state.isAuth = false;
-      StorageService.removeItem("isAuth");
+      StorageService.clear();
     }
   },
   extraReducers: (builder) => {
     builder
+      .addCase(loginWithJWT.pending, (state) => {
+        state.isError = false;
+        state.isLoading = true;
+      })
+      .addCase(loginWithJWT.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isAuth = true;
+        state.token = action.payload.token;
+        state.role = action.payload.role;
+        StorageService.saveItem('authToken', action.payload.token);
+        StorageService.saveItem('userRole', action.payload.role);
+      })
+      .addCase(loginWithJWT.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload;
+      })
       .addCase(loginAdmin.pending, (state) => {
         state.isLoading = true;
       })

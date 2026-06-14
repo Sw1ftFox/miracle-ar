@@ -3,6 +3,8 @@ import ErrorBoundary from "@/app/providers/ErrorBoundary/ErrorBoundary";
 import { AdminPageAsync } from "@/pages/AdminPage";
 import { ARViewerPageHTMLAsync } from "@/pages/ARViewerPageHTML";
 import { AuthPage } from "@/pages/AuthPage";
+import { CategoryModelsPage } from "@/pages/CategoryModelsPage";
+import { HomePage } from "@/pages/HomePage/ui/HomePage";
 import { ModelsPageAsync } from "@/pages/ModelsPage";
 import { ModelViewerPageAsync } from "@/pages/ModelViewerPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
@@ -14,6 +16,7 @@ export const AppRoutes = {
   AUTH: "auth",
   ADMIN: "admin",
   MODELS: "models",
+  CATEGORY: "categories",
   MODELS_MODELNAME: "models_modelName",
   MODELS_PREVIEW_MODELNAME: "models_preview_modelName",
   NOT_FOUND: "not_found",
@@ -26,6 +29,7 @@ export const RoutePath: Record<AppRoutesValues, string> = {
   [AppRoutes.AUTH]: "/auth",
   [AppRoutes.ADMIN]: "/admin",
   [AppRoutes.MODELS]: "/models",
+  [AppRoutes.CATEGORY]: "/category/:categoryId",
   [AppRoutes.MODELS_MODELNAME]: "/models/:modelName",
   [AppRoutes.MODELS_PREVIEW_MODELNAME]: "/models/preview/:modelName",
   [AppRoutes.NOT_FOUND]: "*",
@@ -36,7 +40,7 @@ export const routeConfig: Record<AppRoutesValues, RouteProps> = {
     path: RoutePath.root,
     element: (
       <ErrorBoundary>
-        <ModelsPageAsync />
+        <HomePage />
       </ErrorBoundary>
     ),
   },
@@ -59,6 +63,14 @@ export const routeConfig: Record<AppRoutesValues, RouteProps> = {
     element: (
       <ErrorBoundary>
         <ModelsPageAsync />
+      </ErrorBoundary>
+    ),
+  },
+  [AppRoutes.CATEGORY]: {
+    path: RoutePath.categories,
+    element: (
+      <ErrorBoundary>
+        <CategoryModelsPage />
       </ErrorBoundary>
     ),
   },

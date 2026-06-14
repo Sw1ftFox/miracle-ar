@@ -1,6 +1,8 @@
 package com.miraclear.viewing.service;
 
 import com.miraclear.viewing.dto.ModelDto;
+import com.miraclear.viewing.repository.ModelCategoryRepository;
+import com.miraclear.viewing.repository.ModelRepository;
 import com.miraclear.viewing.dto.AppConfigDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.miraclear.viewing.entity.Model;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +44,14 @@ public class StorageService {
     private final String DESCRIPTIONS_DIR = "descriptions";
     private final String VIDEOS_DIR = "videos";
 
+    private final ModelRepository modelRepository;
+    private final ModelCategoryRepository modelCategoryRepository;    
+
+    public StorageService(ModelRepository modelRepository, ModelCategoryRepository modelCategoryRepository) {
+        this.modelRepository = modelRepository;
+        this.modelCategoryRepository = modelCategoryRepository;
+    }
+
     public List<ModelDto.FullInfo> getAllModelsWithFullInfo() throws IOException {
         List<String> modelFiles = listModelFiles();
         List<ModelDto.FullInfo> models = new ArrayList<>();
@@ -49,7 +60,19 @@ public class StorageService {
             String baseName = getBaseName(modelFile);
             ModelDto.FullInfo info = new ModelDto.FullInfo();
 
-            info.setName(modelFile);
+            Optional<Model> modelOpt = modelRepository.findByFileName(baseName);
+            String displayName = modelOpt.map(Model::getDisplayName).orElse(baseName);
+            info.setName(displayName);
+            info.setFileName(baseName);
+            info.setDisplayName(displayName);
+
+            List<Long> categoryIds = modelCategoryRepository.findByModelFileName(baseName)
+                    .stream()
+                    .map(mc -> mc.getCategory().getId())
+                    .collect(Collectors.toList());
+            info.setCategoryIds(categoryIds);
+
+            info.setName(displayName);   
             info.setPreviewUrl(findImageFile(baseName));
             info.setDescription(getDescriptionContent(baseName));
             info.setModelUrl("/api/files/models/" + modelFile);
@@ -57,10 +80,11 @@ public class StorageService {
             info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
             info.setVideoUrl(findVideoFile(baseName));
             info.setIsCurrent(modelFile.equals(currentModel));
+            info.setFileName(baseName);
+            info.setDisplayName(displayName); 
 
             models.add(info);
         }
-
         return models;
     }
 
@@ -85,13 +109,24 @@ public class StorageService {
         String baseName = getBaseName(modelName);
         ModelDto.DetailInfo info = new ModelDto.DetailInfo();
 
-        info.setName(modelName);
+        List<Long> categoryIds = modelCategoryRepository.findByModelFileName(baseName)
+                .stream()
+                .map(mc -> mc.getCategory().getId())
+                .collect(Collectors.toList());
+        info.setCategoryIds(categoryIds);
+
+        String displayName = modelRepository.findByFileName(baseName)
+                .map(Model::getDisplayName)
+                .orElse(baseName);
+        info.setName(displayName);   
         info.setPreviewUrl(findImageFile(baseName));
         info.setDescription(getDescriptionContent(baseName));
         info.setModelUrl("/api/files/models/" + modelName);
         info.setPatternUrl("/api/files/patterns/" + baseName + ".patt");
         info.setSoundUrl("/api/files/sounds/" + baseName + ".mp3");
         info.setVideoUrl(findVideoFile(baseName));
+        info.setFileName(baseName);
+        info.setDisplayName(displayName);
 
         try {
             info.setFileSize(Files.size(modelPath));

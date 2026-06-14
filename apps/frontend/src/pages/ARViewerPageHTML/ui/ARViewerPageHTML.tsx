@@ -1,6 +1,6 @@
 import type { ModelType } from "@/features/modelManagment/modelTypes";
 import { useEffect, useState, useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styles from "./ARViewerPageHTML.module.css";
 import { API_BASE } from "@/app/api/config";
 import { PageLoader } from "@/shared/ui/pageLoader/PageLoader";
@@ -18,6 +18,14 @@ export const ARViewerPageHTML = () => {
   const [soundData, setSoundData] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || "/";
+
+  const handleBack = () => {
+    navigate(from);
+  };
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -158,19 +166,18 @@ export const ARViewerPageHTML = () => {
       )}
 
       <div className={styles.backButtonContainer}>
-        <Link to={"/models"}>
-          <Button
-            variant="solid"
-            color="purple"
-            style={{
-              fontWeight: 600,
-              padding: 18,
-              borderRadius: 12,
-            }}
-          >
-            Вернуться в меню
-          </Button>
-        </Link>
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+          }}
+          onClick={handleBack}
+        >
+          Вернуться в меню
+        </Button>
       </div>
 
       {instructionsVisible && (

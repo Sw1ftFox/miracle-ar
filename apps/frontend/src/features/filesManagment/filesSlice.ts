@@ -7,6 +7,7 @@ import {
   type SectionType
 } from "./fileTypes";
 import { API_BASE } from "@/app/api/config";
+import { fetchWithAuth } from "@/shared/utils/fetchWithAuth";
 
 const initialState: FilesState = {
   files: [],
@@ -72,7 +73,7 @@ export const deleteFile = createAsyncThunk<string | undefined, FileType, { rejec
   "files/delete",
   async (obj, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/api/files/${obj.type}/${obj.fileName}`, {
+      const response = await fetchWithAuth(`${API_BASE}/api/files/${obj.type}/${obj.fileName}`, {
         method: "DELETE"
       });
 
@@ -95,7 +96,7 @@ export const deleteFile = createAsyncThunk<string | undefined, FileType, { rejec
 export const downloadDefaultMarker = createAsyncThunk<void, void, { rejectValue: string }>(
   "files/defaultMarker",
   async (_, { rejectWithValue }) => {
-    fetch(`${API_BASE}/api/files/patterns/default`).then(response => {
+    fetchWithAuth(`${API_BASE}/api/files/patterns/default`).then(response => {
       if (!response.ok) throw new Error('Failed to download');
       return response.blob();
     })
@@ -121,7 +122,7 @@ export const uploadFiles = createAsyncThunk<void, FormData, { rejectValue: strin
   "files/uploadFiles",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/api/files/upload`, {
+      const response = await fetchWithAuth(`${API_BASE}/api/files/upload`, {
         method: "POST",
         body: formData
       })
@@ -175,19 +176,19 @@ const filesSlice = createSlice({
         downloadFile.pending,
         deleteFile.pending,
         uploadFiles.pending), (state) => {
-        state.isLoading = true;
-        state.isSuccess = false;
-        state.isError = false;
-      })
+          state.isLoading = true;
+          state.isSuccess = false;
+          state.isError = false;
+        })
       .addMatcher(isAnyOf(
         fetchFiles.rejected,
         downloadFile.rejected,
         deleteFile.rejected,
         uploadFiles.rejected), (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.errorMessage = action.payload;
-      })
+          state.isLoading = false;
+          state.isError = true;
+          state.errorMessage = action.payload;
+        })
   }
 })
 

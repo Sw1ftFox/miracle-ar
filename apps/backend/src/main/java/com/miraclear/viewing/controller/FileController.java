@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import com.miraclear.viewing.repository.ModelRepository;
+import com.miraclear.viewing.entity.Model;
 
 import java.util.Map;
 
@@ -14,21 +16,23 @@ import java.util.Map;
 public class FileController {
 
     private final StorageService storageService;
+    private final ModelRepository modelRepository;
 
-    public FileController(StorageService storageService) {
+    public FileController(StorageService storageService, ModelRepository modelRepository) {
         this.storageService = storageService;
+        this.modelRepository = modelRepository;      
     }
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("type") String type,
-            @RequestParam("modelName") String modelName) {
+            @RequestParam("modelName") String modelName,
+            @RequestParam(value = "displayName", required = false) String displayName) {
 
         try {
             String result = storageService.saveFileWithModelAssociation(file, type, modelName);
             return ResponseEntity.ok(Map.of("message", result));
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {

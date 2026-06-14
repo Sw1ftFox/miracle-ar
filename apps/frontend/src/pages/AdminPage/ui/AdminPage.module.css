@@ -72,6 +72,12 @@
   margin-bottom: 0.8rem;
 }
 
+@media (max-width: 965px) {
+  .tabs {
+    overflow-x: auto;
+  }
+}
+
 @media (max-width: 768px) {
   .adminPage {
     padding: 1.5rem 1rem;
@@ -87,7 +93,6 @@
   }
 
   .tabs {
-    overflow-x: auto;
     background-color: transparent;
     border-radius: 15px;
     padding: 5px;

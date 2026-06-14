@@ -1,12 +1,15 @@
 export type ModelType = {
-  id: string; // "Полонский" (имя без расширения)
-  name: string; // "Полонский.glb"
-  previewUrl?: string;
+  id: number;
+  name: string;
+  fileName: string;
+  displayName?: string;
   description?: string;
   modelUrl: string;
-  patternUrl: string;
-  soundUrl?: string;
-  videoUrl?: string;
+  patternUrl: string | null;
+  previewUrl?: string | null;
+  soundUrl?: string | null;
+  videoUrl?: string | null;
+  categoryIds?: number[];
 }
 
 export type ModelState = {

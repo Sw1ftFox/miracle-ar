@@ -1,0 +1,1 @@
+export { CategoryAdminList } from "./ui/CategoryAdminList";

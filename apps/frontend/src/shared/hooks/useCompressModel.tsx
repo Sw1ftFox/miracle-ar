@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { compressGLB } from "../utils/compressModel";
-import type { GetProp, UploadFile, UploadProps } from "antd";
-
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+import type { UploadFile } from "antd";
 
 export const useCompressModel = () => {
   const [compressEnabled, setCompressEnabled] = useState(false);
@@ -11,24 +9,28 @@ export const useCompressModel = () => {
   const [originalSize, setOriginalSize] = useState<number | null>(null);
   const [compressedSize, setCompressedSize] = useState<number | null>(null);
 
-  let fileToUpload: FileType | Blob = new Blob();
+  async function compressModel(
+    file: UploadFile<unknown>,
+  ): Promise<File | Blob> {
+    if (!compressEnabled) {
+      return file.originFileObj as File;
+    }
 
-  async function compressModel(file: UploadFile<unknown>) {
-    if (compressEnabled) {
-      setIsCompressing(true);
-      setCompressError(null);
-      try {
-        const compressedBlob = await compressGLB(file as FileType, "medium");
-        setCompressedSize(compressedBlob.size);
-        fileToUpload = compressedBlob;
-      } catch (err) {
-        console.error("Ошибка сжатия:", err);
-        setCompressError("Не удалось сжать модель");
-        setIsCompressing(false);
-        return;
-      } finally {
-        setIsCompressing(false);
-      }
+    setIsCompressing(true);
+    setCompressError(null);
+    try {
+      const compressedBlob = await compressGLB(
+        file.originFileObj as File,
+        "medium",
+      );
+      setCompressedSize(compressedBlob.size);
+      return compressedBlob;
+    } catch (err) {
+      console.error("Ошибка сжатия:", err);
+      setCompressError("Не удалось сжать модель");
+      throw err;
+    } finally {
+      setIsCompressing(false);
     }
   }
 
@@ -43,6 +45,5 @@ export const useCompressModel = () => {
     compressError,
     originalSize,
     compressedSize,
-    fileToUpload,
   };
 };

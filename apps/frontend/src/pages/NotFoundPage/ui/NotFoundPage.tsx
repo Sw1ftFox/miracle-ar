@@ -5,7 +5,7 @@ export const NotFoundPage = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    navigate("/models");
+    navigate("/");
   };
 
   return (
