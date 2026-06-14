@@ -173,6 +173,7 @@ export const ModelForm = ({
       setOriginalSize(file.originFileObj.size || 0);
       setCompressedSize(null);
     }
+    // Если загружен новый файл (с originFileObj), снимаем все метки удаления
     if (file && file.originFileObj) {
       setRemovedFileTypes((prev) => {
         const next = new Set(prev);
@@ -190,11 +191,20 @@ export const ModelForm = ({
 
   const handleRemove = (type: string) => {
     const file = fileList[type as keyof typeof fileList];
-    if (file && file.name) {
-      setFilesToDelete((prev) => ({ ...prev, [type]: file.name }));
+    if (!file) return;
+
+    // Если файл новый (есть originFileObj), просто убираем его из списка
+    if (file.originFileObj) {
+      setFileList((prev) => ({ ...prev, [type]: undefined }));
+      return;
     }
-    setRemovedFileTypes((prev) => new Set(prev).add(type));
-    setFileList((prev) => ({ ...prev, [type]: undefined }));
+
+    // Если файл с сервера – запоминаем для удаления
+    if (file.name) {
+      setFilesToDelete((prev) => ({ ...prev, [type]: file.name }));
+      setRemovedFileTypes((prev) => new Set(prev).add(type));
+      setFileList((prev) => ({ ...prev, [type]: undefined }));
+    }
   };
 
   const onFinish = async (values: any) => {
@@ -220,8 +230,8 @@ export const ModelForm = ({
           fileToUpload instanceof File
             ? fileToUpload
             : new File([fileToUpload], values.fileName + ".glb", {
-              type: fileToUpload.type,
-            });
+                type: fileToUpload.type,
+              });
         formData.append("file", finalFile);
         formData.append("type", "model");
         formData.append("modelName", values.fileName);
@@ -370,11 +380,11 @@ export const ModelForm = ({
           fileType === "model" &&
           originalSize &&
           compressedSize && (
-          <CompressionStats
-            originalSize={originalSize}
-            compressedSize={compressedSize}
-          />
-        )}
+            <CompressionStats
+              originalSize={originalSize}
+              compressedSize={compressedSize}
+            />
+          )}
       </>
     );
   };

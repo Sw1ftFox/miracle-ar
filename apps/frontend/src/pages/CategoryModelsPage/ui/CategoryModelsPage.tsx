@@ -56,11 +56,40 @@ export const CategoryModelsPage = () => {
       .includes(searchText.toLowerCase()),
   );
 
-  if (isLoading)
-    return (
-      <Spin size="large" style={{ display: "block", margin: "2rem auto" }} />
-    );
-  if (errorMessage) return <Alert title={errorMessage} type="error" showIcon />;
+  const loader = isLoading ? (
+    <Spin
+      size="large"
+      style={{
+        display: "flex",
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    />
+  ) : null;
+
+  const error = errorMessage ? (
+    <Alert title={errorMessage} type="error" showIcon />
+  ) : null;
+
+  const content =
+    !isLoading && !errorMessage ? (
+      <Row justify="center">
+        <Col span={24} style={{ display: "grid", gap: "30px" }}>
+          {filteredModels.length === 0 ? (
+            <Alert
+              title="В этой категории пока нет моделей"
+              type="info"
+              showIcon
+            />
+          ) : (
+            filteredModels.map((model) => (
+              <ModelItem key={model.id} model={model} />
+            ))
+          )}
+        </Col>
+      </Row>
+    ) : null;
 
   return (
     <div style={{ padding: "24px", maxWidth: 1400, margin: "0 auto" }}>
@@ -99,26 +128,12 @@ export const CategoryModelsPage = () => {
           }}
         />
       </div>
-
       <Title level={2} style={{ marginBottom: 24 }}>
         Категория "{categoryName}"
       </Title>
-
-      <Row justify="center">
-        <Col span={24} style={{ display: "grid", gap: "30px" }}>
-          {filteredModels.length === 0 ? (
-            <Alert
-              title="В этой категории пока нет моделей"
-              type="info"
-              showIcon
-            />
-          ) : (
-            filteredModels.map((model) => (
-              <ModelItem key={model.id} model={model} />
-            ))
-          )}
-        </Col>
-      </Row>
+      {loader}
+      {error}
+      {content}
       <FloatButton.BackTop />
     </div>
   );

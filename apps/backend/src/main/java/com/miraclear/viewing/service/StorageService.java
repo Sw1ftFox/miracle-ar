@@ -72,10 +72,6 @@ public class StorageService {
                     .collect(Collectors.toList());
             info.setCategoryIds(categoryIds);
 
-            // String displayName = modelRepository.findByFileName(baseName)
-            //         .map(Model::getDisplayName)
-            //         .orElse(baseName);
-
             info.setName(displayName);   
             info.setPreviewUrl(findImageFile(baseName));
             info.setDescription(getDescriptionContent(baseName));
