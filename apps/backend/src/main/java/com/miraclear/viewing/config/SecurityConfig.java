@@ -75,7 +75,8 @@ public class SecurityConfig {
             "https://ar-frontend-dcei.onrender.com",
             "https://miracle-ar-client.vercel.app",
             "https://miracle-client.vercel.app",
-            "http://186.246.13.122"
+            "http://186.246.13.122",
+            "https://miracle-ar-space.ru"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
