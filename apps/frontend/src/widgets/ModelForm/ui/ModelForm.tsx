@@ -348,7 +348,7 @@ export const ModelForm = ({
     if (isModelFile && editingModel) return null;
     return (
       <>
-        <Form.Item label={label}>
+        <Form.Item label={label} style={{ width: "fit-content" }}>
           <Upload
             accept={accept}
             maxCount={1}
@@ -424,9 +424,7 @@ export const ModelForm = ({
               }))}
             />
           </Form.Item>
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }}>
             {renderUpload("3D модель (GLB)", ".glb", "model", true)}
             {renderUpload("Маркер (patt)", ".patt", "pattern")}
             {renderUpload("Превью (jpg/png)", "image/*", "preview")}

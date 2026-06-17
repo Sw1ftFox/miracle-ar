@@ -103,17 +103,17 @@ const modelsSlice = createSlice({
         fetchModels.pending,
         fetchCurrentModel.pending,
         fetchModelsByCategory.pending), (state) => {
-          state.isLoading = true;
-          state.isError = false;
-        })
+        state.isLoading = true;
+        state.isError = false;
+      })
       .addMatcher(isAnyOf(
         fetchModels.rejected,
         fetchCurrentModel.rejected,
         fetchModelsByCategory.rejected), (state, action) => {
-          state.isLoading = false;
-          state.isError = true;
-          state.errorMessage = action.payload;
-        })
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload;
+      })
   }
 })
 
