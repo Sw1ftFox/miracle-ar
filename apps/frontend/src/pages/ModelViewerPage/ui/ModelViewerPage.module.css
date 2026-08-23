@@ -1,7 +1,9 @@
 .container {
   width: 100vw;
   height: 100vh;
-  background: #1a1a1a;
   display: flex;
   justify-content: center;
+  background: linear-gradient(135deg, #f0e6ff 0%, #ffffff 50%, #e6d9ff 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }

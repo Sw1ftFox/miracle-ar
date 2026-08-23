@@ -134,7 +134,7 @@ export const ARViewerPageHTML = () => {
             zIndex: 1,
           }}
           title="AR Scene"
-          allow="camera; microphone; autoplay; encrypted-media"
+          allow="camera; microphone; autoplay; encrypted-media; vr"
         />
       )}
       {isLoading ? <PageLoader /> : null}
