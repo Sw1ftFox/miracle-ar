@@ -46,7 +46,7 @@ export const CategoryAdminList = () => {
       await dispatch(createCategory(values)).unwrap();
       message.success("Категория создана");
       setIsModalVisible(false);
-    } catch (error) {
+    } catch {
       message.error("Ошибка создания категории");
     }
   };

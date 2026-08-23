@@ -118,6 +118,33 @@ export const downloadDefaultMarker = createAsyncThunk<void, void, { rejectValue:
       })
   }
 )
+
+export const downloadDefaultMarkerImage = createAsyncThunk<void, void, { rejectValue: string }>(
+  "files/defaultMarkerImage",
+  async (_, { rejectWithValue }) => {
+    fetchWithAuth(`${API_BASE}/api/files/patterns/default-image`).then(response => {
+      if (!response.ok) throw new Error('Failed to download');
+      return response.blob();
+    })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'default-marker.png';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }).catch(err => {
+        if (err instanceof Error) {
+          return rejectWithValue(err.message);
+        } else {
+          return rejectWithValue("Unknown error!");
+        }
+      })
+  }
+)
+
 export const uploadFiles = createAsyncThunk<void, FormData, { rejectValue: string }>(
   "files/uploadFiles",
   async (formData, { rejectWithValue }) => {
@@ -176,19 +203,19 @@ const filesSlice = createSlice({
         downloadFile.pending,
         deleteFile.pending,
         uploadFiles.pending), (state) => {
-        state.isLoading = true;
-        state.isSuccess = false;
-        state.isError = false;
-      })
+          state.isLoading = true;
+          state.isSuccess = false;
+          state.isError = false;
+        })
       .addMatcher(isAnyOf(
         fetchFiles.rejected,
         downloadFile.rejected,
         deleteFile.rejected,
         uploadFiles.rejected), (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.errorMessage = action.payload;
-      })
+          state.isLoading = false;
+          state.isError = true;
+          state.errorMessage = action.payload;
+        })
   }
 })
 

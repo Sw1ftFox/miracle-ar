@@ -1,7 +1,7 @@
 import type { AppDispatch } from "@/app/store";
 import { deleteFile, downloadFile } from "@/features/filesManagment/filesSlice";
 import { isSectionType } from "@/features/filesManagment/fileTypes";
-import { Button, message } from "antd";
+import { Button, message, Popconfirm } from "antd";
 import { useDispatch } from "react-redux";
 import styles from "./FilesItem.module.css";
 
@@ -45,16 +45,16 @@ export const FilesItem = ({ fileName, type }: FilesItemProps) => {
       >
         Скачать
       </Button>
-      <Button
-        variant="outlined"
-        color="danger"
-        style={{
-          fontWeight: 500,
-        }}
-        onClick={() => handleDelete(type + "s", fileName)}
+      <Popconfirm
+        title="Удалить файл?"
+        onConfirm={() => handleDelete(type + "s", fileName)}
+        cancelText="Нет"
+        okText="Да"
       >
-        Удалить
-      </Button>
+        <Button variant="outlined" color="danger" style={{ fontWeight: 500 }}>
+          Удалить
+        </Button>
+      </Popconfirm>
     </div>
   );
 };

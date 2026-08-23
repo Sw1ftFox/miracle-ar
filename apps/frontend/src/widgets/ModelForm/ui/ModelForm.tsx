@@ -103,6 +103,10 @@ export const ModelForm = ({
     if (visible) {
       form.resetFields();
       setUploading(false);
+      setCompressError(null);
+      setOriginalSize(null);
+      setCompressedSize(null);
+      setCompressEnabled(false);
 
       dispatch(fetchCategories())
         .unwrap()
@@ -230,8 +234,8 @@ export const ModelForm = ({
           fileToUpload instanceof File
             ? fileToUpload
             : new File([fileToUpload], values.fileName + ".glb", {
-              type: fileToUpload.type,
-            });
+                type: fileToUpload.type,
+              });
         formData.append("file", finalFile);
         formData.append("type", "model");
         formData.append("modelName", values.fileName);
@@ -380,11 +384,11 @@ export const ModelForm = ({
           fileType === "model" &&
           originalSize &&
           compressedSize && (
-          <CompressionStats
-            originalSize={originalSize}
-            compressedSize={compressedSize}
-          />
-        )}
+            <CompressionStats
+              originalSize={originalSize}
+              compressedSize={compressedSize}
+            />
+          )}
       </>
     );
   };

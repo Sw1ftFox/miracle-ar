@@ -8,15 +8,18 @@ import { logout } from "@/features/auth/authSlice";
 import { Section } from "@/widgets/Section";
 import {
   FileTypes,
-  isSectionType,
   type SectionType,
 } from "@/features/filesManagment/fileTypes";
-import { downloadDefaultMarker } from "@/features/filesManagment/filesSlice";
+import {
+  downloadDefaultMarker,
+  downloadDefaultMarkerImage,
+} from "@/features/filesManagment/filesSlice";
 import { Button, Grid } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ModelAdminList } from "@/widgets/ModelAdminList";
 import { CategoryAdminList } from "@/widgets/CategoryAdminList";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { ModeratorAdminList } from "@/widgets/ModeratorAdminList";
 
 const { useBreakpoint } = Grid;
 
@@ -32,7 +35,7 @@ export const AdminPage = () => {
   const navigate = useNavigate();
 
   const screens = useBreakpoint();
-  const [selectedSection, setSelectedSection] = useState<SectionType>(
+  const [selectedSection, setSelectedSection] = useState<string>(
     FileTypes.MODELS,
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -40,12 +43,15 @@ export const AdminPage = () => {
   const changeSelectedSection = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     const id = target.id;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    isSectionType(id) && setSelectedSection(id);
+    setSelectedSection(id);
   };
 
   const handleDownloadDefaultMarker = () => {
     dispatch(downloadDefaultMarker());
+  };
+
+  const handleDownloadDefaultMarkerImage = () => {
+    dispatch(downloadDefaultMarkerImage());
   };
 
   return (
@@ -82,6 +88,20 @@ export const AdminPage = () => {
         >
           Скачать маркер по умолчанию
         </Button>
+        <Button
+          variant="solid"
+          color="purple"
+          style={{
+            fontWeight: 600,
+            padding: 18,
+            borderRadius: 12,
+            textWrap: "auto",
+            fontSize: screens.xs ? "0.8rem" : "",
+          }}
+          onClick={handleDownloadDefaultMarkerImage}
+        >
+          Скачать картинку маркера
+        </Button>
       </div>
 
       <div className={styles.section}>
@@ -89,6 +109,7 @@ export const AdminPage = () => {
           {filteredSections.map((section) => {
             return (
               <button
+                key={section.name}
                 id={section.name}
                 className={`${styles.tab__btn} ${
                   selectedSection === section.name ? styles.active : ""
@@ -98,6 +119,17 @@ export const AdminPage = () => {
               </button>
             );
           })}
+          {isAdmin && (
+            <button
+              key="moderators-key"
+              id="moderators"
+              className={`${styles.tab__btn} 
+              ${selectedSection === "moderators" ? styles.active : ""}`}
+              onClick={() => setSelectedSection("moderators" as SectionType)}
+            >
+              Модераторы
+            </button>
+          )}
         </div>
 
         {filteredSections.map((section) => {
@@ -123,6 +155,7 @@ export const AdminPage = () => {
           }
           return null;
         })}
+        {isAdmin && selectedSection === "moderators" && <ModeratorAdminList />}
       </div>
     </div>
   );

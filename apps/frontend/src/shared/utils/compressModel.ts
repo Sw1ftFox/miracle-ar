@@ -1,6 +1,7 @@
 import { WebIO } from '@gltf-transform/core';
 import { reorder, quantize, meshopt } from '@gltf-transform/functions';
 import { MeshoptEncoder, MeshoptDecoder } from 'meshoptimizer';
+import { KHRMaterialsPBRSpecularGlossiness } from '@gltf-transform/extensions';
 
 export type CompressionLevel = 'medium' | 'high';
 
@@ -11,7 +12,7 @@ async function ensureMeshoptReady() {
     await MeshoptEncoder.ready;
     encoderReady = true;
   }
-  await MeshoptDecoder.ready; 
+  await MeshoptDecoder.ready;
 }
 
 export async function compressGLB(
@@ -26,7 +27,7 @@ export async function compressGLB(
   const io = new WebIO().registerDependencies({
     'meshopt.encoder': MeshoptEncoder,
     'meshopt.decoder': MeshoptDecoder,
-  });
+  }).registerExtensions([KHRMaterialsPBRSpecularGlossiness]);;
 
   const document = await io.readBinary(uint8Array);
 
