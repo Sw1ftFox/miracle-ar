@@ -73,9 +73,10 @@ export const CategoryAdminList = () => {
       key: "actions",
       render: (_: unknown, record: CategoryType) => (
         <Space>
-          {isAdmin && (
+          {isAdmin && record.name !== "Другие" && (
             <Popconfirm
               title="Удалить категорию?"
+              description="Модели, привязанные только к этой категории, будут перенесены в «Другие»"
               onConfirm={() => handleDelete(record.id)}
               okText="Да"
               cancelText="Нет"

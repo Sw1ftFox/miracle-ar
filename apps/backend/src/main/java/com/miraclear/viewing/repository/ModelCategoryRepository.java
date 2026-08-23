@@ -9,8 +9,13 @@ import java.util.List;
 
 public interface ModelCategoryRepository extends JpaRepository<ModelCategory, Long> {
     List<ModelCategory> findByModelFileName(String modelFileName);
+    List<ModelCategory> findByCategoryId(Long categoryId);
+
     @Modifying
     @Transactional
     void deleteByModelFileName(String modelFileName);
-    List<ModelCategory> findByCategoryId(Long categoryId);
+
+    @Modifying
+    @Transactional
+    void deleteByCategoryId(Long categoryId);
 }
