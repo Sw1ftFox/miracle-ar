@@ -115,7 +115,7 @@ export const ARScene: React.FC<ARSceneProps> = ({
         embedded
         arjs="sourceType: webcam; patternRatio: 0.75; debugUIEnabled: false; trackingMethod: best;"
         sound
-        vr-mode-ui="enabled: true"
+        vr-mode-ui="enabled: false"
         renderer="logarithmicDepthBuffer: true;"
         cursor="rayOrigin: mouse"
         raycaster="objects: .clickable"
