@@ -9,7 +9,7 @@
 
 .backButtonContainer {
   position: absolute;
-  bottom: 20px;
+  bottom: 50px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -62,7 +62,7 @@
 
 .soundControls {
   position: absolute;
-  bottom: 30px;
+  bottom: 50px;
   right: 10px;
   z-index: 1000;
   display: flex;
@@ -97,7 +97,7 @@
 
 @media (max-width: 868px) {
   .soundControls {
-    bottom: 80px;
+    bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
     right: auto;

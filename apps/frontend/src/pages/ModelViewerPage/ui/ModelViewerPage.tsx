@@ -88,7 +88,7 @@ export const ModelViewerPage = () => {
       <div
         style={{
           position: "absolute",
-          bottom: "30px",
+          bottom: "50px",
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 100,
